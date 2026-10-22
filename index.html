@@ -549,7 +549,7 @@ input:focus{border-color:var(--caramel)}
 .card-header .icon-btn{display:none}
 .swipe{position:relative;margin-bottom:14px;border-radius:14px;overflow:hidden;background:var(--danger)}
 .swipe .card{margin:0;position:relative;transition:transform .22s;touch-action:pan-y}
-.swipe-del{position:absolute;right:0;top:0;bottom:0;width:90px;background:var(--danger);color:#fff;border:0;font-weight:700;font-size:14px;border-radius:0}
+.swipe-act{position:absolute;right:0;top:0;bottom:0;width:160px;display:flex}.swipe-act button{flex:1;border:0;color:#fff;font-weight:700;font-size:14px;border-radius:0}.swipe-ed{background:#6B7F94}.swipe-del{background:var(--danger)}
 /* avisos y hoja de acciones */
 #toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-bottom));transform:translate(-50%,16px);background:rgba(58,52,46,.96);color:var(--crema);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;z-index:95;pointer-events:none;max-width:88%;text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
@@ -566,6 +566,20 @@ input:focus{border-color:var(--caramel)}
 .swipe>.card{animation:none}
 :is(.card,.swipe):nth-child(2){animation-delay:.05s}:is(.card,.swipe):nth-child(3){animation-delay:.1s}:is(.card,.swipe):nth-child(4){animation-delay:.15s}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+input.roast{-webkit-appearance:none;appearance:none;display:block;width:100%;height:10px;padding:0;border:0;border-radius:6px;background:linear-gradient(90deg,#C9A47A,#9B6B43 38%,#5E3C24 68%,#2A1B12);margin:12px 0 10px}
+input.roast::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--rc,#9B6B43);border:3px solid var(--crema);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+input.roast::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--rc,#9B6B43);border:3px solid var(--crema)}
+.roast-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.roast-labels span.on{color:var(--amber);font-weight:700}
+input.auto{border-color:var(--amber)!important;background:#221c15!important}
+.check-list{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.chk,.set-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;background:none;border:0;border-bottom:.5px solid var(--border);border-radius:0;color:var(--crema);font-size:16px;text-align:left;cursor:pointer}
+.chk:last-child,.set-row:last-child{border-bottom:0}
+.chk svg{width:22px;height:22px;fill:none;stroke:var(--amber);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.chk.on svg{opacity:1}
+.set-row span:last-child{color:var(--muted)}
+.set-help{color:var(--muted);font-size:12px;margin:-2px 4px 8px}
 </style>
 </head>
 <body>
@@ -573,7 +587,7 @@ input:focus{border-color:var(--caramel)}
   <!-- HEADER -->
   <header class="header">
     <div class="h-mini" id="hmini">SkibidiCoffee</div>
-    <button class="h-menu" onclick="openMenu()" aria-label="Más opciones"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+    <button class="h-menu" onclick="openSettings()" aria-label="Ajustes"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
   <div class="large"><div class="lt" id="lt">Diario</div><div class="ls">92°C • PERSONAL SPECIALTY TRACKER</div></div>
 
@@ -597,55 +611,18 @@ input:focus{border-color:var(--caramel)}
     <!-- 3. PESTAÑA HERRAMIENTAS -->
     <section id="tab-Herramientas" class="tab-section">
       <div class="card">
-        <div class="style-title" style="margin-bottom:4px;">Calculadora Bidireccional (Prensa / Filtro)</div>
-        <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Elegí qué variable querés despejar automáticamente:</p>
-
-        <div class="segmented">
-          <button class="seg-btn active" id="calc-mode-ratio" onclick="setCalcMode('ratio')">Despejar Ratio</button>
-          <button class="seg-btn" id="calc-mode-water" onclick="setCalcMode('water')">Despejar Agua</button>
-          <button class="seg-btn" id="calc-mode-coffee" onclick="setCalcMode('coffee')">Despejar Café</button>
-        </div>
-
-        <div class="form-group" id="calc-group-coffee">
-          <label>Café en gramos (g)</label>
-          <input type="number" step="0.1" id="calc-coffee" value="20" oninput="updateToolsCalc()" />
-        </div>
-        <div class="form-group" id="calc-group-water">
-          <label>Agua en mililitros (ml / g)</label>
-          <input type="number" step="1" id="calc-water" value="300" oninput="updateToolsCalc()" />
-        </div>
-        <div class="form-group" id="calc-group-ratio" style="display:none;">
-          <label>Ratio deseado (1 : X)</label>
-          <input type="number" step="0.5" id="calc-ratio" value="15" oninput="updateToolsCalc()" />
-        </div>
-
-        <div class="result-box">
-          <div class="result-label">RESULTADO</div>
-          <div class="result-value" id="calc-result-text">Ratio 1 : 15.0</div>
-        </div>
+        <div class="style-title" style="margin-bottom:4px;">Calculadora de Ratio</div>
+        <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Completá 2 campos y el tercero se calcula solo (queda resaltado).</p>
+        <div class="form-group"><label>Café (g)</label><input type="number" inputmode="decimal" step="any" id="calc-coffee" value="20" oninput="calcInput('coffee')" /></div>
+        <div class="form-group"><label>Agua (ml / g)</label><input type="number" inputmode="decimal" step="any" id="calc-water" value="300" oninput="calcInput('water')" /></div>
+        <div class="form-group"><label>Ratio (1 : X)</label><input type="number" inputmode="decimal" step="any" id="calc-ratio" value="15" oninput="calcInput('ratio')" /></div>
+        <div class="result-box"><div class="result-label">RESULTADO</div><div class="result-value" id="calc-result-text">—</div></div>
+        <button class="btn-outline" style="margin-top:10px;" onclick="calcReset()">Limpiar</button>
       </div>
 
-      <div class="card">
-        <div class="style-title" style="margin-bottom:4px;">Calculadora Rápida de Cafeína</div>
-        <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Fórmula universal: 10 mg de cafeína por cada 1 g de café.</p>
-        <div class="form-group">
-          <label>Dosis de café (g)</label>
-          <input type="number" step="0.1" id="caff-calc-input" value="17.3" oninput="updateToolsCalc()" />
-        </div>
-        <div class="result-box">
-          <div class="result-label">CAFEÍNA ESTIMADA</div>
-          <div class="result-value" id="caff-calc-result">173 mg</div>
-        </div>
-      </div>
+      
 
-      <div class="card">
-        <div class="style-title" style="margin-bottom:6px;">Restaurar Copia de Seguridad</div>
-        <p style="color:var(--muted); font-size:12px; margin-bottom:10px;">Importá un archivo .json exportado previamente para restaurar tu historial e inventario.</p>
-        <label class="photo-label-btn" style="margin:0;">
-          📂 Seleccionar archivo Backup (.json)
-          <input type="file" accept=".json" style="display:none;" onchange="importBackupJSON(event)" />
-        </label>
-      </div>
+      
     </section>
 
     <!-- 4. PESTAÑA STATS -->
@@ -725,7 +702,7 @@ input:focus{border-color:var(--caramel)}
   <!-- ==================== MODAL: NUEVA ENTRADA ==================== -->
   <div id="entry-modal" class="modal-overlay">
     <div class="modal-header">
-      <div class="style-title">Nueva Entrada de Café</div>
+      <div class="style-title" id="entry-title">Nueva Entrada de Café</div>
       <button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeEntryModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -796,7 +773,7 @@ input:focus{border-color:var(--caramel)}
         </div>
         <div class="form-group">
           <label>Método que usaron</label>
-          <input type="text" id="entry-social-method" value="Prensa Francesa" />
+          <div id="entry-social-chips" class="chips-scroll"></div>
         </div>
       </div>
 
@@ -823,14 +800,14 @@ input:focus{border-color:var(--caramel)}
         <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event, 'cup')" />
       </label>
 
-      <button class="btn-submit" onclick="saveEntry()">Guardar en el Diario</button>
+      <button class="btn-submit" id="entry-save" onclick="saveEntry()">Guardar en el Diario</button>
     </div>
   </div>
 
   <!-- ==================== MODAL: NUEVO GRANO ==================== -->
   <div id="bean-modal" class="modal-overlay">
     <div class="modal-header">
-      <div class="style-title">Registrar Paquete de Café</div>
+      <div class="style-title" id="bean-title">Registrar Paquete de Café</div>
       <button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeBeanModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -852,10 +829,12 @@ input:focus{border-color:var(--caramel)}
           <label>Origen</label>
           <input type="text" id="bean-origin" placeholder="Ej: Colombia" />
         </div>
-        <div class="form-group">
-          <label>Proceso</label>
-          <input type="text" id="bean-process" value="Lavado" />
-        </div>
+        
+      </div>
+      <div class="form-group">
+        <label>Tueste: <b id="roast-name" style="color:var(--amber)">Medio</b></label>
+        <input type="range" id="bean-roast" class="roast" min="0" max="3" step="1" value="1" oninput="roastUI()" />
+        <div class="roast-labels"><span>Ligero</span><span class="on">Medio</span><span>Medio-oscuro</span><span>Oscuro</span></div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -868,10 +847,25 @@ input:focus{border-color:var(--caramel)}
         </div>
       </div>
 
-      <button class="btn-submit" onclick="saveBean()">Guardar en Inventario</button>
+      <button class="btn-submit" id="bean-save" onclick="saveBean()">Guardar en Inventario</button>
     </div>
   </div>
 
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title">Ajustes</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeSettings()">✕</button></div>
+    <div class="modal-body">
+      <label>Mis métodos de preparación</label>
+      <p class="set-help">Marcá los que usás. Solo esos aparecen al crear una entrada.</p>
+      <div id="methods-list" class="check-list"></div>
+      <div style="display:flex; gap:8px; margin-bottom:22px;"><input type="text" id="new-method-input" placeholder="Otro método (ej: Sifón)" /><button class="btn-outline" onclick="addCustomMethod()">+ Agregar</button></div>
+      <label>Datos</label>
+      <div class="check-list">
+        <button class="set-row" onclick="exportCSV()"><span>Exportar diario (CSV)</span><span>›</span></button>
+        <button class="set-row" onclick="exportBackupJSON()"><span>Guardar backup (JSON)</span><span>›</span></button>
+        <label class="set-row"><span>Restaurar backup (.json)</span><span>›</span><input type="file" accept=".json" hidden onchange="importBackupJSON(event)" /></label>
+      </div>
+    </div>
+  </div>
   <script>
     // --- CONSTANTES Y ESTADO ---
     const DRINK_STYLES = ['Flat White', 'Doble Shot', 'Shot', 'Cortado', 'Americano', 'Latte', 'Cappuccino', 'Filtrado'];
@@ -987,7 +981,7 @@ input:focus{border-color:var(--caramel)}
             ? `📍 ${log.shopName} ${log.shopLocation ? '(' + log.shopLocation + ')' : ''}`
             : `🏠 En lo de ${log.hostName} • ${log.method}`;
 
-        const unit = log.method === 'Prensa Francesa' ? 'ml' : 'g';
+        const unit = isWater(log.method) ? 'ml' : 'g';
         const ratio = log.dose > 0 ? (log.yieldAmount / log.dose).toFixed(1) : '0';
 
         const metricsHtml = log.source === 'Casa' ? `
@@ -1065,13 +1059,15 @@ input:focus{border-color:var(--caramel)}
                   ${b.archived ? `<span style="color:var(--danger); font-size:10px; font-weight:800;">AGOTADO</span>` : ''}
                 </div>
                 <div class="card-sub" style="margin-bottom:4px;">${b.roaster} • ${b.origin}</div>
-                <div style="color:var(--muted); font-size:12px;">Proceso: ${b.process}</div>
+                <div style="color:var(--muted); font-size:12px;">${b.roast !== undefined ? `Tueste: <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${ROAST_C[b.roast]};margin:0 3px 0 2px"></span>${ROAST[b.roast]}` : (b.process ? 'Proceso: ' + b.process : '')}</div>
                 <div style="color:var(--muted); font-size:12px; margin-top:2px;">
                   📦 ${b.weight}g | 💵 $${b.priceUSD} USD ($${costPerGram}/g)
                 </div>
-                <button class="btn-outline" style="margin-top:8px; padding:4px 10px; font-size:11px;" onclick="toggleArchiveBean('${b.id}')">
-                  ${b.archived ? 'Reactivar grano' : 'Archivar / Agotado'}
-                </button>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="editBean('${b.id}')">Editar</button>
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="toggleArchiveBean('${b.id}')">${b.archived ? 'Reactivar' : 'Agotado'}</button>
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px; color:var(--danger); border-color:var(--danger);" onclick="delBean('${b.id}')">Borrar</button>
+                </div>
               </div>
             </div>
           </div>
@@ -1157,7 +1153,7 @@ input:focus{border-color:var(--caramel)}
         </button>
       `).join('');
 
-      document.getElementById('entry-method-chips').innerHTML = HOME_METHODS.map(m => `
+      document.getElementById('entry-method-chips').innerHTML = entryMethods().map(m => `
         <button class="choice-chip ${m === selectedMethod ? 'active' : ''}" onclick="selectEntryMethod('${m}')">
           ${m}
         </button>
@@ -1178,7 +1174,7 @@ input:focus{border-color:var(--caramel)}
     function selectEntryBean(id) { selectedBeanId = id; renderEntryChips(); }
     function selectEntryMethod(m) {
       selectedMethod = m;
-      document.getElementById('yield-label').innerText = m === 'Prensa Francesa' ? 'Agua (ml)' : 'Rendimiento (g)';
+      syncYield();
       renderEntryChips();
     }
     function selectEntryStyle(st) { selectedStyle = st; renderEntryChips(); }
@@ -1244,7 +1240,7 @@ input:focus{border-color:var(--caramel)}
         source: entrySource,
         beanId: entrySource === 'Casa' ? selectedBeanId : null,
         beanName: entrySource === 'Casa' ? beanLabel : null,
-        method: entrySource === 'Casa' ? selectedMethod : (entrySource === 'Social' ? document.getElementById('entry-social-method').value : 'Máquina Comercial'),
+        method: entrySource === 'Casa' ? selectedMethod : (entrySource === 'Social' ? socialMethod : 'Máquina Comercial'),
         grind: entrySource === 'Casa' ? document.getElementById('entry-grind').value.trim() : null,
         dose: entrySource === 'Casa' ? (parseFloat(document.getElementById('entry-dose').value) || 0) : null,
         yieldAmount: entrySource === 'Casa' ? (parseFloat(document.getElementById('entry-yield').value) || 0) : null,
@@ -1261,7 +1257,7 @@ input:focus{border-color:var(--caramel)}
         photo: tempCupPhoto
       };
 
-      logs.unshift(newLog);
+      if (editingLogId) { const old = logs.find(l => l.id === editingLogId) || {}; logs = logs.map(l => l.id === editingLogId ? { ...newLog, id: old.id, date: old.date } : l); } else logs.unshift(newLog);
       localStorage.setItem('skibidi_logs', JSON.stringify(logs));
       document.getElementById('entry-notes').value = '';
       document.getElementById('entry-shop-cost').value = '';
@@ -1281,32 +1277,21 @@ input:focus{border-color:var(--caramel)}
     }
 
     function saveBean() {
-      const name = document.getElementById('bean-name').value.trim();
-      const roaster = document.getElementById('bean-roaster').value.trim();
+      const name = $('bean-name').value.trim(), roaster = $('bean-roaster').value.trim();
       if (!name || !roaster) { toast('Ingresá nombre y tostador.'); return; }
-
-      const newBean = {
-        id: 'bean-' + Date.now(),
-        name,
-        roaster,
-        origin: document.getElementById('bean-origin').value.trim() || 'Varios',
-        process: document.getElementById('bean-process').value.trim() || 'Lavado',
-        weight: parseFloat(document.getElementById('bean-weight').value) || 250,
-        priceUSD: parseFloat(document.getElementById('bean-price').value) || 0,
-        photo: tempBeanPhoto,
-        archived: false,
-        dateAdded: new Date().toISOString()
-      };
-
-      beans.unshift(newBean);
+      const d = { name, roaster, origin: $('bean-origin').value.trim() || 'Varios', roast: +$('bean-roast').value,
+        weight: parseFloat($('bean-weight').value) || 250, priceUSD: parseFloat($('bean-price').value) || 0, photo: tempBeanPhoto };
+      if (editingBeanId) {
+        beans = beans.map(b => b.id === editingBeanId ? { ...b, ...d } : b);
+        logs = logs.map(l => l.beanId === editingBeanId ? { ...l, beanName: `${roaster} - ${name}` } : l);
+        localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      } else {
+        const nb = { id: 'bean-' + Date.now(), ...d, archived: false, dateAdded: new Date().toISOString() };
+        beans.unshift(nb); selectedBeanId = nb.id;
+      }
       localStorage.setItem('skibidi_beans', JSON.stringify(beans));
-      selectedBeanId = newBean.id;
-      document.getElementById('bean-name').value = '';
-      document.getElementById('bean-roaster').value = '';
-      document.getElementById('bean-price').value = '';
-      closeBeanModal();
-      renderAll();
-      renderEntryChips();
+      editingBeanId = null;
+      closeBeanModal(); renderAll(); renderEntryChips();
     }
 
     // --- CALCULADORAS ---
@@ -1321,23 +1306,7 @@ input:focus{border-color:var(--caramel)}
       updateToolsCalc();
     }
 
-    function updateToolsCalc() {
-      const c = parseFloat(document.getElementById('calc-coffee').value) || 0;
-      const w = parseFloat(document.getElementById('calc-water').value) || 0;
-      const r = parseFloat(document.getElementById('calc-ratio').value) || 1;
-      const resEl = document.getElementById('calc-result-text');
-
-      if (calcMode === 'ratio') {
-        resEl.innerText = `Ratio 1 : ${(w / (c || 1)).toFixed(1)}`;
-      } else if (calcMode === 'water') {
-        resEl.innerText = `Usar ${(c * r).toFixed(0)} ml de agua`;
-      } else {
-        resEl.innerText = `Moler ${(w / r).toFixed(1)} g de café`;
-      }
-
-      const caffG = parseFloat(document.getElementById('caff-calc-input').value) || 0;
-      document.getElementById('caff-calc-result').innerText = `${Math.round(caffG * 10)} mg`;
-    }
+    function updateToolsCalc() { calcRender(); }
 
     // --- STATS ---
     function setStatsFilter(period) {
@@ -1399,7 +1368,7 @@ input:focus{border-color:var(--caramel)}
     }
 
     function exportBackupJSON() {
-      const payload = JSON.stringify({ beans, logs, tags, exportedAt: new Date().toISOString() }, null, 2);
+      const payload = JSON.stringify({ beans, logs, tags, methods: { all: allMethods, mine: myMethods }, exportedAt: new Date().toISOString() }, null, 2);
       downloadFile(payload, 'SkibidiCoffee_Backup.json', 'application/json');
     }
 
@@ -1413,6 +1382,7 @@ input:focus{border-color:var(--caramel)}
           if (data.beans) { beans = data.beans; localStorage.setItem('skibidi_beans', JSON.stringify(beans)); }
           if (data.logs) { logs = data.logs; localStorage.setItem('skibidi_logs', JSON.stringify(logs)); }
           if (data.tags) { tags = data.tags; localStorage.setItem('skibidi_tags', JSON.stringify(tags)); }
+          if (data.methods && data.methods.all) { allMethods = data.methods.all; myMethods = data.methods.mine || []; saveMethods(); }
           renderAll();
           toast('¡Backup restaurado con éxito!');
         } catch (err) {
@@ -1468,14 +1438,16 @@ input:focus{border-color:var(--caramel)}
       [...$('logs-container').querySelectorAll(':scope > .card')].forEach((card, i) => {
         const id = logs[i].id, w = document.createElement('div');
         w.className = 'swipe';
-        w.innerHTML = '<button class="swipe-del">Borrar</button>';
+        w.innerHTML = '<div class="swipe-act"><button class="swipe-ed">Editar</button><button class="swipe-del">Borrar</button></div>';
         card.replaceWith(w); w.append(card);
-        w.firstChild.onclick = () => actionSheet('¿Eliminar esta entrada del diario?', [{ l: 'Eliminar', d: 1, fn: () => deleteLog(id) }]);
+        w.querySelector('.swipe-del').onclick = () => actionSheet('¿Eliminar esta entrada del diario?', [{ l: 'Eliminar', d: 1, fn: () => deleteLog(id) }]);
+        w.querySelector('.swipe-ed').onclick = () => { card._o = false; card.style.transform = ''; editLog(id); };
         let x0 = 0, dx = 0;
-        const base = () => card._o ? -90 : 0;
+        const base = () => card._o ? -160 : 0;
         card.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; dx = 0; card.style.transition = 'none'; }, { passive: true });
-        card.addEventListener('touchmove', e => { dx = e.touches[0].clientX - x0; card.style.transform = `translateX(${Math.min(0, Math.max(-110, base() + dx))}px)`; }, { passive: true });
-        card.addEventListener('touchend', () => { card.style.transition = ''; card._o = base() + dx < -45; card.style.transform = card._o ? 'translateX(-90px)' : ''; });
+        card.addEventListener('touchmove', e => { dx = e.touches[0].clientX - x0; card.style.transform = `translateX(${Math.min(0, Math.max(-180, base() + dx))}px)`; }, { passive: true });
+        card.addEventListener('click', () => { if (Math.abs(dx) > 8) return; if (card._o) { card._o = false; card.style.transform = ''; } else editLog(id); });
+        card.addEventListener('touchend', () => { card.style.transition = ''; card._o = base() + dx < -80; card.style.transform = card._o ? 'translateX(-160px)' : ''; });
       });
     }
 
@@ -1497,7 +1469,7 @@ input:focus{border-color:var(--caramel)}
       const pick = e => { const r = st.getBoundingClientRect(), v = Math.min(5, Math.max(1, Math.round((e.clientX - r.left) / r.width * 10) / 2)); if (v !== currentRating) { setRating(v); tap(); } };
       st.onpointerdown = e => { st.setPointerCapture(e.pointerId); pick(e); };
       st.onpointermove = e => { if (e.buttons) pick(e); };
-      setRating(currentRating);
+      window.setRatingUI = setRating; setRating(currentRating);
       // Título que se achica al hacer scroll
       addEventListener('scroll', () => { $('hmini').style.opacity = Math.min(1, Math.max(0, (scrollY - 34) / 24)); document.querySelector('.header').classList.toggle('sc', scrollY > 40); }, { passive: true });
       // Instalación y modo sin conexión
@@ -1505,6 +1477,124 @@ input:focus{border-color:var(--caramel)}
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
     })();
 
+    
+    // ===== MÉTODOS, EDICIÓN, TUESTE Y CALCULADORA =====
+    const CATALOG = ['Espresso', 'Picopresso', 'Prensa Francesa', 'Filtro', 'Moka', 'Aeropress', 'Cold Brew', 'Café turco'];
+    let allMethods = [...CATALOG], myMethods = ['Picopresso', 'Moka', 'Prensa Francesa'];
+    try { const m = JSON.parse(localStorage.getItem('skibidi_methods')); if (m && m.all) { allMethods = m.all; myMethods = m.mine || []; } } catch (e) {}
+    const saveMethods = () => localStorage.setItem('skibidi_methods', JSON.stringify({ all: allMethods, mine: myMethods }));
+    let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa', _wasEdit = false;
+    const ROAST = ['Ligero', 'Medio', 'Medio-oscuro', 'Oscuro'], ROAST_C = ['#C9A47A', '#9B6B43', '#5E3C24', '#2A1B12'];
+    const isWater = m => ['Prensa Francesa', 'Filtro', 'Cold Brew', 'Aeropress'].includes(m);
+    const syncYield = () => { $('yield-label').innerText = isWater(selectedMethod) ? 'Agua (ml)' : 'Rendimiento (g)'; };
+    function entryMethods() {
+      const base = allMethods.filter(m => myMethods.includes(m)), list = base.length ? base : allMethods;
+      if (editingLogId && selectedMethod && !list.includes(selectedMethod)) return [...list, selectedMethod];
+      if (!list.includes(selectedMethod)) selectedMethod = list[0];
+      return list;
+    }
+    function setSocialMethod(m) { socialMethod = m; renderEntryChips(); }
+    const _rc = renderEntryChips;
+    renderEntryChips = function () {
+      _rc(); syncYield();
+      $('entry-social-chips').innerHTML = allMethods.map(m => `<button class="choice-chip ${m === socialMethod ? 'active' : ''}" onclick="setSocialMethod('${m}')">${m}</button>`).join('');
+    };
+
+    // Ajustes
+    function renderMethods() {
+      $('methods-list').innerHTML = allMethods.map(m => `<button class="chk ${myMethods.includes(m) ? 'on' : ''}" onclick="toggleMethod('${m}')"><span>${m}</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>`).join('');
+    }
+    function toggleMethod(m) { myMethods = myMethods.includes(m) ? myMethods.filter(x => x !== m) : [...myMethods, m]; saveMethods(); renderMethods(); tap(); }
+    function addCustomMethod() {
+      const v = $('new-method-input').value.replace(/["'<>]/g, '').trim(); if (!v) return;
+      if (!allMethods.includes(v)) allMethods.push(v);
+      if (!myMethods.includes(v)) myMethods.push(v);
+      $('new-method-input').value = ''; saveMethods(); renderMethods();
+    }
+    const openSettings = () => { renderMethods(); $('settings-modal').classList.add('open'); };
+    const closeSettings = () => $('settings-modal').classList.remove('open');
+
+    // Entradas: nueva / editar
+    const _oe = openEntryModal;
+    function resetEntryForm() {
+      setEntrySource('Casa'); selectedMethod = ''; socialMethod = 'Prensa Francesa'; selectedStyle = 'Flat White'; selectedTags = ['Balanceado', 'Dulce'];
+      const v = (i, x) => $(i).value = x;
+      v('entry-grind', '0.8.0 (40 clics)'); v('entry-dose', '17.3'); v('entry-yield', '44'); v('entry-time', '40');
+      ['entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => v(i, ''));
+      window.setRatingUI(4.5);
+    }
+    openEntryModal = function () {
+      editingLogId = null;
+      if (_wasEdit) { resetEntryForm(); _wasEdit = false; }
+      $('entry-title').textContent = 'Nueva Entrada de Café'; $('entry-save').textContent = 'Guardar en el Diario';
+      _oe();
+    };
+    function editLog(id) {
+      const l = logs.find(x => x.id === id); if (!l) return;
+      editingLogId = id; _wasEdit = true;
+      setEntrySource(l.source);
+      if (l.beanId) selectedBeanId = l.beanId;
+      if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
+      selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])];
+      const v = (i, x) => $(i).value = x ?? '';
+      v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
+      v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName); v('entry-notes', l.notes);
+      _oe();
+      tempCupPhoto = l.photo || null;
+      $('cup-photo-status').innerText = l.photo ? '✅ Foto de la taza lista' : '📷 Adjuntar foto de la taza (Opcional)';
+      window.setRatingUI(l.rating);
+      $('entry-title').textContent = 'Editar entrada'; $('entry-save').textContent = 'Guardar cambios';
+    }
+    const _se = saveEntry;
+    saveEntry = function () { _se(); if (!$('entry-modal').classList.contains('open')) editingLogId = null; };
+
+    // Granos: nuevo / editar / borrar / tueste
+    function roastUI() {
+      const i = $('bean-roast'), v = +i.value;
+      $('roast-name').textContent = ROAST[v]; i.style.setProperty('--rc', ROAST_C[v]);
+      document.querySelectorAll('.roast-labels span').forEach((s, k) => s.classList.toggle('on', k === v));
+    }
+    const _ob = openBeanModal;
+    openBeanModal = function () {
+      editingBeanId = null;
+      ['bean-name', 'bean-roaster', 'bean-origin', 'bean-price'].forEach(i => $(i).value = '');
+      $('bean-weight').value = 250; $('bean-roast').value = 1; roastUI();
+      $('bean-title').textContent = 'Registrar Paquete de Café'; $('bean-save').textContent = 'Guardar en Inventario';
+      _ob();
+    };
+    function editBean(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      _ob(); editingBeanId = id;
+      const v = (i, x) => $(i).value = x ?? '';
+      v('bean-name', b.name); v('bean-roaster', b.roaster); v('bean-origin', b.origin); v('bean-weight', b.weight); v('bean-price', b.priceUSD || '');
+      $('bean-roast').value = b.roast ?? 1; roastUI();
+      tempBeanPhoto = b.photo || null;
+      $('bean-photo-status').innerText = b.photo ? '✅ Foto de etiqueta lista (tocá para cambiar)' : '📸 Fotografiar Etiqueta / Paquete';
+      $('bean-title').textContent = 'Editar paquete'; $('bean-save').textContent = 'Guardar cambios';
+    }
+    function delBean(id) {
+      actionSheet('¿Eliminar este paquete? Las entradas del diario que lo usaron se conservan.', [{ l: 'Eliminar paquete', d: 1, fn: () => {
+        beans = beans.filter(b => b.id !== id);
+        localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+        renderAll(); renderEntryChips();
+      } }]);
+    }
+
+    // Calculadora: ingresás 2 y calcula el 3ro
+    let calcTouched = ['coffee', 'water'];
+    function calcInput(f) { calcTouched = calcTouched.filter(x => x !== f); calcTouched.push(f); if (calcTouched.length > 2) calcTouched.shift(); calcRender(); }
+    function calcReset() { calcTouched = []; ['coffee', 'water', 'ratio'].forEach(k => $('calc-' + k).value = ''); calcRender(); }
+    function calcRender() {
+      const K = ['coffee', 'water', 'ratio'], g = k => parseFloat($('calc-' + k).value), miss = calcTouched.length === 2 ? K.find(k => !calcTouched.includes(k)) : null;
+      K.forEach(k => $('calc-' + k).classList.toggle('auto', k === miss));
+      const out = $('calc-result-text');
+      if (!miss) { out.innerText = 'Ingresá 2 valores'; return; }
+      const c = g('coffee'), w = g('water'), r = g('ratio');
+      const v = miss === 'ratio' ? w / c : miss === 'water' ? c * r : w / r;
+      $('calc-' + miss).value = isFinite(v) && v > 0 ? +v.toFixed(miss === 'water' ? 0 : 1) : '';
+      const C = g('coffee'), W = g('water'), Rt = g('ratio');
+      out.innerText = (C > 0 && W > 0) ? `${+C.toFixed(1)} g + ${+W.toFixed(0)} ml  →  1 : ${(+Rt.toFixed(1))}` : 'Ingresá 2 valores';
+    }
     initApp();
   </script>
 </body>
