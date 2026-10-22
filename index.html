@@ -620,6 +620,32 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
 @keyframes jpbounce{to{transform:translateY(-8px) scale(1.07)}}
 .jp-name{font-size:30px;font-weight:900;color:#fff;text-shadow:0 0 14px #FFD43B,0 0 28px #FF3B6B}
 .jp-sub{color:#ffe9a8;font-size:14px;margin:4px 0 14px}
+
+/* ajustes: misma tipografía y alineación en todas las filas */
+.chk,.set-row,label.set-row{font:inherit;font-size:16px;font-weight:400;letter-spacing:normal;margin:0;color:var(--crema);text-align:left}
+/* orden del inventario */
+.sort-row{display:flex;gap:8px;overflow-x:auto;margin:-4px 0 14px;padding-bottom:2px}
+.sort-row .choice-chip{flex:none;margin:0}
+/* error de dosis */
+input.err{border-color:var(--danger)!important;background:#2a1513!important}
+.over{color:var(--danger)!important}
+/* guía de ratios */
+.gcard .grow{display:flex;align-items:center;gap:12px}
+.gic{width:48px;height:48px;flex:none;background:#2a2521;border-radius:12px;padding:4px}
+.gratio{color:var(--amber);font-weight:800;font-size:15px;margin-top:2px}
+.gbar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:12px 0 8px;border:1px solid var(--border)}
+.gbar i{display:block}
+.glegend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--muted);margin-bottom:8px}
+.glegend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;border:1px solid rgba(255,255,255,.25)}
+.gmeta{font-size:12px;color:var(--caramel);font-weight:700;margin-bottom:4px}
+.gtext{font-size:13px;color:var(--crema);opacity:.9;line-height:1.4}
+/* nivel de cafeína */
+.large{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.tier{display:none;flex-direction:column;align-items:flex-end;flex:none;border:0;border-radius:14px;padding:7px 12px;background:var(--tc,#30A46C);text-align:right;line-height:1.2;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.tier b{font-size:13px;font-weight:900;letter-spacing:.5px}
+.tier span{font-size:10.5px;font-weight:700;opacity:.92}
+.tier.t5{animation:tpulse .6s ease-in-out infinite alternate}
+@keyframes tpulse{to{transform:scale(1.06);box-shadow:0 0 18px #ff2a2a}}
 </style>
 </head>
 <body>
@@ -630,7 +656,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
     <div class="h-mini" id="hmini">SkibidiCoffee</div>
     <button class="h-menu" onclick="openSettings()" aria-label="Ajustes"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
-  <div class="large"><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div>
+  <div class="large"><div><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div><button class="tier" id="tier" onclick="showTiers()" aria-label="Nivel de cafeína"></button></div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="main-container">
@@ -646,6 +672,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
         <button id="toggle-archived-btn" class="btn-outline" onclick="toggleShowArchived()">Ver Agotados</button>
         <button class="btn-small" onclick="openBeanModal()">+ Nuevo Paquete</button>
       </div>
+      <div class="sort-row" id="sort-row"></div>
       <div id="beans-container"></div>
     </section>
 
@@ -654,6 +681,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
       <div class="segmented">
         <button class="seg-btn active" id="tool-btn-ratio" onclick="setTool('ratio')">Ratio</button>
         <button class="seg-btn" id="tool-btn-wheel" onclick="setTool('wheel')">🎰 Ruleta</button>
+        <button class="seg-btn" id="tool-btn-guide" onclick="setTool('guide')">☕ Guía</button>
       </div>
       <div id="tool-ratio"><div class="card">
         <div class="style-title" style="margin-bottom:4px;">Calculadora de Ratio</div>
@@ -664,6 +692,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
         <div class="result-box"><div class="result-label">RESULTADO</div><div class="result-value" id="calc-result-text">—</div></div>
         <button class="btn-outline" style="margin-top:10px;" onclick="calcReset()">Limpiar</button>
       </div></div>
+      <div id="tool-guide" style="display:none;"></div>
       <div id="tool-wheel" style="display:none;">
         <div class="card wheel-card">
           <div class="style-title" style="margin-bottom:2px;">¿No sabés qué tomar?</div>
@@ -1104,7 +1133,8 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
     // --- RENDER INVENTARIO ---
     function renderBeans() {
       const container = document.getElementById('beans-container');
-      const visibleBeans = beans.filter(b => showArchivedBeans ? true : !b.archived);
+      renderSort();
+      const visibleBeans = beans.filter(b => showArchivedBeans ? true : !b.archived).sort(sortBeans);
 
       if (visibleBeans.length === 0) {
         container.innerHTML = `<p style="text-align:center; color:var(--muted); margin-top:30px;">No hay paquetes en esta vista.</p>`;
@@ -1279,6 +1309,10 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
       const caff = Math.round(d * 10);
       const sb = beans.find(x => x.id === selectedBeanId);
       document.getElementById('live-entry-preview').innerText = `Ratio automático: 1:${ratio} • Cafeína: ${caff} mg` + (sb ? ` • Quedan ${+((sb.remaining ?? sb.weight)).toFixed(1)} g` : '');
+      const over = !!selectedBeanId && d > availStock(selectedBeanId) + 1e-6;
+      document.getElementById('entry-dose').classList.toggle('err', over);
+      document.getElementById('live-entry-preview').classList.toggle('over', over);
+      if (over) document.getElementById('live-entry-preview').innerText += ' ⚠ La dosis supera el stock';
     }
 
     function saveEntry() {
@@ -1290,6 +1324,10 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
       if (entrySource === 'Casa') {
         const d = num('entry-dose', 5000);
         if (!(d > 0)) { toast('Ingresá la dosis de café.'); return; }
+        if (selectedBeanId && d > availStock(selectedBeanId) + 1e-6) {
+          $('entry-dose').classList.add('err');
+          toast(`La dosis (${d} g) supera lo que queda en el paquete (${+availStock(selectedBeanId).toFixed(1)} g).`); return;
+        }
         caffeineMg = Math.round(d * 10);
         const b = beans.find(x => x.id === selectedBeanId);
         if (b) {
@@ -1404,6 +1442,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
     }
 
     function renderStats() {
+      renderTier();
       const now = new Date();
       const passFilter = (iso) => {
         if (statsFilter === 'Histórico') return true;
@@ -1515,7 +1554,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
       else _df(c, n, m);
     };
     const _st = switchTab;
-    switchTab = function (t) { _st(t); $('lt').textContent = t; scrollTo(0, 0); tap(); };
+    switchTab = function (t) { _st(t); $('lt').textContent = t; $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; scrollTo(0, 0); tap(); };
 
     // Deslizar para borrar
     const _rl = renderLogs;
@@ -1722,7 +1761,7 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
     }, true);
 
     // Herramientas: una a la vez
-    function setTool(t) { ['ratio', 'wheel'].forEach(k => { $('tool-' + k).style.display = k === t ? 'block' : 'none'; $('tool-btn-' + k).classList.toggle('active', k === t); }); }
+    function setTool(t) { ['ratio', 'wheel', 'guide'].forEach(k => { $('tool-' + k).style.display = k === t ? 'block' : 'none'; $('tool-btn-' + k).classList.toggle('active', k === t); }); }
 
     // Ruleta
     const DRINKS = [
@@ -1785,6 +1824,74 @@ input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-s
       })();
     }
     buildWheel();
+    
+    // ===== ORDEN DE INVENTARIO, STOCK, GUÍA Y NIVELES =====
+    const fmtN = n => Math.round(n).toLocaleString('es-AR');
+    const SORTS = { date: { l: 'Fecha', d: -1 }, rating: { l: 'Calificación', d: -1 }, price: { l: 'Precio', d: 1 }, stock: { l: 'Stock', d: 1 } };
+    let invSort = 'date', invDir = -1;
+    function setSort(k) { if (invSort === k) invDir = -invDir; else { invSort = k; invDir = SORTS[k].d; } renderBeans(); }
+    function renderSort() {
+      $('sort-row').innerHTML = Object.entries(SORTS).map(([k, v]) =>
+        `<button class="choice-chip ${k === invSort ? 'active' : ''}" onclick="setSort('${k}')">${v.l}${k === invSort ? (invDir < 0 ? ' ↓' : ' ↑') : ''}</button>`).join('');
+    }
+    function sortBeans(a, b) {
+      const t = x => new Date(x.purchaseDate ? x.purchaseDate + 'T12:00:00' : x.dateAdded).getTime() || 0;
+      const key = x => invSort === 'date' ? t(x) : invSort === 'rating' ? (x.rating || 0) : invSort === 'price' ? (x.priceUSD || 0) : (x.remaining ?? x.weight);
+      return (key(a) - key(b)) * invDir || (new Date(b.dateAdded) - new Date(a.dateAdded));
+    }
+    function availStock(id) {
+      const b = beans.find(x => x.id === id); if (!b) return Infinity;
+      let a = b.remaining ?? b.weight;
+      const o = editingLogId && logs.find(l => l.id === editingLogId);
+      if (o && o.beanId === id && o.stockG) a += o.stockG;
+      return a;
+    }
+
+    // Guía de ratios por bebida
+    const GUIDE = [
+      { n: 'Espresso / Moka Puro', i: 'shot', r: [1, 0, 0], cup: '60 – 80 ml', t: 'Solo la base recién extraída.' },
+      { n: 'Cortado', i: 'cort', r: [1, 1, 0], cup: '100 – 120 ml', t: 'Partes iguales. Corta la acidez punzante sin tapar el cuerpo del grano.' },
+      { n: 'Flat White', i: 'fw', r: [1, 2, 0.5], cup: '150 – 160 ml', t: 'Doble café con capa sedosa muy fina de microespuma (apenas 5 mm).' },
+      { n: 'Cappuccino', i: 'cap', r: [1, 1.5, 1], cup: '160 – 180 ml', t: 'Mismo café que el Flat White, pero con microespuma más aireada y espesa que ocupa un tercio de la taza.' },
+      { n: 'Latte', i: 'latte', r: [1, 3, 0.5], cup: '240 – 300 ml', t: 'Predomina la leche dulce y caliente; el café queda de fondo aromático.' },
+      { n: 'Americano / Moka Long', i: 'cup', r: [1, 2, 0], water: true, cup: '180 – 200 ml', t: 'Agua a 90–92°C en la taza y el café vertido encima para conservar la crema intacta.' }
+    ];
+    function buildGuide() {
+      const COL = ['#6F4A2F', '#EAD9BF', '#FFFFFF'], WCOL = '#7FB6D9';
+      $('tool-guide').innerHTML = `<p style="color:var(--muted); font-size:12px; margin:0 4px 12px;">Proporción en partes: <b style="color:var(--crema)">Café : Leche líquida : Microespuma</b></p>` +
+        GUIDE.map(g => {
+          const names = ['Café', g.water ? 'Agua' : 'Leche líquida', 'Microespuma'], cols = [COL[0], g.water ? WCOL : COL[1], COL[2]];
+          const bar = g.r.map((v, k) => v ? `<i style="flex:${v};background:${cols[k]}"></i>` : '').join('');
+          const legend = g.r.map((v, k) => v ? `<span><b style="background:${cols[k]}"></b>${names[k]} ${v}</span>` : '').join('');
+          return `<div class="card gcard">
+            <div class="grow"><svg class="gic" viewBox="0 0 40 40"><use href="#ic-${g.i}"/></svg>
+              <div><div class="style-title" style="font-size:16px;">${g.n}</div><div class="gratio">${g.r[0]} : ${g.r[1]}${g.water ? ' (Agua)' : ''} : ${g.r[2]}</div></div></div>
+            <div class="gbar">${bar}</div><div class="glegend">${legend}</div>
+            <div class="gmeta">🥛 Taza sugerida: ${g.cup}</div><div class="gtext">${g.t}</div></div>`;
+        }).join('');
+    }
+
+    // Niveles de cafeína (últimos 7 días)
+    const TIERS = [
+      { max: 350, n: 'Nivel 0', r: '0 – 350 mg', tag: '', c: '#30A46C', fg: '#ffffff' },
+      { max: 650, n: 'Nivel 1', r: '351 – 650 mg', tag: '', c: '#9BC53D', fg: '#14210a' },
+      { max: 1000, n: 'Nivel 2', r: '651 – 1.000 mg', tag: '', c: '#F2B705', fg: '#2a1e00' },
+      { max: 1250, n: 'Nivel 3', r: '1.001 – 1.250 mg', tag: '', c: '#F76B15', fg: '#ffffff' },
+      { max: 2100, n: 'Nivel 4', r: '1.251 – 2.100 mg', tag: 'Adicto!', c: '#E5484D', fg: '#ffffff' },
+      { max: Infinity, n: 'Nivel Taquicardia', r: '2.101+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
+    ];
+    function weekCaffeine() { const now = Date.now(); return logs.reduce((a, l) => ((now - new Date(l.date)) / 864e5 <= 7 ? a + (l.caffeineMg || 0) : a), 0); }
+    function renderTier() {
+      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k], el = $('tier');
+      el.style.setProperty('--tc', t.c); el.style.color = t.fg;
+      el.className = 'tier' + (k === 5 ? ' t5' : '');
+      el.innerHTML = `<b>${t.n.toUpperCase()}</b><span>${fmtN(mg)} mg · 7 días${t.tag && k < 5 ? ' · ' + t.tag : ''}</span>`;
+    }
+    function showTiers() {
+      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max);
+      actionSheet(`Cafeína de los últimos 7 días: ${fmtN(mg)} mg`, TIERS.map((t, i) => ({ l: `${i === k ? '● ' : ''}${t.n}: ${t.r}${t.tag ? ' · ' + t.tag : ''}`, fn: () => {} })));
+    }
+    buildGuide();
     initApp();
 
     (function splash() {
