@@ -565,7 +565,13 @@ input:focus{border-color:var(--caramel)}
 .card,.swipe{animation:rise .35s cubic-bezier(.2,.8,.2,1) backwards}
 .swipe>.card{animation:none}
 :is(.card,.swipe):nth-child(2){animation-delay:.05s}:is(.card,.swipe):nth-child(3){animation-delay:.1s}:is(.card,.swipe):nth-child(4){animation-delay:.15s}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*:not(.splash):not(.splash *){animation:none!important;transition:none!important}}
+
+#splash{position:fixed;inset:0;z-index:300;background:#000;display:flex;align-items:center;justify-content:center;opacity:1}
+#splash img{width:min(78vw,360px);height:auto;animation:splashIn .85s cubic-bezier(.16,1,.3,1) both}
+#splash.out{animation:splashOut .55s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+@keyframes splashIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes splashOut{to{opacity:0}}
 
 input.roast{-webkit-appearance:none;appearance:none;display:block;width:100%;height:10px;padding:0;border:0;border-radius:6px;background:linear-gradient(90deg,#C9A47A,#9B6B43 38%,#5E3C24 68%,#2A1B12);margin:12px 0 10px}
 input.roast::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--rc,#9B6B43);border:3px solid var(--crema);box-shadow:0 2px 6px rgba(0,0,0,.5)}
@@ -583,13 +589,14 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
 </style>
 </head>
 <body>
+  <div id="splash" aria-hidden="true"><img src="splash.png" alt="" /></div>
 
   <!-- HEADER -->
   <header class="header">
     <div class="h-mini" id="hmini">SkibidiCoffee</div>
     <button class="h-menu" onclick="openSettings()" aria-label="Ajustes"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
-  <div class="large"><div class="lt" id="lt">Diario</div><div class="ls">92°C • PERSONAL SPECIALTY TRACKER</div></div>
+  <div class="large"><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="main-container">
@@ -869,7 +876,7 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
   <script>
     // --- CONSTANTES Y ESTADO ---
     const DRINK_STYLES = ['Flat White', 'Doble Shot', 'Shot', 'Cortado', 'Americano', 'Latte', 'Cappuccino', 'Filtrado'];
-    const HOME_METHODS = ['Picopresso', 'Moka', 'Prensa Francesa'];
+    const HOME_METHODS = ['Espresso', 'Moka', 'Prensa Francesa'];
     const STANDARD_CAFFEINE = {
       'Shot': 80, 'Doble Shot': 160, 'Flat White': 150, 'Cortado': 140,
       'Latte': 150, 'Cappuccino': 150, 'Americano': 150, 'Filtrado': 120
@@ -881,7 +888,7 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
 
     let entrySource = 'Casa';
     let selectedBeanId = '';
-    let selectedMethod = 'Picopresso';
+    let selectedMethod = 'Espresso';
     let selectedStyle = 'Flat White';
     let currentRating = 4.5;
     let selectedTags = ['Balanceado', 'Dulce'];
@@ -901,44 +908,20 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
       if (savedBeans) {
         beans = JSON.parse(savedBeans);
       } else {
-        beans = [{
-          id: 'bean-1',
-          name: 'Blend Especialidad',
-          roaster: 'Iris',
-          origin: 'Brasil / Colombia',
-          process: 'Natural / Lavado',
-          weight: 250,
-          priceUSD: 14,
-          photo: null,
-          archived: false,
-          dateAdded: new Date().toISOString()
-        }];
-        localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+        beans = [];
       }
 
       if (savedLogs) {
         logs = JSON.parse(savedLogs);
+        let logsChanged = false;
+        logs = logs.map(l => {
+          if (l.method !== 'Picopresso') return l;
+          logsChanged = true;
+          return { ...l, method: 'Espresso' };
+        });
+        if (logsChanged) localStorage.setItem('skibidi_logs', JSON.stringify(logs));
       } else {
-        logs = [{
-          id: 'log-1',
-          date: new Date().toISOString(),
-          source: 'Casa',
-          beanId: 'bean-1',
-          beanName: 'Iris - Blend Especialidad',
-          method: 'Picopresso',
-          grind: '0.8.0 (40 clics)',
-          dose: 17.3,
-          yieldAmount: 44,
-          brewTime: 40,
-          drinkStyle: 'Flat White',
-          caffeineMg: 173,
-          costUSD: 0.97,
-          rating: 4.5,
-          tags: ['Dulce', 'Cuerpo sedoso', 'Balanceado'],
-          notes: 'Extracción de 30s tras preinfusión de 10s.',
-          photo: null
-        }];
-        localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+        logs = [];
       }
 
       if (savedTags) tags = JSON.parse(savedTags);
@@ -1479,10 +1462,15 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
 
     
     // ===== MÉTODOS, EDICIÓN, TUESTE Y CALCULADORA =====
-    const CATALOG = ['Espresso', 'Picopresso', 'Prensa Francesa', 'Filtro', 'Moka', 'Aeropress', 'Cold Brew', 'Café turco'];
-    let allMethods = [...CATALOG], myMethods = ['Picopresso', 'Moka', 'Prensa Francesa'];
+    const CATALOG = ['Espresso', 'Prensa Francesa', 'Filtro', 'Moka', 'Aeropress', 'Cold Brew', 'Café turco'];
+    const dedupeRename = (list, from, to) => [...new Set((list || []).map(m => m === from ? to : m))];
+    let allMethods = [...CATALOG], myMethods = ['Espresso', 'Moka', 'Prensa Francesa'];
     try { const m = JSON.parse(localStorage.getItem('skibidi_methods')); if (m && m.all) { allMethods = m.all; myMethods = m.mine || []; } } catch (e) {}
+    allMethods = dedupeRename(allMethods, 'Picopresso', 'Espresso');
+    myMethods = dedupeRename(myMethods, 'Picopresso', 'Espresso');
+    if (!allMethods.includes('Espresso')) allMethods.unshift('Espresso');
     const saveMethods = () => localStorage.setItem('skibidi_methods', JSON.stringify({ all: allMethods, mine: myMethods }));
+    saveMethods();
     let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa', _wasEdit = false;
     const ROAST = ['Ligero', 'Medio', 'Medio-oscuro', 'Oscuro'], ROAST_C = ['#C9A47A', '#9B6B43', '#5E3C24', '#2A1B12'];
     const isWater = m => ['Prensa Francesa', 'Filtro', 'Cold Brew', 'Aeropress'].includes(m);
@@ -1596,6 +1584,23 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
       out.innerText = (C > 0 && W > 0) ? `${+C.toFixed(1)} g + ${+W.toFixed(0)} ml  →  1 : ${(+Rt.toFixed(1))}` : 'Ingresá 2 valores';
     }
     initApp();
+
+    (function splash() {
+      const el = document.getElementById('splash');
+      if (!el) return;
+      const hide = () => {
+        if (el.classList.contains('out')) return;
+        el.classList.add('out');
+        el.addEventListener('animationend', e => { if (e.animationName === 'splashOut') el.remove(); });
+      };
+      const img = el.querySelector('img');
+      const ready = img && img.complete ? Promise.resolve() : new Promise(r => {
+        if (!img) return r();
+        img.addEventListener('load', r, { once: true });
+        img.addEventListener('error', r, { once: true });
+      });
+      Promise.all([ready, new Promise(r => setTimeout(r, 1600))]).then(hide);
+    })();
   </script>
 </body>
 </html>
