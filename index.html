@@ -710,6 +710,9 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 .bd-row:last-child{border-bottom:0}
 .bd-row span{color:var(--muted);flex:none}
 .bd-row b{font-weight:600;text-align:right}
+/* campos dentro de tarjetas: más oscuros que el fondo */
+.card input{background:#0D0B09;border:1px solid #3d362e}
+.card input:focus{border-color:var(--caramel)}
 </style>
 </head>
 <body>
@@ -781,7 +784,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       </div>
 
       <div class="card">
-        <div class="style-title">Métricas de Consumo</div>
+        <div class="style-title">Consumo</div>
         <div class="stat-grid">
           <div class="stat-box">
             <div class="stat-label">Tazas Totales</div>
@@ -800,7 +803,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       </div>
 
       <div class="card">
-        <div class="style-title">Panel Financiero Sumatorio (USD)</div>
+        <div class="style-title">Gastos</div>
         <div class="stat-grid">
           <div class="stat-box">
             <div class="stat-label">Gasto en Granos</div>
@@ -1183,7 +1186,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
             <div class="card-header">
               <div class="badge-row">
                 <span class="badge ${badgeClass}">${log.source}</span>
-                <span class="style-title">${log.drinkStyle || log.method}</span>
+                <span class="style-title">${logTitle(log)}</span>
               </div>
               <button class="icon-btn" onclick="deleteLog('${log.id}')">🗑️</button>
             </div>
@@ -1269,9 +1272,13 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     }
 
     function toggleArchiveBean(id) {
-      beans = beans.map(b => b.id === id ? { ...b, archived: !b.archived } : b);
+      beans = beans.map(b => {
+        if (b.id !== id) return b;
+        const arch = !b.archived;
+        return { ...b, archived: arch, autoArchived: false, remaining: arch ? 0 : b.weight };
+      });
       localStorage.setItem('skibidi_beans', JSON.stringify(beans));
-      renderBeans();
+      renderBeans(); renderEntryChips();
     }
 
     // --- COMPRESIÓN DE FOTOS EN CANVAS (PARA NO SATURAR MEMORIA EN iOS) ---
@@ -1553,7 +1560,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       document.getElementById('stat-total-caffeine').innerText = `${totalCaff} mg`;
 
       const counts = {};
-      fLogs.forEach(l => { counts[l.drinkStyle || 'Sin estilo'] = (counts[l.drinkStyle || 'Sin estilo'] || 0) + 1; });
+      fLogs.forEach(l => { counts[statLabel(l)] = (counts[statLabel(l)] || 0) + 1; });
       const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
 
       document.getElementById('stat-top-style').innerText = sorted.length ? `${sorted[0][0]} (${sorted[0][1]})` : 'Sin datos';
@@ -1777,6 +1784,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       if (l.beanId) selectedBeanId = l.beanId;
       if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
       selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])];
+      editOrig = { method: l.source === 'Cafetería' ? '' : l.method, style: l.drinkStyle };
       const v = (i, x) => $(i).value = x ?? '';
       entTouch = []; v('entry-ratio', ''); v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
       v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName); v('entry-notes', l.notes); v('entry-date', ymd(new Date(l.date)));
@@ -1859,6 +1867,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     function adjustStock(beanId, delta) {
       const b = beans.find(x => x.id === beanId); if (!b) return 0;
       const cur = b.remaining ?? b.weight;
+      if (delta > 0 && b.archived && !b.autoArchived) return 0;
       b.remaining = Math.min(b.weight, Math.max(0, +(cur + delta).toFixed(1)));
       if (b.remaining <= 0 && !b.archived) { b.archived = true; b.autoArchived = true; toast('Paquete agotado: ' + b.name); }
       else if (delta > 0 && b.autoArchived && b.remaining > 0) { b.archived = false; b.autoArchived = false; }
@@ -2070,7 +2079,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       let bestHtml;
       if (best) {
         const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? (best.yieldAmount / best.dose).toFixed(1) : '—';
-        bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${best.drinkStyle ? E(best.drinkStyle) + ' · ' : ''}${new Date(best.date).toLocaleDateString()}</div>
+        bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${best.drinkStyle ? E(logTitle(best)) + ' · ' : ''}${new Date(best.date).toLocaleDateString()}</div>
           <div class="bd-list" style="background:transparent; margin-bottom:10px;">${row('Método', E(best.method))}${row('Molienda', E(best.grind || '—'))}${row('Dosis', best.dose + ' g')}${row('Rendimiento', best.yieldAmount + ' ' + unit)}${row('Ratio', '1 : ' + ratio)}${best.brewTime ? row('Tiempo', best.brewTime + ' s') : ''}</div>
           <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}','${best.id}')">☕ Preparar con esta configuración</button></div>`;
       } else {
@@ -2160,9 +2169,13 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     const effMethod = () => entrySource === 'Casa' ? selectedMethod : (entrySource === 'Social' ? socialMethod : '');
     const styleRule = () => STYLE_RULES[effMethod()] || { opts: DRINK_STYLES };
     const styleOptional = () => !!styleRule().optional;
+    let editOrig = null;
+    const logTitle = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || l.method || 'Sin estilo');
+    const statLabel = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || ((l.method && l.method !== 'Sin especificar') ? l.method : 'Sin estilo'));
     function styleOptions() {
       const list = styleRule().opts;
-      return (editingLogId && selectedStyle && !list.includes(selectedStyle)) ? [...list, selectedStyle] : list;
+      const keep = editingLogId && editOrig && selectedStyle && selectedStyle === editOrig.style && effMethod() === editOrig.method && !list.includes(selectedStyle);
+      return keep ? [...list, selectedStyle] : list;
     }
     const _ses = setEntrySource;
     setEntrySource = function (src) { _ses(src); renderEntryChips(); };
