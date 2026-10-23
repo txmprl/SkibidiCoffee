@@ -713,8 +713,9 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 /* campos dentro de tarjetas: más oscuros que el fondo */
 .card input{background:#0D0B09;border:1px solid #3d362e}
 .card input:focus{border-color:var(--caramel)}
-/* que todas las pestañas tengan la misma altura mínima: así Safari no cambia su barra inferior según la pestaña */
-body{min-height:calc(100vh + 2px);min-height:calc(100lvh + 2px)}
+/* El documento ya no se desplaza: el que se desplaza es el body. Así el alto de la ventana es el mismo en todas las pestañas y la barra inferior no se mueve. */
+html{height:100%;overflow:hidden}
+body{height:100%;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:none}
 </style>
 </head>
 <body>
@@ -1648,7 +1649,7 @@ body{min-height:calc(100vh + 2px);min-height:calc(100lvh + 2px)}
       else _df(c, n, m);
     };
     const _st = switchTab;
-    switchTab = function (t) { const wasStats = $('tier').style.display === 'flex'; _st(t); $('lt').textContent = t; if (t === 'Stats' && !wasStats) playTier(); $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; scrollTo(0, 0); tap(); };
+    switchTab = function (t) { const wasStats = $('tier').style.display === 'flex'; _st(t); $('lt').textContent = t; if (t === 'Stats' && !wasStats) playTier(); $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; document.body.scrollTop = 0; tap(); };
 
     // Deslizar para borrar
     const _rl = renderLogs;
@@ -1694,7 +1695,7 @@ body{min-height:calc(100vh + 2px);min-height:calc(100lvh + 2px)}
       window.setBeanRatingUI = mkStars('bean-stars', 'bean-starfill', 'bean-rating-val', () => beanRating, v => beanRating = v);
       setRatingUI(currentRating); setBeanRatingUI(beanRating);
       // Título que se achica al hacer scroll
-      addEventListener('scroll', () => { $('hmini').style.opacity = Math.min(1, Math.max(0, (scrollY - 34) / 24)); document.querySelector('.header').classList.toggle('sc', scrollY > 40); }, { passive: true });
+      document.body.addEventListener('scroll', () => { const y = document.body.scrollTop; $('hmini').style.opacity = Math.min(1, Math.max(0, (y - 34) / 24)); document.querySelector('.header').classList.toggle('sc', y > 40); }, { passive: true });
       // Instalación y modo sin conexión
       if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
