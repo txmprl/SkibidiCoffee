@@ -676,9 +676,11 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 .tmeter{position:relative;height:10px;margin:3px 0}
 .tm-bg,.tm-fill{position:absolute;inset:0;display:flex;gap:1px;border-radius:5px;overflow:hidden}
 .tm-bg{opacity:.28}
-.tm-fill{animation:tfill .9s cubic-bezier(.2,.8,.2,1) both}
+
 .tm-bg i,.tm-fill i{display:block;height:100%}
-.tm-pin{position:absolute;top:-3px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.6);animation:tpin .9s cubic-bezier(.2,.8,.2,1) both}
+.tm-pin{position:absolute;top:-3px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.6)}
+.tier.anim .tm-fill,.anim-in .tm-fill{animation:tfill .9s cubic-bezier(.2,.8,.2,1) both}
+.tier.anim .tm-pin,.anim-in .tm-pin{animation:tpin .9s cubic-bezier(.2,.8,.2,1) both}
 .tnext{font-size:10.5px;color:var(--muted)}
 @keyframes tfill{from{clip-path:inset(0 100% 0 0)}}
 @keyframes tpin{from{left:0}}
@@ -693,6 +695,21 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 .trow small{color:var(--muted);margin-left:auto}
 .trow.on{background:var(--card);border-color:var(--caramel)}
 .trow em{font-style:normal;font-size:10px;color:var(--amber);font-weight:800}
+
+/* pestañas de herramientas */
+.tool-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tool-btn{--c1:#E8962A;--c2:#B85C0A;--bd:rgba(232,150,42,.4);--bg:rgba(232,150,42,.09);display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);color:var(--crema);font-weight:700;font-size:13px;transition:background .2s,box-shadow .2s}
+.tool-btn span{font-size:16px;line-height:1}
+.tool-btn.t-guide{--c1:#4F7BFF;--c2:#3552C9;--bd:rgba(79,123,255,.45);--bg:rgba(79,123,255,.10)}
+.tool-btn.t-wheel{--c1:#F0566A;--c2:#C5283D;--bd:rgba(240,86,106,.45);--bg:rgba(240,86,106,.10)}
+.tool-btn.active{background:linear-gradient(160deg,var(--c1),var(--c2));border-color:rgba(255,255,255,.28);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 3px 10px rgba(0,0,0,.35)}
+/* popup de bolsa: lista */
+.bd-photo{max-height:190px;margin-bottom:10px}
+.bd-list{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:6px}
+.bd-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:10px 14px;border-bottom:.5px solid var(--border);font-size:14px}
+.bd-row:last-child{border-bottom:0}
+.bd-row span{color:var(--muted);flex:none}
+.bd-row b{font-weight:600;text-align:right}
 </style>
 </head>
 <body>
@@ -725,17 +742,17 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 
     <!-- 3. PESTAÑA HERRAMIENTAS -->
     <section id="tab-Herramientas" class="tab-section">
-      <div class="segmented">
-        <button class="seg-btn active" id="tool-btn-ratio" onclick="setTool('ratio')">Ratio</button>
-        <button class="seg-btn" id="tool-btn-guide" onclick="setTool('guide')">☕ Guía</button>
-        <button class="seg-btn" id="tool-btn-wheel" onclick="setTool('wheel')">🎰 Ruleta</button>
+      <div class="tool-tabs">
+        <button class="tool-btn t-ratio active" id="tool-btn-ratio" onclick="setTool('ratio')"><span>🧮</span>Ratio</button>
+        <button class="tool-btn t-guide" id="tool-btn-guide" onclick="setTool('guide')"><span>📖</span>Guía</button>
+        <button class="tool-btn t-wheel" id="tool-btn-wheel" onclick="setTool('wheel')"><span>🎰</span>Ruleta</button>
       </div>
       <div id="tool-ratio"><div class="card">
         <div class="style-title" style="margin-bottom:4px;">Calculadora de Ratio</div>
         <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Completá 2 campos y el tercero se calcula solo (queda resaltado).</p>
-        <div class="form-group"><label>Café (g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-coffee" value="20" oninput="calcInput('coffee')" /></div>
-        <div class="form-group"><label>Agua (ml / g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-water" value="300" oninput="calcInput('water')" /></div>
-        <div class="form-group"><label>Ratio (1 : X)</label><input min="0" data-max="100" type="number" inputmode="decimal" step="any" id="calc-ratio" value="15" oninput="calcInput('ratio')" /></div>
+        <div class="form-group"><label>Café (g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-coffee" placeholder="Ej: 20" oninput="calcInput('coffee')" /></div>
+        <div class="form-group"><label>Agua (ml / g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-water" placeholder="Ej: 300" oninput="calcInput('water')" /></div>
+        <div class="form-group"><label>Ratio (1 : X)</label><input min="0" data-max="100" type="number" inputmode="decimal" step="any" id="calc-ratio" placeholder="Ej: 15" oninput="calcInput('ratio')" /></div>
         <div class="result-box"><div class="result-label">RESULTADO</div><div class="result-value" id="calc-result-text">—</div></div>
         <button class="btn-submit" id="calc-prep" style="display:none; margin-top:12px;" onclick="prepFromCalc()">☕ Preparar café con este ratio</button>
         <button class="btn-outline" style="margin-top:10px;" onclick="calcReset()">Limpiar</button>
@@ -1031,7 +1048,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
   </div>
   <div id="tier-modal" class="modal-overlay">
     <div class="modal-header"><div class="style-title">Cafeína semanal</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="$('tier-modal').classList.remove('open')">✕</button></div>
-    <div class="modal-body" id="tier-body"></div>
+    <div class="modal-body anim-in" id="tier-body"></div>
   </div>
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-header"><div class="style-title">Ajustes</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeSettings()">✕</button></div>
@@ -1617,7 +1634,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       else _df(c, n, m);
     };
     const _st = switchTab;
-    switchTab = function (t) { _st(t); $('lt').textContent = t; $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; scrollTo(0, 0); tap(); };
+    switchTab = function (t) { const wasStats = $('tier').style.display === 'flex'; _st(t); $('lt').textContent = t; if (t === 'Stats' && !wasStats) playTier(); $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; scrollTo(0, 0); tap(); };
 
     // Deslizar para borrar
     const _rl = renderLogs;
@@ -1804,7 +1821,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     }
 
     // Calculadora: ingresás 2 y calcula el 3ro
-    let calcTouched = ['coffee', 'water'];
+    let calcTouched = [];
     function calcInput(f) { calcTouched = calcTouched.filter(x => x !== f); calcTouched.push(f); if (calcTouched.length > 2) calcTouched.shift(); calcRender(); }
     function calcReset() { calcTouched = []; ['coffee', 'water', 'ratio'].forEach(k => $('calc-' + k).value = ''); calcRender(); }
     function calcRender() {
@@ -2043,33 +2060,33 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       const rated = used.filter(l => l.rating > 0), avgR = rated.length ? rated.reduce((a, l) => a + l.rating, 0) / rated.length : 0;
       const best = rated.slice().sort((a, c) => (c.rating - a.rating) || (new Date(c.date) - new Date(a.date)))[0];
       const pd = b.purchaseDate ? new Date(b.purchaseDate + 'T12:00:00') : (b.dateAdded ? new Date(b.dateAdded) : null);
-      const days = pd ? Math.max(0, Math.floor((Date.now() - pd) / 864e5)) : null;
-      const box = (l, v) => `<div class="bd-st"><small>${l}</small><b>${v}</b></div>`;
+      const row = (l, v) => `<div class="bd-row"><span>${l}</span><b>${v}</b></div>`;
       let bestHtml;
       if (best) {
         const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? (best.yieldAmount / best.dose).toFixed(1) : '—';
         bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${E(best.drinkStyle)} · ${new Date(best.date).toLocaleDateString()}</div>
-          <div class="bd-grid">${box('Método', E(best.method))}${box('Molienda', E(best.grind || '—'))}${box('Dosis', best.dose + ' g')}${box('Rendimiento', best.yieldAmount + ' ' + unit)}${box('Ratio', '1 : ' + ratio)}${box('Tiempo', best.brewTime ? best.brewTime + ' s' : '—')}</div>
+          <div class="bd-list" style="background:transparent; margin-bottom:10px;">${row('Método', E(best.method))}${row('Molienda', E(best.grind || '—'))}${row('Dosis', best.dose + ' g')}${row('Rendimiento', best.yieldAmount + ' ' + unit)}${row('Ratio', '1 : ' + ratio)}${best.brewTime ? row('Tiempo', best.brewTime + ' s') : ''}</div>
           <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}','${best.id}')">☕ Preparar con esta configuración</button></div>`;
       } else {
-        bestHtml = `<p style="color:var(--muted); font-size:13px; margin-bottom:10px;">Todavía no hay tiros calificados con este grano. Cuando califiques una preparación, la mejor se guarda acá automáticamente.</p>
+        bestHtml = `<p style="color:var(--muted); font-size:13px; margin-bottom:10px;">Todavía no hay tiros calificados con este grano. Cuando califiques una preparación, la mejor aparece acá.</p>
           <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}')">☕ Preparar con este grano</button>`;
       }
       $('bd-title').textContent = b.name;
       $('bd-body').innerHTML = `
-        ${b.photo ? `<img class="bd-photo" src="${b.photo}" alt="Etiqueta">` : `<div class="bd-photo ph">☕<small>Sin foto de la etiqueta</small></div>`}
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
-          <div><div class="card-sub" style="margin:0;">${E(b.roaster)} • ${E(b.origin)}</div>
-          <div style="color:var(--muted); font-size:12px; margin-top:2px;">${b.roast !== undefined ? `Tueste: ${ROAST[b.roast]}` : (b.process ? 'Proceso: ' + E(b.process) : '')}</div></div>
+        ${b.photo ? `<img class="bd-photo" src="${b.photo}" alt="Etiqueta">` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+          <div class="card-sub" style="margin:0;">${E(b.roaster)} • ${E(b.origin)}${b.roast !== undefined ? ' • ' + ROAST[b.roast] : ''}</div>
           ${b.rating ? roStars(b.rating) : ''}
         </div>
-        <div class="bd-grid">
-          ${box('Restante', `${+rem.toFixed(1)} g · ${Math.round(pct)}%`)}${box('Precio', `$${b.priceUSD} · $${perG.toFixed(3)}/g`)}
-          ${box('Preparaciones', used.length)}${box('Gramos usados', +grams.toFixed(1) + ' g')}
-          ${box('Costo por taza', used.length && perG ? '$' + (avgDose * perG).toFixed(2) : '—')}${box('Rating de tiros', avgR ? '⭐ ' + avgR.toFixed(1) : '—')}
-          ${box('Comprado', pd ? pd.toLocaleDateString() : '—')}${box('Tazas restantes', avgDose ? '≈ ' + Math.floor(rem / avgDose) : '—')}
+        <div class="bd-list">
+          ${row('Restante', `${+rem.toFixed(1)} g (${Math.round(pct)}%)${avgDose ? ' · ≈ ' + Math.floor(rem / avgDose) + ' tazas' : ''}`)}
+          ${row('Precio', `$${b.priceUSD} · $${perG.toFixed(3)}/g`)}
+          ${row('Preparaciones', `${used.length}${used.length ? ' · ' + +grams.toFixed(1) + ' g usados' : ''}`)}
+          ${row('Costo por taza', used.length && perG ? '$' + (avgDose * perG).toFixed(2) : '—')}
+          ${row('Rating de tiros', avgR ? '⭐ ' + avgR.toFixed(1) : '—')}
+          ${row('Comprado', pd ? pd.toLocaleDateString() : '—')}
         </div>
-        <div class="bd-sec">🏆 Mejor tiro <span style="color:var(--muted); font-weight:500; font-size:12px;">(se guarda solo)</span></div>
+        <div class="bd-sec">🏆 Mejor tiro</div>
         ${bestHtml}
         <button class="btn-outline" style="width:100%; margin-top:12px; padding:12px;" onclick="closeBeanDetail(); editBean('${id}')">Editar paquete</button>`;
       $('bean-detail-modal').classList.add('open');
@@ -2098,6 +2115,10 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       const pct = Math.min(100, mg / 2100 * 100);
       const seg = TIERS.slice(0, 5).map((x, i) => `<i style="flex:${x.max - (i ? TIERS[i - 1].max : 0)};background:${x.c}"></i>`).join('');
       return `<div class="tmeter"><div class="tm-bg">${seg}</div><div class="tm-fill" style="clip-path:inset(0 ${100 - pct}% 0 0)">${seg}</div><span class="tm-pin" style="left:${pct}%"></span></div>`;
+    }
+    function playTier() {
+      const el = $('tier'); el.classList.add('anim'); renderTier();
+      clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('anim'), 1100);
     }
     function renderTier() {
       const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k];
