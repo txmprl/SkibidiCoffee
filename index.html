@@ -644,11 +644,55 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 .gtext{font-size:13px;color:var(--crema);opacity:.9;line-height:1.4}
 /* nivel de cafeína */
 .large{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-.tier{display:none;flex-direction:column;align-items:flex-end;flex:none;border:0;border-radius:14px;padding:7px 12px;background:var(--tc,#30A46C);text-align:right;line-height:1.2;box-shadow:0 2px 10px rgba(0,0,0,.35)}
-.tier b{font-size:13px;font-weight:900;letter-spacing:.5px}
-.tier span{font-size:10.5px;font-weight:700;opacity:.92}
-.tier.t5{animation:tpulse .6s ease-in-out infinite alternate}
 @keyframes tpulse{to{transform:scale(1.06);box-shadow:0 0 18px #ff2a2a}}
+
+/* categorías de la entrada */
+.src-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.src-btn{--c1:#E8962A;--c2:#B85C0A;--bd:rgba(232,150,42,.45);--bg:rgba(232,150,42,.10);--sh:rgba(232,150,42,.45);display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px 10px;border-radius:16px;border:2px solid var(--bd);background:var(--bg);color:var(--crema);font-weight:700;font-size:13px;transition:transform .15s,box-shadow .2s,background .2s}
+.src-btn .si{font-size:26px;line-height:1.1}
+.src-btn.s-cafe{--c1:#9B5DE5;--c2:#6D3FB5;--bd:rgba(155,93,229,.5);--bg:rgba(155,93,229,.12);--sh:rgba(155,93,229,.5)}
+.src-btn.s-soc{--c1:#2FB67C;--c2:#14805A;--bd:rgba(47,182,124,.5);--bg:rgba(47,182,124,.12);--sh:rgba(47,182,124,.5)}
+.src-btn.active{background:linear-gradient(160deg,var(--c1),var(--c2));border-color:rgba(255,255,255,.35);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 6px 18px var(--sh);transform:translateY(-2px)}
+/* cerrar jackpot */
+.jp-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:5;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #fff;color:#fff;font-size:20px;display:grid;place-items:center}
+/* popup de bolsa */
+.bd-photo{display:block;width:100%;max-height:260px;object-fit:contain;background:#0e0c0a;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
+.bd-photo.ph{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:38px;color:var(--caramel)}
+.bd-photo.ph small{font-size:11px;color:var(--muted)}
+.bd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.bd-st{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+.bd-st small{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
+.bd-st b{font-size:16px;font-weight:800}
+.bd-sec{font-weight:800;font-size:15px;margin:16px 0 8px}
+.bd-best{background:linear-gradient(160deg,#2a2118,#1E1B18);border:1px solid var(--caramel);border-radius:14px;padding:12px}
+.bd-bhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
+/* widget de cafeína */
+.large>div:first-child{flex:none}
+.tier{display:none;flex-direction:column;gap:5px;flex:1;max-width:250px;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 10px;text-align:left;color:var(--crema);cursor:pointer}
+.tr1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tbadge{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.4px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.tbadge.pulse{animation:tpulse .6s ease-in-out infinite alternate}
+.tmg{font-size:13px;font-weight:800;white-space:nowrap}
+.tmeter{position:relative;height:10px;margin:3px 0}
+.tm-bg,.tm-fill{position:absolute;inset:0;display:flex;gap:1px;border-radius:5px;overflow:hidden}
+.tm-bg{opacity:.28}
+.tm-fill{animation:tfill .9s cubic-bezier(.2,.8,.2,1) both}
+.tm-bg i,.tm-fill i{display:block;height:100%}
+.tm-pin{position:absolute;top:-3px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.6);animation:tpin .9s cubic-bezier(.2,.8,.2,1) both}
+.tnext{font-size:10.5px;color:var(--muted)}
+@keyframes tfill{from{clip-path:inset(0 100% 0 0)}}
+@keyframes tpin{from{left:0}}
+.dchart{display:flex;align-items:flex-end;gap:8px;height:140px;margin:16px 0 4px}
+.dbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+.dbar i{display:block;width:100%;border-radius:6px 6px 2px 2px;background:var(--caramel);animation:dgrow .7s cubic-bezier(.2,.8,.2,1) both}
+.dbar.today i{background:var(--amber)}
+.dbar span{font-size:10px;color:var(--muted);text-transform:capitalize}.dbar em{font-style:normal;font-size:10px;font-weight:700;min-height:12px}
+@keyframes dgrow{from{height:0!important}}
+.trow{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;font-size:14px;border:1px solid transparent}
+.trow b{width:12px;height:12px;border-radius:50%;flex:none}
+.trow small{color:var(--muted);margin-left:auto}
+.trow.on{background:var(--card);border-color:var(--caramel)}
+.trow em{font-style:normal;font-size:10px;color:var(--amber);font-weight:800}
 </style>
 </head>
 <body>
@@ -659,7 +703,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     <div class="h-mini" id="hmini">SkibidiCoffee</div>
     <button class="h-menu" onclick="openSettings()" aria-label="Ajustes"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
-  <div class="large"><div><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div><button class="tier" id="tier" onclick="showTiers()" aria-label="Nivel de cafeína"></button></div>
+  <div class="large"><div><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div><div class="tier" id="tier" role="button" tabindex="0" onclick="showTiers()" aria-label="Cafeína semanal"></div></div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="main-container">
@@ -683,8 +727,8 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     <section id="tab-Herramientas" class="tab-section">
       <div class="segmented">
         <button class="seg-btn active" id="tool-btn-ratio" onclick="setTool('ratio')">Ratio</button>
-        <button class="seg-btn" id="tool-btn-wheel" onclick="setTool('wheel')">🎰 Ruleta</button>
         <button class="seg-btn" id="tool-btn-guide" onclick="setTool('guide')">☕ Guía</button>
+        <button class="seg-btn" id="tool-btn-wheel" onclick="setTool('wheel')">🎰 Ruleta</button>
       </div>
       <div id="tool-ratio"><div class="card">
         <div class="style-title" style="margin-bottom:4px;">Calculadora de Ratio</div>
@@ -693,6 +737,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
         <div class="form-group"><label>Agua (ml / g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-water" value="300" oninput="calcInput('water')" /></div>
         <div class="form-group"><label>Ratio (1 : X)</label><input min="0" data-max="100" type="number" inputmode="decimal" step="any" id="calc-ratio" value="15" oninput="calcInput('ratio')" /></div>
         <div class="result-box"><div class="result-label">RESULTADO</div><div class="result-value" id="calc-result-text">—</div></div>
+        <button class="btn-submit" id="calc-prep" style="display:none; margin-top:12px;" onclick="prepFromCalc()">☕ Preparar café con este ratio</button>
         <button class="btn-outline" style="margin-top:10px;" onclick="calcReset()">Limpiar</button>
       </div></div>
       <div id="tool-guide" style="display:none;"></div>
@@ -792,6 +837,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 <symbol id="ic-amer" viewBox="0 0 40 40"><path d="M7 13h23v14a8 8 0 0 1-8 8h-7a8 8 0 0 1-8-8z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 16h2.5a4.2 4.2 0 0 1 0 8.4H29.5" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="13" rx="11.5" ry="2.8" fill="#4a2f1c" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="12.7" rx="8.5" ry="1.3" fill="#C28A55"/><path d="M13 8c-2-2 2-3 0-6M22 8c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
 </defs></svg>
 <div id="jackpot" onclick="if(event.target===this)closeJackpot()">
+  <button class="jp-x" onclick="closeJackpot()" aria-label="Cerrar">✕</button>
   <div class="jp-flash"></div><div class="jp-beams"></div><canvas id="jp-canvas"></canvas>
   <div class="jp-card">
     <div class="jp-title">¡JACKPOT!</div>
@@ -813,10 +859,10 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       <button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeEntryModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="segmented">
-        <button class="seg-btn active" id="src-Casa" onclick="setEntrySource('Casa')">Casa</button>
-        <button class="seg-btn" id="src-Cafetería" onclick="setEntrySource('Cafetería')">Cafetería</button>
-        <button class="seg-btn" id="src-Social" onclick="setEntrySource('Social')">Social</button>
+      <div class="src-tabs">
+        <button class="src-btn s-casa active" id="src-Casa" onclick="setEntrySource('Casa')"><span class="si">🏠</span>Casa</button>
+        <button class="src-btn s-cafe" id="src-Cafetería" onclick="setEntrySource('Cafetería')"><span class="si">☕</span>Cafetería</button>
+        <button class="src-btn s-soc" id="src-Social" onclick="setEntrySource('Social')"><span class="si">👥</span>Social</button>
       </div>
 
       <div class="form-group">
@@ -849,9 +895,13 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
             <label id="yield-label">Rendimiento (g)</label>
             <input min="0" data-max="5000" type="number" step="0.5" id="entry-yield" placeholder="Ej: 36" oninput="updateLiveEntryPreview()" />
           </div>
-          <div class="form-group">
+          <div class="form-group" id="grp-time">
             <label>Tiempo (s)</label>
             <input type="number" id="entry-time" placeholder="Opc." />
+          </div>
+          <div class="form-group" id="grp-ratio" style="display:none;">
+            <label>Ratio (1 : X)</label>
+            <input min="0" data-max="100" type="number" step="0.1" inputmode="decimal" id="entry-ratio" placeholder="Ej: 15" />
           </div>
         </div>
         <div id="live-entry-preview" style="color:var(--amber); font-size:12px; font-weight:600; margin-bottom:10px;">
@@ -975,6 +1025,14 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     </div>
   </div>
 
+  <div id="bean-detail-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title" id="bd-title">Paquete</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeBeanDetail()">✕</button></div>
+    <div class="modal-body" id="bd-body"></div>
+  </div>
+  <div id="tier-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title">Cafeína semanal</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="$('tier-modal').classList.remove('open')">✕</button></div>
+    <div class="modal-body" id="tier-body"></div>
+  </div>
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-header"><div class="style-title">Ajustes</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeSettings()">✕</button></div>
     <div class="modal-body">
@@ -1157,7 +1215,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
           : `<div class="bean-cover">☕</div>`;
 
         return `
-          <div class="card" style="${b.archived ? 'opacity:0.55;' : ''}">
+          <div class="card" style="${b.archived ? 'opacity:0.55;' : ''} cursor:pointer;" onclick="if(!event.target.closest('button'))openBeanDetail('${b.id}')">
             <div class="bean-row">
               ${coverHtml}
               <div style="flex:1;">
@@ -1362,7 +1420,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
         grind: entrySource === 'Casa' ? document.getElementById('entry-grind').value.trim() : null,
         dose: entrySource === 'Casa' ? num('entry-dose', 5000) : null,
         yieldAmount: entrySource === 'Casa' ? num('entry-yield', 5000) : null,
-        brewTime: entrySource === 'Casa' ? (parseFloat(document.getElementById('entry-time').value) || null) : null,
+        brewTime: (entrySource === 'Casa' && !useRatio()) ? (parseFloat(document.getElementById('entry-time').value) || null) : null,
         shopName: entrySource === 'Cafetería' ? document.getElementById('entry-shop-name').value.trim() : null,
         shopLocation: entrySource === 'Cafetería' ? document.getElementById('entry-shop-loc').value.trim() : null,
         hostName: entrySource === 'Social' ? (document.getElementById('entry-host').value.trim() || 'Amigo') : null,
@@ -1625,7 +1683,31 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa', _wasEdit = false;
     const ROAST = ['Ligero', 'Medio', 'Medio-oscuro', 'Oscuro'], ROAST_C = ['#C9A47A', '#9B6B43', '#5E3C24', '#2A1B12'];
     const isWater = m => ['Prensa Francesa', 'Filtro', 'Cold Brew', 'Aeropress'].includes(m);
-    const syncYield = () => { $('yield-label').innerText = isWater(selectedMethod) ? 'Agua (ml)' : 'Rendimiento (g)'; };
+    const RATIO_METHODS = ['Prensa Francesa'];
+    const useRatio = () => entrySource === 'Casa' && RATIO_METHODS.includes(selectedMethod);
+    let entTouch = [];
+    const syncYield = () => {
+      $('yield-label').innerText = isWater(selectedMethod) ? 'Agua (ml)' : 'Rendimiento (g)';
+      const r = useRatio();
+      $('grp-time').style.display = r ? 'none' : ''; $('grp-ratio').style.display = r ? '' : 'none';
+      if (r && entTouch.length < 2 && $('entry-dose').value && $('entry-yield').value) { entTouch = ['dose', 'yield']; entryRatioCalc(); }
+      if (!r) { entTouch = []; ['dose', 'yield', 'ratio'].forEach(k => $('entry-' + k).classList.remove('auto')); }
+    };
+    function entryRatioInput(f) {
+      if (!useRatio()) return;
+      entTouch = entTouch.filter(x => x !== f); entTouch.push(f); if (entTouch.length > 2) entTouch.shift();
+      entryRatioCalc();
+    }
+    function entryRatioCalc() {
+      const K = ['dose', 'yield', 'ratio'], el = k => $('entry-' + k), g = k => parseFloat(el(k).value);
+      const miss = entTouch.length === 2 ? K.find(k => !entTouch.includes(k)) : null;
+      K.forEach(k => el(k).classList.toggle('auto', k === miss));
+      if (!miss) return;
+      const d = g('dose'), y = g('yield'), r = g('ratio');
+      const v = miss === 'ratio' ? y / d : miss === 'yield' ? d * r : y / r, lim = miss === 'ratio' ? 100 : 5000;
+      el(miss).value = (v > 0 && v <= lim) ? +v.toFixed(miss === 'yield' ? 0 : 1) : '';
+      updateLiveEntryPreview();
+    }
     function entryMethods() {
       const base = allMethods.filter(m => myMethods.includes(m)), list = base.length ? base : allMethods;
       if (editingLogId && selectedMethod && !list.includes(selectedMethod)) return [...list, selectedMethod];
@@ -1657,8 +1739,8 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     const _oe = openEntryModal;
     function resetEntryForm() {
       setEntrySource('Casa'); selectedMethod = ''; socialMethod = ''; selectedStyle = ''; selectedTags = []; selectedBeanId = '';
-      ['entry-grind', 'entry-dose', 'entry-yield', 'entry-time', 'entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => $(i).value = '');
-      $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
+      ['entry-grind', 'entry-dose', 'entry-yield', 'entry-time', 'entry-ratio', 'entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => $(i).value = '');
+      entTouch = []; $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
     }
     openEntryModal = function () {
       editingLogId = null;
@@ -1674,7 +1756,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
       selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])];
       const v = (i, x) => $(i).value = x ?? '';
-      v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
+      entTouch = []; v('entry-ratio', ''); v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
       v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName); v('entry-notes', l.notes); v('entry-date', ymd(new Date(l.date)));
       _oe();
       tempCupPhoto = l.photo || null;
@@ -1728,7 +1810,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     function calcRender() {
       const K = ['coffee', 'water', 'ratio'], g = k => parseFloat($('calc-' + k).value), miss = calcTouched.length === 2 ? K.find(k => !calcTouched.includes(k)) : null;
       K.forEach(k => $('calc-' + k).classList.toggle('auto', k === miss));
-      const out = $('calc-result-text');
+      const out = $('calc-result-text'); $('calc-prep').style.display = 'none';
       if (!miss) { out.innerText = 'Ingresá 2 valores'; return; }
       const c = g('coffee'), w = g('water'), r = g('ratio');
       const v = miss === 'ratio' ? w / c : miss === 'water' ? c * r : w / r;
@@ -1736,7 +1818,9 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       if (!(v > 0) || v > lim) { $('calc-' + miss).value = ''; out.innerText = v > lim ? `Fuera de rango (máx. ${lim})` : 'Ingresá 2 valores'; return; }
       $('calc-' + miss).value = +v.toFixed(miss === 'water' ? 0 : 1);
       const C = g('coffee'), W = g('water'), Rt = g('ratio');
-      out.innerText = (C > 0 && W > 0) ? `${+C.toFixed(1)} g + ${+W.toFixed(0)} ml  →  1 : ${(+Rt.toFixed(1))}` : 'Ingresá 2 valores';
+      const okc = C > 0 && W > 0;
+      out.innerText = okc ? `${+C.toFixed(1)} g + ${+W.toFixed(0)} ml  →  1 : ${(+Rt.toFixed(1))}` : 'Ingresá 2 valores';
+      $('calc-prep').style.display = okc ? 'block' : 'none';
     }
     
     // ===== FECHAS, LÍMITES, STOCK, RULETA =====
@@ -1887,18 +1971,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       { max: 2100, n: 'Nivel 4', r: '1.251 – 2.100 mg', tag: 'Adicto!', c: '#E5484D', fg: '#ffffff' },
       { max: Infinity, n: 'Nivel Taquicardia', r: '2.101+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
     ];
-    function weekCaffeine() { const now = Date.now(); return logs.reduce((a, l) => ((now - new Date(l.date)) / 864e5 <= 7 ? a + (l.caffeineMg || 0) : a), 0); }
-    function renderTier() {
-      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k], el = $('tier');
-      el.style.setProperty('--tc', t.c); el.style.color = t.fg;
-      el.className = 'tier' + (k === 5 ? ' t5' : '');
-      el.innerHTML = `<b>${t.n.toUpperCase()}</b><span>${fmtN(mg)} mg · 7 días${t.tag && k < 5 ? ' · ' + t.tag : ''}</span>`;
-    }
-    function showTiers() {
-      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max);
-      actionSheet(`Cafeína de los últimos 7 días: ${fmtN(mg)} mg`, TIERS.map((t, i) => ({ l: `${i === k ? '● ' : ''}${t.n}: ${t.r}${t.tag ? ' · ' + t.tag : ''}`, fn: () => {} })));
-    }
-    buildGuide();
+                buildGuide();
     
     // ===== SONIDO Y FOTO POR DEFECTO =====
     function drinkTile(name) {
@@ -1946,6 +2019,108 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       if (soundOn && ac()) beep(_ac.currentTime + 0.01, 880, 0.14, 'triangle', 0.15, 1320);
     }
     syncSnd();
+    
+    // ===== RATIO EN ENTRADA, POPUP DE BOLSA, WIDGET DE CAFEÍNA =====
+    ['entry-dose', 'entry-yield', 'entry-ratio'].forEach(id => $(id).addEventListener('input', () => entryRatioInput(id.slice(6))));
+
+    function prepFromCalc() {
+      const c = num('calc-coffee', 5000), w = num('calc-water', 5000);
+      const pick = ['Prensa Francesa', 'Filtro'].find(m => myMethods.includes(m)) || '';
+      openEntryModal();
+      selectedMethod = pick; $('entry-dose').value = c; $('entry-yield').value = w;
+      entTouch = []; renderEntryChips(); updateLiveEntryPreview();
+    }
+
+    // Popup de la bolsa
+    const E = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const roStars = r => `<span class="stars sm"><i style="width:${r / 5 * 100}%">★★★★★</i>★★★★★</span>`;
+    const closeBeanDetail = () => $('bean-detail-modal').classList.remove('open');
+    function openBeanDetail(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      const rem = b.remaining ?? b.weight, pct = b.weight > 0 ? Math.max(0, Math.min(100, rem / b.weight * 100)) : 0, perG = b.weight > 0 ? b.priceUSD / b.weight : 0;
+      const used = logs.filter(l => l.beanId === id && l.source === 'Casa');
+      const grams = used.reduce((a, l) => a + (l.dose || 0), 0), avgDose = used.length ? grams / used.length : 0;
+      const rated = used.filter(l => l.rating > 0), avgR = rated.length ? rated.reduce((a, l) => a + l.rating, 0) / rated.length : 0;
+      const best = rated.slice().sort((a, c) => (c.rating - a.rating) || (new Date(c.date) - new Date(a.date)))[0];
+      const pd = b.purchaseDate ? new Date(b.purchaseDate + 'T12:00:00') : (b.dateAdded ? new Date(b.dateAdded) : null);
+      const days = pd ? Math.max(0, Math.floor((Date.now() - pd) / 864e5)) : null;
+      const box = (l, v) => `<div class="bd-st"><small>${l}</small><b>${v}</b></div>`;
+      let bestHtml;
+      if (best) {
+        const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? (best.yieldAmount / best.dose).toFixed(1) : '—';
+        bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${E(best.drinkStyle)} · ${new Date(best.date).toLocaleDateString()}</div>
+          <div class="bd-grid">${box('Método', E(best.method))}${box('Molienda', E(best.grind || '—'))}${box('Dosis', best.dose + ' g')}${box('Rendimiento', best.yieldAmount + ' ' + unit)}${box('Ratio', '1 : ' + ratio)}${box('Tiempo', best.brewTime ? best.brewTime + ' s' : '—')}</div>
+          <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}','${best.id}')">☕ Preparar con esta configuración</button></div>`;
+      } else {
+        bestHtml = `<p style="color:var(--muted); font-size:13px; margin-bottom:10px;">Todavía no hay tiros calificados con este grano. Cuando califiques una preparación, la mejor se guarda acá automáticamente.</p>
+          <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}')">☕ Preparar con este grano</button>`;
+      }
+      $('bd-title').textContent = b.name;
+      $('bd-body').innerHTML = `
+        ${b.photo ? `<img class="bd-photo" src="${b.photo}" alt="Etiqueta">` : `<div class="bd-photo ph">☕<small>Sin foto de la etiqueta</small></div>`}
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+          <div><div class="card-sub" style="margin:0;">${E(b.roaster)} • ${E(b.origin)}</div>
+          <div style="color:var(--muted); font-size:12px; margin-top:2px;">${b.roast !== undefined ? `Tueste: ${ROAST[b.roast]}` : (b.process ? 'Proceso: ' + E(b.process) : '')}</div></div>
+          ${b.rating ? roStars(b.rating) : ''}
+        </div>
+        <div class="bd-grid">
+          ${box('Restante', `${+rem.toFixed(1)} g · ${Math.round(pct)}%`)}${box('Precio', `$${b.priceUSD} · $${perG.toFixed(3)}/g`)}
+          ${box('Preparaciones', used.length)}${box('Gramos usados', +grams.toFixed(1) + ' g')}
+          ${box('Costo por taza', used.length && perG ? '$' + (avgDose * perG).toFixed(2) : '—')}${box('Rating de tiros', avgR ? '⭐ ' + avgR.toFixed(1) : '—')}
+          ${box('Comprado', pd ? pd.toLocaleDateString() : '—')}${box('Tazas restantes', avgDose ? '≈ ' + Math.floor(rem / avgDose) : '—')}
+        </div>
+        <div class="bd-sec">🏆 Mejor tiro <span style="color:var(--muted); font-weight:500; font-size:12px;">(se guarda solo)</span></div>
+        ${bestHtml}
+        <button class="btn-outline" style="width:100%; margin-top:12px; padding:12px;" onclick="closeBeanDetail(); editBean('${id}')">Editar paquete</button>`;
+      $('bean-detail-modal').classList.add('open');
+    }
+    function prepFromBean(id, logId) {
+      const l = logId && logs.find(x => x.id === logId);
+      closeBeanDetail(); openEntryModal();
+      selectedBeanId = id;
+      if (l) {
+        selectedMethod = l.method; selectedStyle = l.drinkStyle;
+        $('entry-grind').value = l.grind ?? ''; $('entry-dose').value = l.dose ?? ''; $('entry-yield').value = l.yieldAmount ?? ''; $('entry-time').value = l.brewTime ?? '';
+      }
+      entTouch = []; renderEntryChips(); updateLiveEntryPreview();
+    }
+
+    // Widget de cafeína semanal
+    const EMO = ['😴', '☕', '⚡', '🔥', '🤪', '💓'];
+    function weekDays() {
+      const out = [], t = new Date(); t.setHours(12, 0, 0, 0);
+      for (let i = 6; i >= 0; i--) { const d = new Date(t); d.setDate(t.getDate() - i); out.push({ key: ymd(d), d, mg: 0 }); }
+      logs.forEach(l => { const o = out.find(x => x.key === ymd(new Date(l.date))); if (o) o.mg += l.caffeineMg || 0; });
+      return out;
+    }
+    const weekCaffeine = () => weekDays().reduce((a, x) => a + x.mg, 0);
+    function meterHtml(mg) {
+      const pct = Math.min(100, mg / 2100 * 100);
+      const seg = TIERS.slice(0, 5).map((x, i) => `<i style="flex:${x.max - (i ? TIERS[i - 1].max : 0)};background:${x.c}"></i>`).join('');
+      return `<div class="tmeter"><div class="tm-bg">${seg}</div><div class="tm-fill" style="clip-path:inset(0 ${100 - pct}% 0 0)">${seg}</div><span class="tm-pin" style="left:${pct}%"></span></div>`;
+    }
+    function renderTier() {
+      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k];
+      $('tier').innerHTML = `<div class="tr1"><span class="tbadge${k === 5 ? ' pulse' : ''}" style="background:${t.c};color:${t.fg}">${EMO[k]} ${t.n.toUpperCase()}</span><span class="tmg">${fmtN(mg)} mg</span></div>
+        ${meterHtml(mg)}
+        <div class="tnext">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : '¡Ojo con ese corazón! 💓'}</div>`;
+    }
+    function showTiers() {
+      const days = weekDays(), mg = days.reduce((a, x) => a + x.mg, 0), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k], mx = Math.max(1, ...days.map(x => x.mg));
+      const wd = d => d.toLocaleDateString('es-AR', { weekday: 'short' }).replace('.', '');
+      $('tier-body').innerHTML = `
+        <div style="text-align:center; margin-bottom:8px;">
+          <span class="tbadge${k === 5 ? ' pulse' : ''}" style="background:${t.c};color:${t.fg};font-size:14px;padding:6px 14px">${EMO[k]} ${t.n.toUpperCase()}${t.tag && k < 5 ? ' · ' + t.tag : ''}</span>
+          <div style="font-size:34px; font-weight:900; margin-top:8px;">${fmtN(mg)} <span style="font-size:15px; color:var(--muted); font-weight:600;">mg · últimos 7 días</span></div>
+        </div>
+        ${meterHtml(mg)}
+        <div class="tnext" style="text-align:center;">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : '¡Ojo con ese corazón! 💓'}</div>
+        <div class="dchart">${days.map((x, i) => `<div class="dbar ${i === 6 ? 'today' : ''}"><em>${x.mg || ''}</em><i style="height:${Math.max(3, x.mg / mx * 88)}px"></i><span>${wd(x.d)}</span></div>`).join('')}</div>
+        <div class="bd-sec">Niveles</div>
+        ${TIERS.map((x, i) => `<div class="trow ${i === k ? 'on' : ''}"><b style="background:${x.c}"></b><span>${x.n}</span><small>${x.r}${x.tag && i < 5 ? ' · ' + x.tag : ''}</small>${i === k ? '<em>ESTÁS ACÁ</em>' : ''}</div>`).join('')}
+        <p style="color:var(--muted); font-size:12px; margin-top:10px;">Se cuentan hoy y los 6 días anteriores, sin importar el filtro de Stats.</p>`;
+      $('tier-modal').classList.add('open');
+    }
     initApp();
 
     (function splash() {
