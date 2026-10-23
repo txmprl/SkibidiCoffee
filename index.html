@@ -151,6 +151,8 @@
       border-radius: 6px;
       border: 1px solid var(--border);
     }
+    .cup-ph{height:92px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+    .cup-ph svg{width:72px;height:72px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
     .cup-img {
       width: 100%;
       height: 155px;
@@ -590,7 +592,8 @@ input.auto{border-color:var(--amber)!important;background:#221c15!important}
 input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-scheme:dark}
 .stars.sm{font-size:14px;letter-spacing:2px;touch-action:auto;cursor:default}
 .stock{height:5px;border-radius:3px;background:#2a2521;margin:6px 0 4px;overflow:hidden}.stock i{display:block;height:100%;background:var(--caramel);border-radius:3px}.stock.low i{background:var(--danger)}
-.wheel-card{text-align:center;overflow:hidden}
+.wheel-card{text-align:center;overflow:hidden;position:relative}
+.snd{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:0;background:#2a2521;font-size:17px;display:grid;place-items:center;z-index:2}
 .wheel-sub{color:var(--amber);font-weight:800;font-size:15px;margin-bottom:6px}
 .wheel-wrap{position:relative;width:min(86vw,340px);aspect-ratio:1;margin:6px auto 14px}
 .wheel-wrap svg{position:absolute;inset:0;width:100%;height:100%}
@@ -695,6 +698,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       <div id="tool-guide" style="display:none;"></div>
       <div id="tool-wheel" style="display:none;">
         <div class="card wheel-card">
+          <button class="snd" id="snd-btn" onclick="toggleSound()" aria-label="Sonido">🔊</button>
           <div class="style-title" style="margin-bottom:2px;">¿No sabés qué tomar?</div>
           <div class="wheel-sub">¡Gira la ruleta!</div>
           <div class="wheel-wrap" id="wheel-wrap">
@@ -778,13 +782,14 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
   </nav>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="ic-cup" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 17h22v7a11 8 0 0 1-22 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M31 19h2.5a3.2 3.2 0 0 1 0 6.4H30" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="17" rx="11" ry="2.6" fill="#6F4A2F" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="16.7" rx="7" ry="1.2" fill="#D4A373"/></symbol>
-<symbol id="ic-shot" viewBox="0 0 40 40"><use href="#ic-cup" width="40" height="40"/><path d="M16 11c-2-2 2-3 0-6M24 11c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
-<symbol id="ic-double" viewBox="0 0 40 40"><use href="#ic-cup" x="-5" y="8" width="26" height="26"/><use href="#ic-cup" x="19" y="8" width="26" height="26"/><path d="M12 12c-2-2 2-3 0-6M30 12c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="ic-shot" viewBox="0 0 40 40"><path d="M11 11h18l-2.4 21a3 2.4 0 0 1-3 2.6H16.4a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".45" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.4 16h15.2l-1 16a2 1.6 0 0 1-2 1.8H15.4a2 1.6 0 0 1-2-1.8z" fill="#6F4A2F"/><path d="M11.8 11.6h16.4l-.3 4.4H12.1z" fill="#D4A373"/></symbol>
+<symbol id="ic-double" viewBox="0 0 40 40"><use href="#ic-shot" x="-4" y="6" width="28" height="28"/><use href="#ic-shot" x="16" y="6" width="28" height="28"/></symbol>
 <symbol id="ic-filter" viewBox="0 0 40 40"><path d="M7 5h26l-7.5 13h-11z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 8h20" stroke="#D4A373" stroke-width="1.6"/><circle cx="20" cy="22.5" r="1.4" fill="#6F4A2F"/><path d="M10 26h20v4a10 6.5 0 0 1-20 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 27.5h2a3 3 0 0 1 0 6h-2.4" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="26" rx="10" ry="2" fill="#6F4A2F" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/></symbol>
 <symbol id="ic-cap" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 19h26l-2.6 11a8.4 5 0 0 1-20.8 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M33 21h1.5a3.2 3.2 0 0 1 0 6.4H31" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 19a12 9 0 0 1 24 0z" fill="#F5EBE6" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><circle cx="15" cy="16" r="1.1" fill="#6F4A2F"/><circle cx="20" cy="13.5" r="1.1" fill="#6F4A2F"/><circle cx="25" cy="16" r="1.1" fill="#6F4A2F"/></symbol>
 <symbol id="ic-cort" viewBox="0 0 40 40"><path d="M11 11h18l-2.4 21a3 2.4 0 0 1-3 2.6H16.4a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".45" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.6 21h14.8l-1 11a2 1.6 0 0 1-2 1.8H15.6a2 1.6 0 0 1-2-1.8z" fill="#6F4A2F"/><path d="M12 14h16l-.5 7h-15z" fill="#F5EBE6"/></symbol>
 <symbol id="ic-latte" viewBox="0 0 40 40"><path d="M10 4h20l-2.6 29a3 2.4 0 0 1-3 2.6H15.6a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".4" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.4 23h15.2l-1 10.4a2 1.6 0 0 1-2 1.6H15.4a2 1.6 0 0 1-2-1.6z" fill="#6F4A2F"/><path d="M11.9 14h16.2l-.5 9H12.4z" fill="#D4A373"/><path d="M11.1 6h17.8l-.8 8H11.9z" fill="#F5EBE6"/></symbol>
-<symbol id="ic-fw" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 17h28l-3 12a9 6 0 0 1-22 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M34 19h1.5a3.2 3.2 0 0 1 0 6.4H32" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="17" rx="14" ry="3.4" fill="#C28A55" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 19.4c-5-3.2-7.4-.4-4.2 1.6L20 22.4l4.2-1.4c3.2-2 .8-4.8-4.2-1.6z" fill="#fff"/></symbol>
+<symbol id="ic-fw" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 15h28l-3 14a9 6 0 0 1-22 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M34 18h1.5a3.2 3.2 0 0 1 0 6.4H32" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="15" rx="14" ry="5" fill="#C28A55" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="17.2" rx="6.2" ry="1.7" fill="#fff"/><ellipse cx="20" cy="14.9" rx="4.8" ry="1.5" fill="#fff"/><ellipse cx="20" cy="12.7" rx="3.3" ry="1.2" fill="#fff"/><path d="M20 18.6V11" stroke="#C28A55" stroke-width=".9" stroke-linecap="round"/></symbol>
+<symbol id="ic-amer" viewBox="0 0 40 40"><path d="M7 13h23v14a8 8 0 0 1-8 8h-7a8 8 0 0 1-8-8z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 16h2.5a4.2 4.2 0 0 1 0 8.4H29.5" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="13" rx="11.5" ry="2.8" fill="#4a2f1c" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="12.7" rx="8.5" ry="1.3" fill="#C28A55"/><path d="M13 8c-2-2 2-3 0-6M22 8c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
 </defs></svg>
 <div id="jackpot" onclick="if(event.target===this)closeJackpot()">
   <div class="jp-flash"></div><div class="jp-beams"></div><canvas id="jp-canvas"></canvas>
@@ -1089,7 +1094,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
           </div>
         ` : '';
 
-        const photoHtml = log.photo ? `<img src="${log.photo}" class="cup-img" />` : '';
+        const photoHtml = log.photo ? `<img src="${log.photo}" class="cup-img" />` : drinkTile(log.drinkStyle);
         const tagsHtml = (log.tags && log.tags.length)
           ? `<div class="tags-wrap">${log.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}</div>`
           : '';
@@ -1766,7 +1771,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     // Ruleta
     const DRINKS = [
       { n: 'Shot', i: 'shot', c: '#E5484D' }, { n: 'Doble Shot', i: 'double', c: '#F76B15' }, { n: 'Filtrado', i: 'filter', c: '#E5A800' },
-      { n: 'Cappuccino', i: 'cap', c: '#30A46C' }, { n: 'Cortado', i: 'cort', c: '#12A594' }, { n: 'Latte', i: 'latte', c: '#3E63DD' }, { n: 'Flat White', i: 'fw', c: '#8E4EC6' }
+      { n: 'Cappuccino', i: 'cap', c: '#30A46C' }, { n: 'Cortado', i: 'cort', c: '#12A594' }, { n: 'Latte', i: 'latte', c: '#3E63DD' }, { n: 'Flat White', i: 'fw', c: '#8E4EC6' }, { n: 'Americano', i: 'amer', c: '#7FBF27' }
     ];
     function buildWheel() {
       const N = DRINKS.length, S = 360 / N, C = 160, R = 140, pt = (a, r) => [C + r * Math.cos(a * Math.PI / 180), C + r * Math.sin(a * Math.PI / 180)];
@@ -1778,7 +1783,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       });
       $('wheel-disc').innerHTML = d;
       let b = '';
-      for (let j = 0; j < 28; j++) { const [x, y] = pt(j * 360 / 28, 150); b += `<circle cx="${x}" cy="${y}" r="4.6" class="bulb b${j % 2}"/>`; }
+      for (let j = 0; j < 32; j++) { const [x, y] = pt(j * 360 / 32, 150); b += `<circle cx="${x}" cy="${y}" r="4.6" class="bulb b${j % 2}"/>`; }
       $('wheel-frame').innerHTML = `<circle cx="160" cy="160" r="150" fill="none" stroke="#C98A12" stroke-width="16"/><circle cx="160" cy="160" r="141" fill="none" stroke="#FFE08A" stroke-width="2"/>` + b +
         `<circle cx="160" cy="160" r="27" fill="#FFD43B" stroke="#7a4b00" stroke-width="3"/><text x="160" y="169" text-anchor="middle" font-size="26" fill="#7a4b00">★</text><path d="M147 0h26l-13 32z" fill="#FF3B3B" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`;
     }
@@ -1786,10 +1791,12 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     function spinWheel() {
       if (spinning) return; spinning = true;
       const N = DRINKS.length, S = 360 / N, idx = Math.floor(Math.random() * N), jitter = (Math.random() - .5) * S * .7;
+      const R0 = wheelRot;
       wheelRot = Math.ceil((wheelRot + 360 * 6) / 360) * 360 - (idx + .5) * S + jitter;
       const disc = $('wheel-disc'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       disc.style.transition = still ? 'none' : 'transform 5s cubic-bezier(.12,.62,.12,1)';
       disc.style.transform = `rotate(${wheelRot}deg)`;
+      if (!still) wheelSound(R0, wheelRot, S, 5);
       $('wheel-wrap').classList.remove('win'); $('wheel-wrap').classList.add('spinning'); $('spin-btn').disabled = true; tap();
       setTimeout(() => {
         $('wheel-wrap').classList.remove('spinning'); $('wheel-wrap').classList.add('win');
@@ -1799,7 +1806,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
     }
     function jackpot(k) {
       _win = k; $('jp-use').setAttribute('href', '#ic-' + k.i); $('jp-name').textContent = k.n;
-      $('jackpot').classList.add('on'); [0, 120, 240, 420].forEach(t => setTimeout(tap, t));
+      $('jackpot').classList.add('on'); [0, 120, 240, 420].forEach(t => setTimeout(tap, t)); winSound();
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) confetti();
     }
     const closeJackpot = () => { $('jackpot').classList.remove('on'); cancelAnimationFrame(_cf); };
@@ -1854,7 +1861,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       { n: 'Flat White', i: 'fw', r: [1, 2, 0.5], cup: '150 – 160 ml', t: 'Doble café con capa sedosa muy fina de microespuma (apenas 5 mm).' },
       { n: 'Cappuccino', i: 'cap', r: [1, 1.5, 1], cup: '160 – 180 ml', t: 'Mismo café que el Flat White, pero con microespuma más aireada y espesa que ocupa un tercio de la taza.' },
       { n: 'Latte', i: 'latte', r: [1, 3, 0.5], cup: '240 – 300 ml', t: 'Predomina la leche dulce y caliente; el café queda de fondo aromático.' },
-      { n: 'Americano / Moka Long', i: 'cup', r: [1, 2, 0], water: true, cup: '180 – 200 ml', t: 'Agua a 90–92°C en la taza y el café vertido encima para conservar la crema intacta.' }
+      { n: 'Americano / Moka Long', i: 'amer', r: [1, 2, 0], water: true, cup: '180 – 200 ml', t: 'Agua a 90–92°C en la taza y el café vertido encima para conservar la crema intacta.' }
     ];
     function buildGuide() {
       const COL = ['#6F4A2F', '#EAD9BF', '#FFFFFF'], WCOL = '#7FB6D9';
@@ -1892,6 +1899,53 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       actionSheet(`Cafeína de los últimos 7 días: ${fmtN(mg)} mg`, TIERS.map((t, i) => ({ l: `${i === k ? '● ' : ''}${t.n}: ${t.r}${t.tag ? ' · ' + t.tag : ''}`, fn: () => {} })));
     }
     buildGuide();
+    
+    // ===== SONIDO Y FOTO POR DEFECTO =====
+    function drinkTile(name) {
+      const d = DRINKS.find(x => x.n === name) || { i: 'cup', c: '#9B6B43' };
+      return `<div class="cup-ph" style="background:linear-gradient(135deg,${d.c}55,#1b1815 85%)"><svg viewBox="0 0 40 40"><use href="#ic-${d.i}"/></svg></div>`;
+    }
+    let _ac = null, soundOn = localStorage.getItem('skibidi_sound') !== '0';
+    function ac() {
+      if (!_ac) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; _ac = new C(); }
+      if (_ac.state === 'suspended') _ac.resume();
+      return _ac;
+    }
+    function beep(t, f, d, type, v, f2) {
+      const a = _ac, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+    }
+    // curva cubic-bezier igual a la del giro, para que cada "clic" caiga cuando pasa un gajo
+    function bez(x1, y1, x2, y2) {
+      const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+      const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
+      return x => { let lo = 0, hi = 1; for (let i = 0; i < 28; i++) { const m = (lo + hi) / 2; X(m) < x ? lo = m : hi = m; } return Y((lo + hi) / 2); };
+    }
+    function wheelSound(R0, R1, step, dur) {
+      if (!soundOn || !ac()) return;
+      const P = bez(.12, .62, .12, 1), t0 = _ac.currentTime + 0.05;
+      for (let m = Math.floor(R0 / step) + 1; m <= Math.floor(R1 / step); m++) {
+        const f = (m * step - R0) / (R1 - R0);
+        let lo = 0, hi = 1; for (let i = 0; i < 24; i++) { const x = (lo + hi) / 2; P(x) < f ? lo = x : hi = x; }
+        beep(t0 + lo * dur, 950 + (m % 2) * 230, 0.045, 'triangle', 0.16);
+      }
+    }
+    function winSound() {
+      if (!soundOn || !ac()) return;
+      const t = _ac.currentTime + 0.02;
+      [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568, 2093].forEach((f, i) => beep(t + i * 0.09, f, 0.22, 'square', 0.07));
+      for (let i = 0; i < 16; i++) { const tt = t + 0.75 + i * 0.1 + Math.random() * 0.03; beep(tt, 1568, 0.12, 'sine', 0.12); beep(tt + 0.04, 2093, 0.18, 'sine', 0.1); }
+      [523.25, 659.25, 783.99, 1046.5].forEach(f => beep(t + 2.5, f, 0.9, 'triangle', 0.09));
+    }
+    function syncSnd() { $('snd-btn').textContent = soundOn ? '🔊' : '🔇'; }
+    function toggleSound() {
+      soundOn = !soundOn; localStorage.setItem('skibidi_sound', soundOn ? '1' : '0'); syncSnd();
+      if (soundOn && ac()) beep(_ac.currentTime + 0.01, 880, 0.14, 'triangle', 0.15, 1320);
+    }
+    syncSnd();
     initApp();
 
     (function splash() {
