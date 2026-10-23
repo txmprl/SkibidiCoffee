@@ -713,6 +713,8 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 /* campos dentro de tarjetas: más oscuros que el fondo */
 .card input{background:#0D0B09;border:1px solid #3d362e}
 .card input:focus{border-color:var(--caramel)}
+/* que todas las pestañas tengan la misma altura mínima: así Safari no cambia su barra inferior según la pestaña */
+body{min-height:calc(100vh + 2px);min-height:calc(100lvh + 2px)}
 </style>
 </head>
 <body>
