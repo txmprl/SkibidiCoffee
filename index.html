@@ -545,7 +545,7 @@ input:focus{border-color:var(--caramel)}
 .segmented{border-radius:12px}
 .rating-box{padding:12px 14px;border-radius:12px;border-color:transparent}
 .rv{font-size:14px;font-weight:700}.rv b{color:var(--amber)}
-.stars{position:relative;display:inline-block;font-size:32px;letter-spacing:4px;line-height:1;color:#4a423b;touch-action:none;cursor:pointer}
+.stars{position:relative;display:inline-block;font-size:32px;letter-spacing:4px;line-height:1;color:#4a423b;touch-action:pan-y;cursor:pointer}
 .stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--amber);font-style:normal;pointer-events:none}
 /* deslizar para borrar */
 .card-header .icon-btn{display:none}
@@ -713,6 +713,9 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 /* campos dentro de tarjetas: más oscuros que el fondo */
 .card input{background:#0D0B09;border:1px solid #3d362e}
 .card input:focus{border-color:var(--caramel)}
+/* La página siempre es desplazable, aunque sea por 2 px. Con poco contenido (Ratio) iOS dejaba de tratarla como desplazable,
+   cambiaba el alto de la ventana y levantaba la barra inferior y el botón "+". */
+body{min-height:calc(100vh + 2px)}
 </style>
 </head>
 <body>
@@ -1681,11 +1684,32 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
         h.addEventListener('touchend', () => { s.style.transition = ''; s.style.transform = ''; if (dy > 110) o.classList.remove('open'); });
       });
       // Estrellas táctiles (pasos de 0.5; tocar la misma nota la borra)
+      let lastScroll = 0;
+      document.addEventListener('scroll', () => { lastScroll = Date.now(); }, true);
       const mkStars = (id, fillId, valId, get, set) => {
         const st = $(id), paint = v => { $(fillId).style.width = (v / 5 * 100) + '%'; $(valId).textContent = v ? v.toFixed(1) : '—'; };
         const at = e => { const r = st.getBoundingClientRect(); return Math.min(5, Math.max(0.5, Math.round((e.clientX - r.left) / r.width * 10) / 2)); };
-        st.onpointerdown = e => { st.setPointerCapture(e.pointerId); const v = at(e), nv = v === get() ? 0 : v; set(nv); paint(nv); tap(); };
-        st.onpointermove = e => { if (!e.buttons) return; const v = at(e); if (v !== get()) { set(v); paint(v); tap(); } };
+        let sx = 0, sy = 0, t0 = 0, active = false, drag = false;
+        // Tocar y soltar en el lugar (toque corto, sin movimiento) pone la nota; arrastrar en horizontal la ajusta.
+        // Un gesto vertical (scroll) o un toque justo después de scrollear no cambian nada.
+        st.onpointerdown = e => { active = true; drag = false; sx = e.clientX; sy = e.clientY; t0 = Date.now(); };
+        st.onpointermove = e => {
+          if (!active) return;
+          const dx = e.clientX - sx, dy = e.clientY - sy;
+          if (!drag) {
+            if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) { active = false; return; }
+            if (Math.abs(dx) < 12) return;
+            drag = true; try { st.setPointerCapture(e.pointerId); } catch (x) {}
+          }
+          const v = at(e); if (v !== get()) { set(v); paint(v); tap(); }
+        };
+        st.onpointerup = e => {
+          if (active && !drag && Date.now() - t0 < 400 && Math.abs(e.clientX - sx) < 8 && Math.abs(e.clientY - sy) < 8 && Date.now() - lastScroll > 250) {
+            const v = at(e), nv = v === get() ? 0 : v; set(nv); paint(nv); tap();
+          }
+          active = false; drag = false;
+        };
+        st.onpointercancel = () => { active = false; drag = false; };
         return paint;
       };
       window.setRatingUI = mkStars('stars', 'starfill', 'entry-rating-val', () => currentRating, v => currentRating = v);
