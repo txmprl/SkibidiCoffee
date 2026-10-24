@@ -1999,7 +1999,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       { max: 650, n: 'Nivel 1', r: '351 – 650 mg', tag: '', c: '#9BC53D', fg: '#14210a' },
       { max: 1000, n: 'Nivel 2', r: '651 – 1.000 mg', tag: '', c: '#F2B705', fg: '#2a1e00' },
       { max: 1250, n: 'Nivel 3', r: '1.001 – 1.250 mg', tag: '', c: '#F76B15', fg: '#ffffff' },
-      { max: 2100, n: 'Nivel 4', r: '1.251 – 2.100 mg', tag: 'Adicto!', c: '#E5484D', fg: '#ffffff' },
+      { max: 2100, n: 'Nivel 4', r: '1.251 – 2.100 mg', tag: '', c: '#E5484D', fg: '#ffffff' },
       { max: Infinity, n: 'Nivel Taquicardia', r: '2.101+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
     ];
                 buildGuide();
@@ -2139,7 +2139,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
       const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k];
       $('tier').innerHTML = `<div class="tr1"><span class="tbadge${k === 5 ? ' pulse' : ''}" style="background:${t.c};color:${t.fg}">${EMO[k]} ${t.n.toUpperCase()}</span><span class="tmg">${fmtN(mg)} mg</span></div>
         ${meterHtml(mg)}
-        <div class="tnext">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : '¡Ojo con ese corazón! 💓'}</div>`;
+        <div class="tnext">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : 'Adicto!'}</div>`;
     }
     function showTiers() {
       const days = weekDays(), mg = days.reduce((a, x) => a + x.mg, 0), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k], mx = Math.max(1, ...days.map(x => x.mg));
@@ -2150,7 +2150,7 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
           <div style="font-size:34px; font-weight:900; margin-top:8px;">${fmtN(mg)} <span style="font-size:15px; color:var(--muted); font-weight:600;">mg · últimos 7 días</span></div>
         </div>
         ${meterHtml(mg)}
-        <div class="tnext" style="text-align:center;">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : '¡Ojo con ese corazón! 💓'}</div>
+        <div class="tnext" style="text-align:center;">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : 'Adicto!'}</div>
         <div class="dchart">${days.map((x, i) => `<div class="dbar ${i === 6 ? 'today' : ''}"><em>${x.mg || ''}</em><i style="height:${Math.max(3, x.mg / mx * 88)}px"></i><span>${wd(x.d)}</span></div>`).join('')}</div>
         <div class="bd-sec">Niveles</div>
         ${TIERS.map((x, i) => `<div class="trow ${i === k ? 'on' : ''}"><b style="background:${x.c}"></b><span>${x.n}</span><small>${x.r}${x.tag && i < 5 ? ' · ' + x.tag : ''}</small>${i === k ? '<em>ESTÁS ACÁ</em>' : ''}</div>`).join('')}
