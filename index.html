@@ -727,6 +727,13 @@ body{min-height:calc(100vh + 2px)}
 .dlg-note{color:var(--caramel);font-size:12px;margin:2px 0 12px}
 .dlg-btns{display:flex;gap:10px}
 .dlg-btns button{flex:1;margin:0;padding:13px}
+/* barra "Deshacer" */
+#undo-bar{position:fixed;left:16px;right:88px;bottom:calc(84px + var(--safe-bottom));z-index:96;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 10px 10px 16px;border-radius:14px;background:rgba(48,43,38,.97);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:14px;font-weight:600;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .25s,visibility 0s .25s}
+#undo-bar.on{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s}
+#undo-bar button{border:0;background:none;color:var(--amber);font-weight:800;font-size:13px;letter-spacing:.5px;padding:6px 8px}
+#undo-bar::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--amber);transform-origin:left}
+#undo-bar.on::after{animation:ubar 6s linear forwards}
+@keyframes ubar{to{transform:scaleX(0)}}
 </style>
 </head>
 <body>
@@ -885,7 +892,8 @@ body{min-height:calc(100vh + 2px)}
     <button class="btn-outline" style="margin-top:10px;width:100%;color:#fff;border-color:#fff;" onclick="closeJackpot();setTimeout(spinWheel,350)">Girar de nuevo</button>
   </div>
 </div>
-<div id="toast"></div><div id="asb"></div>
+<div id="toast"></div>
+  <div id="undo-bar" role="status"><span id="undo-msg"></span><button onclick="runUndo()">DESHACER</button></div><div id="asb"></div>
   <label style="position:fixed;left:-99px;opacity:0;pointer-events:none"><input type="checkbox" switch id="hp"></label>
   <input type="file" id="imp" accept=".json" hidden onchange="importBackupJSON(event)">
 
@@ -1233,11 +1241,19 @@ body{min-height:calc(100vh + 2px)}
     }
 
     function deleteLog(id) {
-      const gone = logs.find(l => l.id === id);
-      if (gone && gone.stockG && gone.beanId) { adjustStock(gone.beanId, gone.stockG); localStorage.setItem('skibidi_beans', JSON.stringify(beans)); }
+      const idx = logs.findIndex(l => l.id === id); if (idx < 0) return;
+      const gone = logs[idx], afterId = idx > 0 ? logs[idx - 1].id : null;
+      let returned = 0;
+      if (gone.stockG && gone.beanId) { returned = adjustStock(gone.beanId, gone.stockG); localStorage.setItem('skibidi_beans', JSON.stringify(beans)); }
       logs = logs.filter(l => l.id !== id);
       localStorage.setItem('skibidi_logs', JSON.stringify(logs));
       renderAll();
+      showUndo('Entrada eliminada', () => {
+        logs.splice(afterId ? logs.findIndex(l => l.id === afterId) + 1 : 0, 0, gone);
+        if (returned) adjustStock(gone.beanId, -returned);
+        localStorage.setItem('skibidi_logs', JSON.stringify(logs)); localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+        renderAll(); renderEntryChips();
+      });
     }
 
     // --- RENDER INVENTARIO ---
@@ -1465,7 +1481,7 @@ body{min-height:calc(100vh + 2px)}
       }
 
       const newLog = {
-        id: 'log-' + Date.now(),
+        id: uid('log'),
         date: dateFromInput(),
         source: entrySource,
         beanId: entrySource === 'Casa' ? selectedBeanId : null,
@@ -1527,7 +1543,7 @@ body{min-height:calc(100vh + 2px)}
         logs = logs.map(l => l.beanId === editingBeanId ? { ...l, beanName: `${roaster} - ${name}` } : l);
         localStorage.setItem('skibidi_logs', JSON.stringify(logs));
       } else {
-        const nb = { id: 'bean-' + Date.now(), ...d, remaining: weight, archived: false, dateAdded: new Date().toISOString() };
+        const nb = { id: uid('bean'), ...d, remaining: weight, archived: false, dateAdded: new Date().toISOString() };
         beans.unshift(nb); selectedBeanId = nb.id;
       }
       localStorage.setItem('skibidi_beans', JSON.stringify(beans));
@@ -1873,9 +1889,16 @@ body{min-height:calc(100vh + 2px)}
     }
     function delBean(id) {
       actionSheet('¿Eliminar este paquete? Las entradas del diario que lo usaron se conservan.', [{ l: 'Eliminar paquete', d: 1, fn: () => {
+        const idx = beans.findIndex(b => b.id === id); if (idx < 0) return;
+        const gone = beans[idx], afterId = idx > 0 ? beans[idx - 1].id : null;
         beans = beans.filter(b => b.id !== id);
         localStorage.setItem('skibidi_beans', JSON.stringify(beans));
         renderAll(); renderEntryChips();
+        showUndo('Paquete eliminado', () => {
+          beans.splice(afterId ? beans.findIndex(b => b.id === afterId) + 1 : 0, 0, gone);
+          localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+          renderAll(); renderEntryChips();
+        });
       } }]);
     }
 
@@ -2253,13 +2276,24 @@ body{min-height:calc(100vh + 2px)}
       const old = beans.find(x => x.id === rpId); if (!old) { closeRepurchase(); return; }
       const best = bestShotOf(old); let snap;
       if (best) { const { id, ...rest } = best; snap = rest; }
-      const nb = { ...old, id: 'bean-' + Date.now(), purchaseDate: $('rp-date').value || todayStr(), dateAdded: new Date().toISOString(),
+      const nb = { ...old, id: uid('bean'), purchaseDate: $('rp-date').value || todayStr(), dateAdded: new Date().toISOString(),
         priceUSD: num('rp-price', 500), remaining: old.weight, archived: false, autoArchived: false, bestShot: snap };
       beans.unshift(nb);
       localStorage.setItem('skibidi_beans', JSON.stringify(beans));
       closeRepurchase(); renderAll(); renderEntryChips();
       toast('Nuevo paquete agregado: ' + nb.name);
     }
+    
+    // ===== DESHACER =====
+    let _undoFn = null, _undoT = 0;
+    function showUndo(msg, fn) {
+      const b = $('undo-bar'); _undoFn = fn; $('undo-msg').textContent = msg;
+      b.classList.remove('on'); void b.offsetWidth; b.classList.add('on');
+      clearTimeout(_undoT); _undoT = setTimeout(hideUndo, 6000);
+    }
+    function hideUndo() { $('undo-bar').classList.remove('on'); _undoFn = null; }
+    function runUndo() { const f = _undoFn; clearTimeout(_undoT); hideUndo(); if (f) { f(); toast('Restaurado'); } }
+    const uid = p => p + '-' + Date.now() + Math.random().toString(36).slice(2, 6);
     initApp();
 
     (function splash() {
