@@ -716,6 +716,17 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 /* La página siempre es desplazable, aunque sea por 2 px. Con poco contenido (Ratio) iOS dejaba de tratarla como desplazable,
    cambiaba el alto de la ventana y levantaba la barra inferior y el botón "+". */
 body{min-height:calc(100vh + 2px)}
+/* diálogo rápido (recomprar) */
+.dlg{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
+.dlg.on{opacity:1;visibility:visible;transition:opacity .2s}
+.dlg-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;transform:scale(.94);transition:transform .25s cubic-bezier(.2,1.2,.4,1)}
+.dlg.on .dlg-card{transform:none}
+.dlg-card input{background:#0D0B09;border:1px solid #3d362e}
+.dlg-card input:focus{border-color:var(--caramel)}
+.dlg-sub{color:var(--muted);font-size:13px;margin:4px 0 14px}
+.dlg-note{color:var(--caramel);font-size:12px;margin:2px 0 12px}
+.dlg-btns{display:flex;gap:10px}
+.dlg-btns button{flex:1;margin:0;padding:13px}
 </style>
 </head>
 <body>
@@ -1051,6 +1062,16 @@ body{min-height:calc(100vh + 2px)}
     </div>
   </div>
 
+  <div id="rp" class="dlg" onclick="if(event.target===this)closeRepurchase()">
+    <div class="dlg-card">
+      <div class="style-title" id="rp-title">Recomprar</div>
+      <p class="dlg-sub" id="rp-sub"></p>
+      <div class="form-group"><label>Fecha de compra</label><input type="date" id="rp-date" /></div>
+      <div class="form-group"><label>Precio (USD)</label><input min="0" data-max="500" type="number" step="any" inputmode="decimal" id="rp-price" /></div>
+      <div class="dlg-note" id="rp-note"></div>
+      <div class="dlg-btns"><button class="btn-outline" onclick="closeRepurchase()">Cancelar</button><button class="btn-submit" style="background:#30A46C; color:#fff;" onclick="confirmRepurchase()">Recomprar</button></div>
+    </div>
+  </div>
   <div id="bean-detail-modal" class="modal-overlay">
     <div class="modal-header"><div class="style-title" id="bd-title">Paquete</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeBeanDetail()">✕</button></div>
     <div class="modal-body" id="bd-body"></div>
@@ -1167,7 +1188,7 @@ body{min-height:calc(100vh + 2px)}
             : `🏠 En lo de ${log.hostName} • ${log.method}`;
 
         const unit = isWater(log.method) ? 'ml' : 'g';
-        const ratio = log.dose > 0 ? (log.yieldAmount / log.dose).toFixed(1) : '0';
+        const ratio = log.dose > 0 ? ratioFmt(log.method, log.dose, log.yieldAmount) : '0';
 
         const metricsHtml = log.source === 'Casa' ? `
           <div class="metrics-strip">
@@ -1259,6 +1280,7 @@ body{min-height:calc(100vh + 2px)}
                 <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
                   <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="editBean('${b.id}')">Editar</button>
                   <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="toggleArchiveBean('${b.id}')">${b.archived ? 'Reactivar' : 'Agotado'}</button>
+                  ${b.archived ? `<button class="btn-outline" style="padding:4px 10px; font-size:11px; background:#30A46C; border-color:#30A46C; color:#fff; font-weight:700;" onclick="openRepurchase('${b.id}')">Recomprar</button>` : ''}
                   <button class="btn-outline" style="padding:4px 10px; font-size:11px; color:var(--danger); border-color:var(--danger);" onclick="delBean('${b.id}')">Borrar</button>
                 </div>
               </div>
@@ -1400,7 +1422,7 @@ body{min-height:calc(100vh + 2px)}
     function updateLiveEntryPreview() {
       const d = parseFloat(document.getElementById('entry-dose').value) || 0;
       const y = parseFloat(document.getElementById('entry-yield').value) || 0;
-      const ratio = d > 0 ? (y / d).toFixed(1) : '0';
+      const ratio = d > 0 ? ratioFmt(effMethod(), d, y) : '0';
       const caff = Math.round(d * 10);
       const sb = beans.find(x => x.id === selectedBeanId);
       document.getElementById('live-entry-preview').innerText = `Ratio automático: 1:${ratio} • Cafeína: ${caff} mg` + (sb ? ` • Quedan ${+((sb.remaining ?? sb.weight)).toFixed(1)} g` : '');
@@ -1758,7 +1780,7 @@ body{min-height:calc(100vh + 2px)}
       if (!miss) return;
       const d = g('dose'), y = g('yield'), r = g('ratio');
       const v = miss === 'ratio' ? y / d : miss === 'yield' ? d * r : y / r, lim = miss === 'ratio' ? 100 : 5000;
-      el(miss).value = (v > 0 && v <= lim) ? +v.toFixed(miss === 'yield' ? 0 : 1) : '';
+      el(miss).value = (v > 0 && v <= lim) ? (miss === 'ratio' ? Math.max(1, Math.round(v)) : +v.toFixed(miss === 'yield' ? 0 : 1)) : '';
       updateLiveEntryPreview();
     }
     function entryMethods() {
@@ -2020,11 +2042,11 @@ body{min-height:calc(100vh + 2px)}
     // Niveles de cafeína (últimos 7 días)
     const TIERS = [
       { max: 350, n: 'Nivel 0', r: '0 – 350 mg', tag: '', c: '#30A46C', fg: '#ffffff' },
-      { max: 650, n: 'Nivel 1', r: '351 – 650 mg', tag: '', c: '#9BC53D', fg: '#14210a' },
-      { max: 1000, n: 'Nivel 2', r: '651 – 1.000 mg', tag: '', c: '#F2B705', fg: '#2a1e00' },
-      { max: 1250, n: 'Nivel 3', r: '1.001 – 1.250 mg', tag: '', c: '#F76B15', fg: '#ffffff' },
-      { max: 2100, n: 'Nivel 4', r: '1.251 – 2.100 mg', tag: '', c: '#E5484D', fg: '#ffffff' },
-      { max: Infinity, n: 'Nivel Taquicardia', r: '2.101+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
+      { max: 850, n: 'Nivel 1', r: '351 – 850 mg', tag: '', c: '#9BC53D', fg: '#14210a' },
+      { max: 1400, n: 'Nivel 2', r: '851 – 1.400 mg', tag: '', c: '#F2B705', fg: '#2a1e00' },
+      { max: 2100, n: 'Nivel 3', r: '1.401 – 2.100 mg', tag: '', c: '#F76B15', fg: '#ffffff' },
+      { max: 2399, n: 'Nivel 4', r: '2.101 – 2.399 mg', tag: '', c: '#E5484D', fg: '#ffffff' },
+      { max: Infinity, n: 'Nivel Taquicardia', r: '2.400+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
     ];
                 buildGuide();
     
@@ -2097,12 +2119,12 @@ body{min-height:calc(100vh + 2px)}
       const used = logs.filter(l => l.beanId === id && l.source === 'Casa');
       const grams = used.reduce((a, l) => a + (l.dose || 0), 0), avgDose = used.length ? grams / used.length : 0;
       const rated = used.filter(l => l.rating > 0), avgR = rated.length ? rated.reduce((a, l) => a + l.rating, 0) / rated.length : 0;
-      const best = rated.slice().sort((a, c) => (c.rating - a.rating) || (new Date(c.date) - new Date(a.date)))[0];
+      const best = bestShotOf(b);
       const pd = b.purchaseDate ? new Date(b.purchaseDate + 'T12:00:00') : (b.dateAdded ? new Date(b.dateAdded) : null);
       const row = (l, v) => `<div class="bd-row"><span>${l}</span><b>${v}</b></div>`;
       let bestHtml;
       if (best) {
-        const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? (best.yieldAmount / best.dose).toFixed(1) : '—';
+        const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? ratioFmt(best.method, best.dose, best.yieldAmount) : '—';
         bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${best.drinkStyle ? E(logTitle(best)) + ' · ' : ''}${new Date(best.date).toLocaleDateString()}</div>
           <div class="bd-list" style="background:transparent; margin-bottom:10px;">${row('Método', E(best.method))}${row('Molienda', E(best.grind || '—'))}${row('Dosis', best.dose + ' g')}${row('Rendimiento', best.yieldAmount + ' ' + unit)}${row('Ratio', '1 : ' + ratio)}${best.brewTime ? row('Tiempo', best.brewTime + ' s') : ''}</div>
           <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}','${best.id}')">☕ Preparar con esta configuración</button></div>`;
@@ -2127,11 +2149,12 @@ body{min-height:calc(100vh + 2px)}
         </div>
         <div class="bd-sec">🏆 Mejor tiro</div>
         ${bestHtml}
+        ${b.archived ? `<button class="btn-submit" style="margin-top:12px; background:#30A46C; color:#fff;" onclick="closeBeanDetail(); openRepurchase('${id}')">Recomprar este grano</button>` : ''}
         <button class="btn-outline" style="width:100%; margin-top:12px; padding:12px;" onclick="closeBeanDetail(); editBean('${id}')">Editar paquete</button>`;
       $('bean-detail-modal').classList.add('open');
     }
     function prepFromBean(id, logId) {
-      const l = logId && logs.find(x => x.id === logId);
+      const l = logId === '__inherited' ? (beans.find(x => x.id === id) || {}).bestShot : (logId && logs.find(x => x.id === logId));
       closeBeanDetail(); openEntryModal();
       selectedBeanId = id;
       if (l) {
@@ -2151,7 +2174,7 @@ body{min-height:calc(100vh + 2px)}
     }
     const weekCaffeine = () => weekDays().reduce((a, x) => a + x.mg, 0);
     function meterHtml(mg) {
-      const pct = Math.min(100, mg / 2100 * 100);
+      const pct = Math.min(100, mg / 2400 * 100);
       const seg = TIERS.slice(0, 5).map((x, i) => `<i style="flex:${x.max - (i ? TIERS[i - 1].max : 0)};background:${x.c}"></i>`).join('');
       return `<div class="tmeter"><div class="tm-bg">${seg}</div><div class="tm-fill" style="clip-path:inset(0 ${100 - pct}% 0 0)">${seg}</div><span class="tm-pin" style="left:${pct}%"></span></div>`;
     }
@@ -2203,6 +2226,40 @@ body{min-height:calc(100vh + 2px)}
     }
     const _ses = setEntrySource;
     setEntrySource = function (src) { _ses(src); renderEntryChips(); };
+    
+    // ===== RECOMPRAR, RATIOS ENTEROS =====
+    const RATIO_INT = ['Prensa Francesa', 'Moka'];
+    const ratioFmt = (m, d, y) => RATIO_INT.includes(m) ? String(Math.round(y / d)) : (y / d).toFixed(1);
+
+    // Mejor tiro de un paquete: sus propias entradas calificadas + el tiro heredado de la compra anterior
+    function bestShotOf(b) {
+      const c = logs.filter(l => l.beanId === b.id && l.source === 'Casa' && l.rating > 0)
+        .map(l => ({ id: l.id, rating: l.rating, drinkStyle: l.drinkStyle, method: l.method, grind: l.grind, dose: l.dose, yieldAmount: l.yieldAmount, brewTime: l.brewTime, date: l.date }));
+      if (b.bestShot) c.push({ ...b.bestShot, id: '__inherited' });
+      return c.sort((a, d) => (d.rating - a.rating) || (new Date(d.date) - new Date(a.date)))[0] || null;
+    }
+    let rpId = null;
+    function openRepurchase(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      rpId = id;
+      $('rp-title').textContent = 'Recomprar ' + b.name;
+      $('rp-sub').textContent = `Se crea un paquete nuevo de ${b.weight} g. El actual queda intacto en el historial de agotados.`;
+      $('rp-date').value = todayStr(); $('rp-price').value = b.priceUSD || '';
+      $('rp-note').textContent = bestShotOf(b) ? '✓ Hereda la configuración de su mejor tiro.' : '';
+      $('rp').classList.add('on');
+    }
+    const closeRepurchase = () => $('rp').classList.remove('on');
+    function confirmRepurchase() {
+      const old = beans.find(x => x.id === rpId); if (!old) { closeRepurchase(); return; }
+      const best = bestShotOf(old); let snap;
+      if (best) { const { id, ...rest } = best; snap = rest; }
+      const nb = { ...old, id: 'bean-' + Date.now(), purchaseDate: $('rp-date').value || todayStr(), dateAdded: new Date().toISOString(),
+        priceUSD: num('rp-price', 500), remaining: old.weight, archived: false, autoArchived: false, bestShot: snap };
+      beans.unshift(nb);
+      localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+      closeRepurchase(); renderAll(); renderEntryChips();
+      toast('Nuevo paquete agregado: ' + nb.name);
+    }
     initApp();
 
     (function splash() {
