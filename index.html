@@ -58,23 +58,6 @@
       justify-content: space-between;
       align-items: center;
     }
-    .header-title {
-      font-size: 23px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      color: var(--crema);
-    }
-    .header-sub {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.3px;
-      color: var(--caramel);
-      margin-top: 2px;
-    }
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
 
     /* CONTENEDOR PRINCIPAL */
     .main-container {
@@ -199,16 +182,6 @@
     }
 
     /* BOTONES */
-    .btn-small {
-      background: var(--caramel);
-      color: var(--bg);
-      border: none;
-      padding: 7px 11px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor: pointer;
-    }
     .btn-outline {
       background: var(--card);
       color: var(--caramel);
@@ -446,9 +419,6 @@
     .tab-item.active {
       color: var(--amber);
     }
-    .tab-icon {
-      font-size: 20px;
-    }
 
     /* MODALES */
     .modal-overlay {
@@ -486,16 +456,6 @@
       justify-content: space-between;
       align-items: center;
       margin: 12px 0;
-    }
-    .step-btn {
-      background: var(--bg);
-      color: var(--caramel);
-      border: 1px solid var(--caramel);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
     }
     .photo-label-btn {
       display: block;
@@ -657,12 +617,6 @@ input.err{border-color:var(--danger)!important;background:#2a1513!important}
 .jp-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:5;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #fff;color:#fff;font-size:20px;display:grid;place-items:center}
 /* popup de bolsa */
 .bd-photo{display:block;width:100%;max-height:260px;object-fit:contain;background:#0e0c0a;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
-.bd-photo.ph{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:38px;color:var(--caramel)}
-.bd-photo.ph small{font-size:11px;color:var(--muted)}
-.bd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.bd-st{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
-.bd-st small{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
-.bd-st b{font-size:16px;font-weight:800}
 .bd-sec{font-weight:800;font-size:15px;margin:16px 0 8px}
 .bd-best{background:linear-gradient(160deg,#2a2118,#1E1B18);border:1px solid var(--caramel);border-radius:14px;padding:12px}
 .bd-bhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
@@ -734,6 +688,9 @@ body{min-height:calc(100vh + 2px)}
 #undo-bar::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--amber);transform-origin:left}
 #undo-bar.on::after{animation:ubar 6s linear forwards}
 @keyframes ubar{to{transform:scaleX(0)}}
+/* botón Nuevo paquete */
+.btn-newbag{position:absolute;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:94px;min-height:88px;padding:8px 6px;border:0;border-radius:18px;background:linear-gradient(160deg,#F2A93B,#D9780F);color:#2a1a0a;font-weight:800;font-size:12px;line-height:1.1;text-align:center;box-shadow:0 4px 14px rgba(224,159,62,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-newbag svg{width:40px;height:40px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
 </style>
 </head>
 <body>
@@ -756,9 +713,21 @@ body{min-height:calc(100vh + 2px)}
 
     <!-- 2. PESTAÑA INVENTARIO -->
     <section id="tab-Inventario" class="tab-section">
-      <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
+      <div style="position:relative; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
         <button id="toggle-archived-btn" class="btn-outline" onclick="toggleShowArchived()">Ver Agotados</button>
-        <button class="btn-small" onclick="openBeanModal()">+ Nuevo Paquete</button>
+        <button class="btn-newbag" onclick="openBeanModal()" aria-label="Nuevo paquete">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <path d="M10 14h20l1.8 20.2a2.4 2.4 0 0 1-2.4 2.6H10.6a2.4 2.4 0 0 1-2.4-2.6z" fill="#D2A36F" stroke="#3b2a20" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M9.4 14L8.6 8.5h22.8L30.6 14z" fill="#B98650" stroke="#3b2a20" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M9.4 11h21.2" stroke="#3b2a20" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.6 2.2"/>
+            <rect x="14.5" y="20" width="11" height="10" rx="1.6" fill="#F5EBE6" stroke="#3b2a20" stroke-width="1.3"/>
+            <ellipse cx="20" cy="25" rx="2.6" ry="3.6" transform="rotate(28 20 25)" fill="#6F4A2F"/>
+            <path d="M18.6 27.2c1.6-1 1.4-3.3 2.8-4.6" stroke="#F5EBE6" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <circle cx="32.5" cy="8" r="5.6" fill="#fff" stroke="#3b2a20" stroke-width="1.5"/>
+            <path d="M32.5 5.2v5.6M29.7 8h5.6" stroke="#D9780F" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Nuevo<br>paquete</span>
+        </button>
       </div>
       <div class="sort-row" id="sort-row"></div>
       <div id="beans-container"></div>
@@ -895,7 +864,6 @@ body{min-height:calc(100vh + 2px)}
 <div id="toast"></div>
   <div id="undo-bar" role="status"><span id="undo-msg"></span><button onclick="runUndo()">DESHACER</button></div><div id="asb"></div>
   <label style="position:fixed;left:-99px;opacity:0;pointer-events:none"><input type="checkbox" switch id="hp"></label>
-  <input type="file" id="imp" accept=".json" hidden onchange="importBackupJSON(event)">
 
   <!-- ==================== MODAL: NUEVA ENTRADA ==================== -->
   <div id="entry-modal" class="modal-overlay">
@@ -1106,7 +1074,6 @@ body{min-height:calc(100vh + 2px)}
   <script>
     // --- CONSTANTES Y ESTADO ---
     const DRINK_STYLES = ['Flat White', 'Doble Shot', 'Shot', 'Cortado', 'Americano', 'Latte', 'Cappuccino', 'Filtrado'];
-    const HOME_METHODS = ['Espresso', 'Moka', 'Prensa Francesa'];
     const STANDARD_CAFFEINE = {
       'Shot': 80, 'Doble Shot': 160, 'Flat White': 150, 'Cortado': 140,
       'Latte': 150, 'Cappuccino': 150, 'Americano': 150, 'Filtrado': 120
@@ -1127,7 +1094,6 @@ body{min-height:calc(100vh + 2px)}
     let tempBeanPhoto = null;
 
     let showArchivedBeans = false;
-    let calcMode = 'ratio';
     let statsFilter = 'Mes';
 
     // --- INICIALIZACIÓN ---
@@ -1172,11 +1138,16 @@ body{min-height:calc(100vh + 2px)}
 
     // --- NAVEGACIÓN ---
     function switchTab(tabName) {
+      const wasStats = $('tier').style.display === 'flex';
       ['Diario', 'Inventario', 'Herramientas', 'Stats'].forEach(t => {
         document.getElementById('tab-' + t).classList.toggle('active', t === tabName);
         document.getElementById('nav-' + t).classList.toggle('active', t === tabName);
       });
       if (tabName === 'Stats') renderStats();
+      $('lt').textContent = tabName;
+      if (tabName === 'Stats' && !wasStats) playTier();
+      $('tier').style.display = tabName === 'Stats' ? 'flex' : 'none';
+      scrollTo(0, 0); tap();
     }
 
     // --- RENDER DIARIO ---
@@ -1238,6 +1209,7 @@ body{min-height:calc(100vh + 2px)}
           </div>
         `;
       }).join('');
+      decorate();
     }
 
     function deleteLog(id) {
@@ -1356,7 +1328,7 @@ body{min-height:calc(100vh + 2px)}
     }
 
     // --- MODAL NUEVA ENTRADA ---
-    function openEntryModal() {
+    function showEntryModal() {
       tempCupPhoto = null;
       document.getElementById('cup-photo-status').innerText = '📷 Adjuntar foto de la taza (Opcional)';
       renderEntryChips();
@@ -1374,6 +1346,7 @@ body{min-height:calc(100vh + 2px)}
         document.getElementById('src-' + s).classList.toggle('active', s === src);
         document.getElementById('fields-' + s).style.display = (s === src) ? 'block' : 'none';
       });
+      renderEntryChips();
     }
 
     function renderEntryChips() {
@@ -1404,6 +1377,8 @@ body{min-height:calc(100vh + 2px)}
         const active = selectedTags.includes(t);
         return `<button class="choice-chip ${active ? 'active' : ''}" onclick="toggleEntryTag('${t}')">${t}</button>`;
       }).join('');
+      syncYield();
+      $('entry-social-chips').innerHTML = allMethods.map(m => `<button class="choice-chip ${m === socialMethod ? 'active' : ''}" onclick="setSocialMethod('${m}')">${m}</button>`).join('');
     }
 
     function selectEntryBean(id) { selectedBeanId = (selectedBeanId === id ? '' : id); renderEntryChips(); updateLiveEntryPreview(); }
@@ -1428,11 +1403,6 @@ body{min-height:calc(100vh + 2px)}
         document.getElementById('new-tag-input').value = '';
         renderEntryChips();
       }
-    }
-
-    function adjustRating(delta) {
-      currentRating = Math.min(5.0, Math.max(1.0, currentRating + delta));
-      document.getElementById('entry-rating-val').innerText = currentRating.toFixed(1);
     }
 
     function updateLiveEntryPreview() {
@@ -1512,11 +1482,12 @@ body{min-height:calc(100vh + 2px)}
       document.getElementById('entry-notes').value = '';
       document.getElementById('entry-shop-cost').value = '';
       closeEntryModal();
+      editingLogId = null;
       renderAll();
     }
 
     // --- MODAL NUEVO GRANO ---
-    function openBeanModal() {
+    function showBeanModal() {
       tempBeanPhoto = null;
       document.getElementById('bean-photo-status').innerText = '📸 Fotografiar Etiqueta / Paquete';
       document.getElementById('bean-modal').classList.add('open');
@@ -1552,17 +1523,6 @@ body{min-height:calc(100vh + 2px)}
     }
 
     // --- CALCULADORAS ---
-    function setCalcMode(mode) {
-      calcMode = mode;
-      ['ratio', 'water', 'coffee'].forEach(m => {
-        document.getElementById('calc-mode-' + m).classList.toggle('active', m === mode);
-      });
-      document.getElementById('calc-group-coffee').style.display = mode === 'coffee' ? 'none' : 'block';
-      document.getElementById('calc-group-water').style.display = mode === 'water' ? 'none' : 'block';
-      document.getElementById('calc-group-ratio').style.display = mode === 'ratio' ? 'none' : 'block';
-      updateToolsCalc();
-    }
-
     function updateToolsCalc() { calcRender(); }
 
     // --- STATS ---
@@ -1651,6 +1611,8 @@ body{min-height:calc(100vh + 2px)}
     }
 
     function downloadFile(content, fileName, mimeType) {
+      const f = new File([content], fileName, { type: mimeType });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f] }).catch(() => {}); return; }
       const blob = new Blob([content], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1675,23 +1637,10 @@ body{min-height:calc(100vh + 2px)}
       b.onclick = e => { if (e.target === b) b.classList.remove('open'); };
       requestAnimationFrame(() => b.classList.add('open'));
     }
-    const openMenu = () => actionSheet('SkibidiCoffee', [
-      { l: 'Exportar diario (CSV)', fn: exportCSV },
-      { l: 'Guardar backup (JSON)', fn: exportBackupJSON },
-      { l: 'Restaurar backup…', fn: () => $('imp').click() }
-    ]);
-    const _df = downloadFile;
-    downloadFile = function (c, n, m) {
-      const f = new File([c], n, { type: m });
-      if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f] }).catch(() => {});
-      else _df(c, n, m);
-    };
-    const _st = switchTab;
-    switchTab = function (t) { const wasStats = $('tier').style.display === 'flex'; _st(t); $('lt').textContent = t; if (t === 'Stats' && !wasStats) playTier(); $('tier').style.display = t === 'Stats' ? 'flex' : 'none'; scrollTo(0, 0); tap(); };
 
     // Deslizar para borrar
-    const _rl = renderLogs;
-    renderLogs = function () { _rl(); decorate(); };
+    let _lastScroll = 0;
+    document.addEventListener('scroll', () => { _lastScroll = Date.now(); }, true);
     function decorate() {
       [...$('logs-container').querySelectorAll(':scope > .card')].forEach((card, i) => {
         const id = logs[i].id, w = document.createElement('div');
@@ -1700,12 +1649,37 @@ body{min-height:calc(100vh + 2px)}
         card.replaceWith(w); w.append(card);
         w.querySelector('.swipe-del').onclick = () => actionSheet('¿Eliminar esta entrada del diario?', [{ l: 'Eliminar', d: 1, fn: () => deleteLog(id) }]);
         w.querySelector('.swipe-ed').onclick = () => { card._o = false; card.style.transform = ''; editLog(id); };
-        let x0 = 0, dx = 0;
+        // Editar/Borrar solo se abren con un deslizamiento horizontal claro y deliberado:
+        // zona muerta de 24 px, dirección casi horizontal (al menos 2.5 : 1) y recorrido largo (o un gesto rápido).
+        // Si el dedo va más hacia arriba/abajo es scroll y la tarjeta no se mueve.
+        let x0 = 0, y0 = 0, mx = 0, t0 = 0, mode = '', moved = false;
+        const DEAD = 24, OPEN_AT = -90;
         const base = () => card._o ? -160 : 0;
-        card.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; dx = 0; card.style.transition = 'none'; }, { passive: true });
-        card.addEventListener('touchmove', e => { dx = e.touches[0].clientX - x0; card.style.transform = `translateX(${Math.min(0, Math.max(-180, base() + dx))}px)`; }, { passive: true });
-        card.addEventListener('click', () => { if (Math.abs(dx) > 8) return; if (card._o) { card._o = false; card.style.transform = ''; } else editLog(id); });
-        card.addEventListener('touchend', () => { card.style.transition = ''; card._o = base() + dx < -80; card.style.transform = card._o ? 'translateX(-160px)' : ''; });
+        const settle = () => { card.style.transition = ''; card.style.transform = card._o ? 'translateX(-160px)' : ''; };
+        card.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; mx = 0; t0 = Date.now(); mode = ''; moved = false; }, { passive: true });
+        card.addEventListener('touchmove', e => {
+          const dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+          if (Math.abs(dx) > 8 || Math.abs(dy) > 8) moved = true;
+          if (mode === 'scroll') return;
+          if (mode === '') {
+            if (Math.abs(dy) > 10 && Math.abs(dy) * 1.5 >= Math.abs(dx)) { mode = 'scroll'; return; }
+            if (Math.abs(dx) < DEAD || Math.abs(dx) < Math.abs(dy) * 2.5) return;
+            mode = 'swipe'; card.style.transition = 'none';
+          }
+          mx = dx - Math.sign(dx) * DEAD;
+          card.style.transform = `translateX(${Math.min(0, Math.max(-180, base() + mx))}px)`;
+        }, { passive: true });
+        card.addEventListener('touchend', () => {
+          if (mode !== 'swipe') return;
+          const fast = (Date.now() - t0) < 300 && Math.abs(mx) > 50;
+          card._o = card._o ? !(mx > 40 || (fast && mx > 0)) : (base() + mx < OPEN_AT || (fast && mx < 0));
+          settle();
+        });
+        card.addEventListener('touchcancel', () => { if (mode === 'swipe') settle(); mode = ''; });
+        card.addEventListener('click', () => {
+          if (moved || Date.now() - _lastScroll < 250) return;
+          if (card._o) { card._o = false; card.style.transform = ''; } else editLog(id);
+        });
       });
     }
 
@@ -1771,7 +1745,7 @@ body{min-height:calc(100vh + 2px)}
     if (!allMethods.includes('Espresso')) allMethods.unshift('Espresso');
     const saveMethods = () => localStorage.setItem('skibidi_methods', JSON.stringify({ all: allMethods, mine: myMethods }));
     saveMethods();
-    let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa', _wasEdit = false;
+    let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa';
     const ROAST = ['Ligero', 'Medio', 'Medio-oscuro', 'Oscuro'], ROAST_C = ['#C9A47A', '#9B6B43', '#5E3C24', '#2A1B12'];
     const isWater = m => ['Prensa Francesa', 'Filtro', 'Cold Brew', 'Aeropress'].includes(m);
     const RATIO_METHODS = ['Prensa Francesa'];
@@ -1806,11 +1780,6 @@ body{min-height:calc(100vh + 2px)}
       return list;
     }
     function setSocialMethod(m) { socialMethod = m; renderEntryChips(); }
-    const _rc = renderEntryChips;
-    renderEntryChips = function () {
-      _rc(); syncYield();
-      $('entry-social-chips').innerHTML = allMethods.map(m => `<button class="choice-chip ${m === socialMethod ? 'active' : ''}" onclick="setSocialMethod('${m}')">${m}</button>`).join('');
-    };
 
     // Ajustes
     function renderMethods() {
@@ -1827,21 +1796,20 @@ body{min-height:calc(100vh + 2px)}
     const closeSettings = () => $('settings-modal').classList.remove('open');
 
     // Entradas: nueva / editar
-    const _oe = openEntryModal;
     function resetEntryForm() {
       setEntrySource('Casa'); selectedMethod = ''; socialMethod = ''; selectedStyle = ''; selectedTags = []; selectedBeanId = '';
       ['entry-grind', 'entry-dose', 'entry-yield', 'entry-time', 'entry-ratio', 'entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => $(i).value = '');
       entTouch = []; $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
     }
-    openEntryModal = function () {
+    function openEntryModal() {
       editingLogId = null;
-      resetEntryForm(); _wasEdit = false;
+      resetEntryForm();
       $('entry-title').textContent = 'Nueva Entrada de Café'; $('entry-save').textContent = 'Guardar en el Diario';
-      _oe();
-    };
+      showEntryModal();
+    }
     function editLog(id) {
       const l = logs.find(x => x.id === id); if (!l) return;
-      editingLogId = id; _wasEdit = true;
+      editingLogId = id;
       setEntrySource(l.source);
       if (l.beanId) selectedBeanId = l.beanId;
       if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
@@ -1850,14 +1818,12 @@ body{min-height:calc(100vh + 2px)}
       const v = (i, x) => $(i).value = x ?? '';
       entTouch = []; v('entry-ratio', ''); v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
       v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName); v('entry-notes', l.notes); v('entry-date', ymd(new Date(l.date)));
-      _oe();
+      showEntryModal();
       tempCupPhoto = l.photo || null;
       $('cup-photo-status').innerText = l.photo ? '✅ Foto de la taza lista' : '📷 Adjuntar foto de la taza (Opcional)';
       currentRating = l.rating || 0; window.setRatingUI(currentRating);
       $('entry-title').textContent = 'Editar entrada'; $('entry-save').textContent = 'Guardar cambios';
     }
-    const _se = saveEntry;
-    saveEntry = function () { _se(); if (!$('entry-modal').classList.contains('open')) editingLogId = null; };
 
     // Granos: nuevo / editar / borrar / tueste
     function roastUI() {
@@ -1865,18 +1831,17 @@ body{min-height:calc(100vh + 2px)}
       $('roast-name').textContent = ROAST[v]; i.style.setProperty('--rc', ROAST_C[v]);
       document.querySelectorAll('.roast-labels span').forEach((s, k) => s.classList.toggle('on', k === v));
     }
-    const _ob = openBeanModal;
-    openBeanModal = function () {
+    function openBeanModal() {
       editingBeanId = null;
       ['bean-name', 'bean-roaster', 'bean-origin', 'bean-price'].forEach(i => $(i).value = '');
       $('bean-weight').value = 250; $('bean-roast').value = 1; roastUI();
       $('bean-date').value = todayStr(); $('bean-rem-group').style.display = 'none'; beanRating = 0; window.setBeanRatingUI(0);
       $('bean-title').textContent = 'Registrar Paquete de Café'; $('bean-save').textContent = 'Guardar en Inventario';
-      _ob();
-    };
+      showBeanModal();
+    }
     function editBean(id) {
       const b = beans.find(x => x.id === id); if (!b) return;
-      _ob(); editingBeanId = id;
+      showBeanModal(); editingBeanId = id;
       const v = (i, x) => $(i).value = x ?? '';
       v('bean-name', b.name); v('bean-roaster', b.roaster); v('bean-origin', b.origin); v('bean-weight', b.weight); v('bean-price', b.priceUSD || '');
       $('bean-roast').value = b.roast ?? 1; roastUI();
@@ -2247,8 +2212,6 @@ body{min-height:calc(100vh + 2px)}
       const keep = editingLogId && editOrig && selectedStyle && selectedStyle === editOrig.style && effMethod() === editOrig.method && !list.includes(selectedStyle);
       return keep ? [...list, selectedStyle] : list;
     }
-    const _ses = setEntrySource;
-    setEntrySource = function (src) { _ses(src); renderEntryChips(); };
     
     // ===== RECOMPRAR, RATIOS ENTEROS =====
     const RATIO_INT = ['Prensa Francesa', 'Moka'];
