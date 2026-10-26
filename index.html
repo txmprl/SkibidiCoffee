@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SkibidiCoffee" />
+  <meta name="theme-color" content="#12100E" />
+  <title>SkibidiCoffee</title>
+
+  <!-- Ícono automático para la pantalla de inicio de iOS -->
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.png" />
+
+  <style>
+    :root {
+      --bg: #12100E;
+      --card: #1E1B18;
+      --border: #2E2924;
+      --crema: #F5EBE6;
+      --muted: #9E9085;
+      --caramel: #D4A373;
+      --amber: #E09F3E;
+      --danger: #D9534F;
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--crema);
+      overscroll-behavior-y: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* HEADER */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(18, 16, 14, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: calc(var(--safe-top) + 10px) 18px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-container {
+      padding: 16px 16px calc(95px + var(--safe-bottom));
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
+      animation: fadeIn 0.18s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TARJETAS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 14px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      background: #382B22;
+      color: var(--caramel);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .badge.cafeteria { background: #3A2E39; color: #E5B8E0; }
+    .badge.social { background: #263832; color: #95D5B2; }
+
+    .style-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--crema);
+    }
+    .card-sub {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--caramel);
+      margin-bottom: 10px;
+    }
+    .metrics-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .metric-pill {
+      background: var(--bg);
+      color: var(--crema);
+      font-size: 12px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .cup-ph{height:92px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+    .cup-ph svg{width:72px;height:72px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+    .cup-img {
+      width: 100%;
+      height: 155px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .tags-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .tag-chip {
+      background: #2A231D;
+      border: 1px solid #3E332A;
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+    .notes-text {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 13px;
+      margin: 6px 0;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .stars-display {
+      color: var(--amber);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    /* BOTONES */
+    .btn-outline {
+      background: var(--card);
+      color: var(--caramel);
+      border: 1px solid var(--caramel);
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 800;
+      margin-top: 14px;
+      cursor: pointer;
+    }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* INVENTARIO */
+    .bean-row {
+      display: flex;
+      gap: 12px;
+    }
+    .bean-cover {
+      width: 78px;
+      height: 96px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    /* CONTROLES SEGMENTADOS Y FORMULARIOS */
+    .segmented {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 14px;
+    }
+    .seg-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 8px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .seg-btn.active {
+      background: var(--caramel);
+      color: var(--bg);
+      font-weight: 800;
+    }
+
+    .form-group {
+      margin-bottom: 11px;
+    }
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+    .form-row .form-group {
+      flex: 1;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--crema);
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--crema);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 16px; /* Evita auto-zoom en iOS Safari */
+      outline: none;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--caramel);
+    }
+
+    /* CHIPS DE SELECCIÓN */
+    .chips-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .chips-scroll::-webkit-scrollbar { display: none; }
+    .choice-chip {
+      background: var(--card);
+      color: var(--crema);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .choice-chip.active {
+      background: var(--caramel);
+      color: var(--bg);
+      border-color: var(--caramel);
+      font-weight: 800;
+    }
+
+    /* CAJAS DE RESULTADOS Y STATS */
+    .result-box {
+      background: #171310;
+      border: 1px solid var(--caramel);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .result-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--caramel);
+      letter-spacing: 1px;
+    }
+    .result-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--amber);
+      margin-top: 4px;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--crema);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    /* BOTÓN FLOTANTE (FAB) */
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: calc(68px + var(--safe-bottom));
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      font-size: 32px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.5);
+      z-index: 30;
+      cursor: pointer;
+    }
+
+    /* BARRA INFERIOR (TAB BAR) */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #181512;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      padding-bottom: calc(8px + var(--safe-bottom));
+      display: flex;
+      z-index: 25;
+    }
+    .tab-item {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-item.active {
+      color: var(--amber);
+    }
+
+    /* MODALES */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-header {
+      padding: calc(var(--safe-top) + 12px) 18px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 16px 18px calc(40px + var(--safe-bottom));
+      overflow-y: auto;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .rating-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 12px 0;
+    }
+    .photo-label-btn {
+      display: block;
+      text-align: center;
+      padding: 11px;
+      border: 1px dashed var(--caramel);
+      border-radius: 8px;
+      color: var(--caramel);
+      font-size: 13px;
+      font-weight: 600;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+  
+/* ===== ACABADO NATIVO ===== */
+input,textarea{-webkit-user-select:text;user-select:text}
+button{transition:transform .12s,opacity .12s;touch-action:manipulation}
+button:active{transform:scale(.95);opacity:.78}
+.ti{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.tab-item.active .ti{stroke-width:2.1;fill:currentColor;fill-opacity:.18;transform:translateY(-1px)}
+.tab-bar{background:rgba(22,19,16,.78);-webkit-backdrop-filter:saturate(1.6) blur(22px);backdrop-filter:saturate(1.6) blur(22px);border-top:.5px solid var(--border)}
+.tab-item{font-size:10px}
+.fab svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+/* título grande */
+.header{justify-content:flex-end;padding:calc(var(--safe-top) + 6px) 14px 8px;min-height:calc(var(--safe-top) + 46px);border-bottom:1px solid transparent;transition:border-color .2s}
+.header.sc{border-bottom-color:var(--border)}
+.h-mini{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:16px;font-weight:700;opacity:0;pointer-events:none}
+.h-menu{width:34px;height:34px;border-radius:50%;border:0;background:#2a2521;color:var(--caramel);display:grid;place-items:center}
+.h-menu svg{width:20px;height:20px;fill:currentColor}
+.large{max-width:600px;margin:0 auto;padding:4px 20px 0}
+.lt{font-size:34px;font-weight:800;letter-spacing:-.8px}
+.ls{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:1.2px;margin-top:2px}
+.main-container{padding-top:12px}
+/* hojas inferiores */
+.modal-overlay{display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,0);visibility:hidden;transition:background .3s,visibility 0s .35s}
+.modal-overlay.open{background:rgba(0,0,0,.55);visibility:visible;transition:background .3s}
+.sheet{display:flex;flex-direction:column;height:calc(100% - var(--safe-top) - 18px);background:var(--bg);border-radius:18px 18px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);box-shadow:0 -8px 30px rgba(0,0,0,.4)}
+.modal-overlay.open .sheet{transform:none}
+.sheet::before{content:'';flex:none;width:38px;height:5px;border-radius:3px;background:#4a423b;margin:8px auto 0}
+.modal-header{padding:10px 18px 12px}
+.modal-header .icon-btn{width:30px;height:30px;border-radius:50%;background:#2a2521;font-size:15px!important;color:var(--muted)!important;display:grid;place-items:center}
+/* formularios */
+label{font-size:12px;color:var(--muted);margin:0 0 6px 4px}
+input,select,textarea{background:var(--card);border:1px solid transparent;border-radius:12px;padding:13px 14px}
+input:focus{border-color:var(--caramel)}
+.choice-chip{border-radius:999px;padding:8px 14px}
+.segmented{border-radius:12px}
+.rating-box{padding:12px 14px;border-radius:12px;border-color:transparent}
+.rv{font-size:14px;font-weight:700}.rv b{color:var(--amber)}
+.stars{position:relative;display:inline-block;font-size:32px;letter-spacing:4px;line-height:1;color:#4a423b;touch-action:pan-y;cursor:pointer}
+.stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--amber);font-style:normal;pointer-events:none}
+/* deslizar para borrar */
+.card-header .icon-btn{display:none}
+.swipe{position:relative;margin-bottom:14px;border-radius:14px;overflow:hidden;background:var(--danger)}
+.swipe .card{margin:0;position:relative;transition:transform .22s;touch-action:pan-y}
+.swipe-act{position:absolute;right:0;top:0;bottom:0;width:160px;display:flex}.swipe-act button{flex:1;border:0;color:#fff;font-weight:700;font-size:14px;border-radius:0}.swipe-ed{background:#6B7F94}.swipe-del{background:var(--danger)}
+/* avisos y hoja de acciones */
+#toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-bottom));transform:translate(-50%,16px);background:rgba(58,52,46,.96);color:var(--crema);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;z-index:95;pointer-events:none;max-width:88%;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#asb{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;justify-content:flex-end;padding:0 10px calc(10px + var(--safe-bottom));background:rgba(0,0,0,0);visibility:hidden;transition:background .25s,visibility 0s .35s}
+#asb.open{background:rgba(0,0,0,.5);visibility:visible;transition:background .25s}
+.asg{background:rgba(44,39,35,.97);border-radius:14px;overflow:hidden;margin-bottom:8px;transform:translateY(130%);transition:transform .38s cubic-bezier(.32,.72,0,1)}
+#asb.open .asg{transform:none}
+.ast{padding:14px;text-align:center;color:var(--muted);font-size:13px;border-bottom:1px solid var(--border)}
+.asg button{display:block;width:100%;background:none;border:0;border-bottom:1px solid var(--border);border-radius:0;padding:16px;font-size:18px;color:var(--amber)}
+.asg button:last-child{border-bottom:0}.asg button.d{color:#ff6b63}.asg.c button{font-weight:700;color:var(--crema)}
+/* movimiento */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.card,.swipe{animation:rise .35s cubic-bezier(.2,.8,.2,1) backwards}
+.swipe>.card{animation:none}
+:is(.card,.swipe):nth-child(2){animation-delay:.05s}:is(.card,.swipe):nth-child(3){animation-delay:.1s}:is(.card,.swipe):nth-child(4){animation-delay:.15s}
+@media (prefers-reduced-motion:reduce){*:not(.splash):not(.splash *){animation:none!important;transition:none!important}}
+
+#splash{position:fixed;inset:0;z-index:300;background:#000;display:flex;align-items:center;justify-content:center;opacity:1}
+#splash img{width:min(78vw,360px);height:auto;animation:splashIn .85s cubic-bezier(.16,1,.3,1) both}
+#splash.out{animation:splashOut .55s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+@keyframes splashIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes splashOut{to{opacity:0}}
+
+input.roast{-webkit-appearance:none;appearance:none;display:block;width:100%;height:10px;padding:0;border:0;border-radius:6px;background:linear-gradient(90deg,#C9A47A,#9B6B43 38%,#5E3C24 68%,#2A1B12);margin:12px 0 10px}
+input.roast::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--rc,#9B6B43);border:3px solid var(--crema);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+input.roast::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--rc,#9B6B43);border:3px solid var(--crema)}
+.roast-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.roast-labels span.on{color:var(--amber);font-weight:700}
+input.auto{border-color:var(--amber)!important;background:#221c15!important}
+.check-list{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.chk,.set-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;background:none;border:0;border-bottom:.5px solid var(--border);border-radius:0;color:var(--crema);font-size:16px;text-align:left;cursor:pointer}
+.chk:last-child,.set-row:last-child{border-bottom:0}
+.chk svg{width:22px;height:22px;fill:none;stroke:var(--amber);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.chk.on svg{opacity:1}
+.set-row span:last-child{color:var(--muted)}
+.set-help{color:var(--muted);font-size:12px;margin:-2px 4px 8px}
+
+input[type=date]{min-height:46px;-webkit-appearance:none;appearance:none;color-scheme:dark}
+.stars.sm{font-size:14px;letter-spacing:2px;touch-action:auto;cursor:default}
+.stock{height:5px;border-radius:3px;background:#2a2521;margin:6px 0 4px;overflow:hidden}.stock i{display:block;height:100%;background:var(--caramel);border-radius:3px}.stock.low i{background:var(--danger)}
+.wheel-card{text-align:center;overflow:hidden;position:relative}
+.snd{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:0;background:#2a2521;font-size:17px;display:grid;place-items:center;z-index:2}
+.wheel-sub{color:var(--amber);font-weight:800;font-size:15px;margin-bottom:6px}
+.wheel-wrap{position:relative;width:min(86vw,340px);aspect-ratio:1;margin:6px auto 14px}
+.wheel-wrap svg{position:absolute;inset:0;width:100%;height:100%}
+#wheel-disc{will-change:transform}
+.wl{font-size:10.5px;font-weight:800;fill:#fff;stroke:rgba(0,0,0,.55);stroke-width:2.6px;paint-order:stroke}
+.bulb{fill:#fff7c2}.b0{animation:bl 1s steps(1) infinite}.b1{animation:bl2 1s steps(1) infinite}
+@keyframes bl{0%{fill:#fff7c2}50%{fill:#8a5a00}}@keyframes bl2{0%{fill:#8a5a00}50%{fill:#fff7c2}}
+.wheel-wrap.spinning .bulb{animation-duration:.3s}
+.wheel-wrap.win #wheel-frame{animation:hue .6s linear infinite}.wheel-wrap.win .bulb{animation-duration:.2s}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+.spin-btn{background:linear-gradient(180deg,#FF5A4D,#C5162E);color:#fff;font-size:20px;letter-spacing:2px;box-shadow:0 4px 0 #7a0c1d,0 0 20px rgba(255,60,60,.5)}
+.spin-btn:disabled{opacity:.6}
+#jackpot{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle,#2a0a3a,#0b0410 72%);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+#jackpot.on{opacity:1;visibility:visible;transition:opacity .3s}
+.jp-flash{position:absolute;inset:0;animation:jpflash .6s steps(1) infinite}
+@keyframes jpflash{0%{background:rgba(255,0,80,.3)}16%{background:rgba(255,160,0,.3)}33%{background:rgba(255,230,0,.3)}50%{background:rgba(0,220,120,.3)}66%{background:rgba(0,160,255,.3)}83%{background:rgba(170,0,255,.3)}}
+.jp-beams{position:absolute;left:50%;top:50%;width:240vmax;height:240vmax;margin:-120vmax;background:repeating-conic-gradient(rgba(255,220,0,.35) 0 8deg,transparent 8deg 24deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 55%);mask:radial-gradient(circle,#000 0,transparent 55%);animation:jpspin 10s linear infinite}
+@keyframes jpspin{to{transform:rotate(360deg)}}
+#jp-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.jp-card{position:relative;z-index:2;width:min(88vw,340px);padding:24px 18px 20px;border-radius:24px;text-align:center;background:linear-gradient(160deg,#3a0f57,#1a0629);border:3px solid #FFD43B;box-shadow:0 0 0 4px #E5484D,0 0 40px #FFD43B,0 0 90px rgba(255,60,160,.6);animation:jppop .6s cubic-bezier(.2,1.4,.4,1) both}
+.jp-card::before{content:'';position:absolute;inset:-13px;border-radius:32px;border:6px dotted #fff;pointer-events:none;animation:jpbulb .4s steps(1) infinite}
+@keyframes jpbulb{0%{border-color:#fff}33%{border-color:#FFD43B}66%{border-color:#FF3B6B}}
+@keyframes jppop{from{transform:scale(.3) rotate(-8deg);opacity:0}}
+.jp-title{font-size:40px;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#ff3b3b,#ffd43b,#3bff6b,#3bd0ff,#b13bff,#ff3b3b);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:jpgrad 1.2s linear infinite;filter:drop-shadow(0 0 8px rgba(255,255,255,.55))}
+@keyframes jpgrad{to{background-position:300% 0}}
+.jp-ic{display:block;width:130px;height:130px;margin:4px auto;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6));animation:jpbounce .8s ease-in-out infinite alternate}
+@keyframes jpbounce{to{transform:translateY(-8px) scale(1.07)}}
+.jp-name{font-size:30px;font-weight:900;color:#fff;text-shadow:0 0 14px #FFD43B,0 0 28px #FF3B6B}
+.jp-sub{color:#ffe9a8;font-size:14px;margin:4px 0 14px}
+
+/* ajustes: misma tipografía y alineación en todas las filas */
+.chk,.set-row,label.set-row{font:inherit;font-size:16px;font-weight:400;letter-spacing:normal;margin:0;color:var(--crema);text-align:left}
+/* orden del inventario */
+.sort-row{display:flex;gap:8px;overflow-x:auto;margin:-4px 0 14px;padding-bottom:2px}
+.sort-row .choice-chip{flex:none;margin:0}
+/* error de dosis */
+input.err{border-color:var(--danger)!important;background:#2a1513!important}
+.over{color:var(--danger)!important}
+/* guía de ratios */
+.gcard .grow{display:flex;align-items:center;gap:12px}
+.gic{width:48px;height:48px;flex:none;background:#2a2521;border-radius:12px;padding:4px}
+.gratio{color:var(--amber);font-weight:800;font-size:15px;margin-top:2px}
+.gbar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:12px 0 8px;border:1px solid var(--border)}
+.gbar i{display:block}
+.glegend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--muted);margin-bottom:8px}
+.glegend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;border:1px solid rgba(255,255,255,.25)}
+.gmeta{font-size:12px;color:var(--caramel);font-weight:700;margin-bottom:4px}
+.gtext{font-size:13px;color:var(--crema);opacity:.9;line-height:1.4}
+/* nivel de cafeína */
+.large{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+@keyframes tpulse{to{transform:scale(1.06);box-shadow:0 0 18px #ff2a2a}}
+
+/* categorías de la entrada */
+.src-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.src-btn{--c1:#E8962A;--c2:#B85C0A;--bd:rgba(232,150,42,.45);--bg:rgba(232,150,42,.10);--sh:rgba(232,150,42,.45);display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px 10px;border-radius:16px;border:2px solid var(--bd);background:var(--bg);color:var(--crema);font-weight:700;font-size:13px;transition:transform .15s,box-shadow .2s,background .2s}
+.src-btn .si{font-size:26px;line-height:1.1}
+.src-btn.s-cafe{--c1:#9B5DE5;--c2:#6D3FB5;--bd:rgba(155,93,229,.5);--bg:rgba(155,93,229,.12);--sh:rgba(155,93,229,.5)}
+.src-btn.s-soc{--c1:#2FB67C;--c2:#14805A;--bd:rgba(47,182,124,.5);--bg:rgba(47,182,124,.12);--sh:rgba(47,182,124,.5)}
+.src-btn.active{background:linear-gradient(160deg,var(--c1),var(--c2));border-color:rgba(255,255,255,.35);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 6px 18px var(--sh);transform:translateY(-2px)}
+/* cerrar jackpot */
+.jp-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:5;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #fff;color:#fff;font-size:20px;display:grid;place-items:center}
+/* popup de bolsa */
+.bd-photo{display:block;width:100%;max-height:260px;object-fit:contain;background:#0e0c0a;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
+.bd-sec{font-weight:800;font-size:15px;margin:16px 0 8px}
+.bd-best{background:linear-gradient(160deg,#2a2118,#1E1B18);border:1px solid var(--caramel);border-radius:14px;padding:12px}
+.bd-bhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
+/* widget de cafeína */
+.large>div:first-child{flex:none}
+.tier{display:none;flex-direction:column;gap:5px;flex:1;max-width:250px;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 10px;text-align:left;color:var(--crema);cursor:pointer}
+.tr1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tbadge{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.4px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.tbadge.pulse{animation:tpulse .6s ease-in-out infinite alternate}
+.tmg{font-size:13px;font-weight:800;white-space:nowrap}
+.tmeter{position:relative;height:10px;margin:3px 0}
+.tm-bg,.tm-fill{position:absolute;inset:0;display:flex;gap:1px;border-radius:5px;overflow:hidden}
+.tm-bg{opacity:.28}
+
+.tm-bg i,.tm-fill i{display:block;height:100%}
+.tm-pin{position:absolute;top:-3px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.6)}
+.tier.anim .tm-fill,.anim-in .tm-fill{animation:tfill .9s cubic-bezier(.2,.8,.2,1) both}
+.tier.anim .tm-pin,.anim-in .tm-pin{animation:tpin .9s cubic-bezier(.2,.8,.2,1) both}
+.tnext{font-size:10.5px;color:var(--muted)}
+@keyframes tfill{from{clip-path:inset(0 100% 0 0)}}
+@keyframes tpin{from{left:0}}
+.dchart{display:flex;align-items:flex-end;gap:8px;height:140px;margin:16px 0 4px}
+.dbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+.dbar i{display:block;width:100%;border-radius:6px 6px 2px 2px;background:var(--caramel);animation:dgrow .7s cubic-bezier(.2,.8,.2,1) both}
+.dbar.today i{background:var(--amber)}
+.dbar span{font-size:10px;color:var(--muted);text-transform:capitalize}.dbar em{font-style:normal;font-size:10px;font-weight:700;min-height:12px}
+@keyframes dgrow{from{height:0!important}}
+.trow{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;font-size:14px;border:1px solid transparent}
+.trow b{width:12px;height:12px;border-radius:50%;flex:none}
+.trow small{color:var(--muted);margin-left:auto}
+.trow.on{background:var(--card);border-color:var(--caramel)}
+.trow em{font-style:normal;font-size:10px;color:var(--amber);font-weight:800}
+
+/* pestañas de herramientas */
+.tool-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tool-btn{--c1:#E8962A;--c2:#B85C0A;--bd:rgba(232,150,42,.4);--bg:rgba(232,150,42,.09);display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);color:var(--crema);font-weight:700;font-size:13px;transition:background .2s,box-shadow .2s}
+.tool-btn span{font-size:16px;line-height:1}
+.tool-btn.t-guide{--c1:#4F7BFF;--c2:#3552C9;--bd:rgba(79,123,255,.45);--bg:rgba(79,123,255,.10)}
+.tool-btn.t-wheel{--c1:#F0566A;--c2:#C5283D;--bd:rgba(240,86,106,.45);--bg:rgba(240,86,106,.10)}
+.tool-btn.active{background:linear-gradient(160deg,var(--c1),var(--c2));border-color:rgba(255,255,255,.28);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 3px 10px rgba(0,0,0,.35)}
+/* popup de bolsa: lista */
+.bd-photo{max-height:190px;margin-bottom:10px}
+.bd-list{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:6px}
+.bd-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:10px 14px;border-bottom:.5px solid var(--border);font-size:14px}
+.bd-row:last-child{border-bottom:0}
+.bd-row span{color:var(--muted);flex:none}
+.bd-row b{font-weight:600;text-align:right}
+/* campos dentro de tarjetas: más oscuros que el fondo */
+.card input{background:#0D0B09;border:1px solid #3d362e}
+.card input:focus{border-color:var(--caramel)}
+/* La página siempre es desplazable, aunque sea por 2 px. Con poco contenido (Ratio) iOS dejaba de tratarla como desplazable,
+   cambiaba el alto de la ventana y levantaba la barra inferior y el botón "+". */
+body{min-height:calc(100vh + 2px)}
+/* diálogo rápido (recomprar) */
+.dlg{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
+.dlg.on{opacity:1;visibility:visible;transition:opacity .2s}
+.dlg-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;transform:scale(.94);transition:transform .25s cubic-bezier(.2,1.2,.4,1)}
+.dlg.on .dlg-card{transform:none}
+.dlg-card input{background:#0D0B09;border:1px solid #3d362e}
+.dlg-card input:focus{border-color:var(--caramel)}
+.dlg-sub{color:var(--muted);font-size:13px;margin:4px 0 14px}
+.dlg-note{color:var(--caramel);font-size:12px;margin:2px 0 12px}
+.dlg-btns{display:flex;gap:10px}
+.dlg-btns button{flex:1;margin:0;padding:13px}
+/* barra "Deshacer" */
+#undo-bar{position:fixed;left:16px;right:88px;bottom:calc(84px + var(--safe-bottom));z-index:96;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 10px 10px 16px;border-radius:14px;background:rgba(48,43,38,.97);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:14px;font-weight:600;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .25s,visibility 0s .25s}
+#undo-bar.on{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s}
+#undo-bar button{border:0;background:none;color:var(--amber);font-weight:800;font-size:13px;letter-spacing:.5px;padding:6px 8px}
+#undo-bar::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--amber);transform-origin:left}
+#undo-bar.on::after{animation:ubar 6s linear forwards}
+@keyframes ubar{to{transform:scaleX(0)}}
+/* botón Nuevo paquete */
+.btn-newbag{position:absolute;right:0;bottom:0;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;height:52px;padding:6px 14px 6px 10px;border:0;border-radius:14px;background:linear-gradient(160deg,#F2A93B,#D9780F);color:#2a1a0a;font-weight:800;font-size:12px;line-height:1.15;text-align:left;box-shadow:0 4px 14px rgba(224,159,62,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-newbag svg{width:34px;height:34px;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+</style>
+</head>
+<body>
+  <div id="splash" aria-hidden="true"><img src="splash.png" alt="" /></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="h-mini" id="hmini">SkibidiCoffee</div>
+    <button class="h-menu" onclick="openSettings()" aria-label="Ajustes"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </header>
+  <div class="large"><div><div class="lt" id="lt">Diario</div><div class="ls">67 SOFTWARE • EST. 2026</div></div><div class="tier" id="tier" role="button" tabindex="0" onclick="showTiers()" aria-label="Cafeína semanal"></div></div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-container">
+
+    <!-- 1. PESTAÑA DIARIO -->
+    <section id="tab-Diario" class="tab-section active">
+      <div id="logs-container"></div>
+    </section>
+
+    <!-- 2. PESTAÑA INVENTARIO -->
+    <section id="tab-Inventario" class="tab-section">
+      <div style="position:relative; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+        <button id="toggle-archived-btn" class="btn-outline" onclick="toggleShowArchived()">Ver Agotados</button>
+        <button class="btn-newbag" onclick="openBeanModal()" aria-label="Nuevo paquete">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <path d="M10 14h20l1.8 20.2a2.4 2.4 0 0 1-2.4 2.6H10.6a2.4 2.4 0 0 1-2.4-2.6z" fill="#D2A36F" stroke="#3b2a20" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M9.4 14L8.6 8.5h22.8L30.6 14z" fill="#B98650" stroke="#3b2a20" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M9.4 11h21.2" stroke="#3b2a20" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.6 2.2"/>
+            <rect x="14.5" y="20" width="11" height="10" rx="1.6" fill="#F5EBE6" stroke="#3b2a20" stroke-width="1.3"/>
+            <ellipse cx="20" cy="25" rx="2.6" ry="3.6" transform="rotate(28 20 25)" fill="#6F4A2F"/>
+            <path d="M18.6 27.2c1.6-1 1.4-3.3 2.8-4.6" stroke="#F5EBE6" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <circle cx="32.5" cy="8" r="5.6" fill="#fff" stroke="#3b2a20" stroke-width="1.5"/>
+            <path d="M32.5 5.2v5.6M29.7 8h5.6" stroke="#D9780F" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Nuevo<br>paquete</span>
+        </button>
+      </div>
+      <div class="sort-row" id="sort-row"></div>
+      <div id="beans-container"></div>
+    </section>
+
+    <!-- 3. PESTAÑA HERRAMIENTAS -->
+    <section id="tab-Herramientas" class="tab-section">
+      <div class="tool-tabs">
+        <button class="tool-btn t-ratio active" id="tool-btn-ratio" onclick="setTool('ratio')"><span>🧮</span>Ratio</button>
+        <button class="tool-btn t-guide" id="tool-btn-guide" onclick="setTool('guide')"><span>📖</span>Guía</button>
+        <button class="tool-btn t-wheel" id="tool-btn-wheel" onclick="setTool('wheel')"><span>🎰</span>Ruleta</button>
+      </div>
+      <div id="tool-ratio"><div class="card">
+        <div class="style-title" style="margin-bottom:4px;">Calculadora de Ratio</div>
+        <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">Completá 2 campos y el tercero se calcula solo (queda resaltado).</p>
+        <div class="form-group"><label>Café (g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-coffee" placeholder="Ej: 20" oninput="calcInput('coffee')" /></div>
+        <div class="form-group"><label>Agua (ml / g)</label><input min="0" data-max="5000" type="number" inputmode="decimal" step="any" id="calc-water" placeholder="Ej: 300" oninput="calcInput('water')" /></div>
+        <div class="form-group"><label>Ratio (1 : X)</label><input min="0" data-max="100" type="number" inputmode="decimal" step="any" id="calc-ratio" placeholder="Ej: 15" oninput="calcInput('ratio')" /></div>
+        <div class="result-box"><div class="result-label">RESULTADO</div><div class="result-value" id="calc-result-text">—</div></div>
+        <button class="btn-submit" id="calc-prep" style="display:none; margin-top:12px;" onclick="prepFromCalc()">☕ Preparar café con este ratio</button>
+        <button class="btn-outline" style="margin-top:10px;" onclick="calcReset()">Limpiar</button>
+      </div></div>
+      <div id="tool-guide" style="display:none;"></div>
+      <div id="tool-wheel" style="display:none;">
+        <div class="card wheel-card">
+          <button class="snd" id="snd-btn" onclick="toggleSound()" aria-label="Sonido">🔊</button>
+          <div class="style-title" style="margin-bottom:2px;">¿No sabés qué tomar?</div>
+          <div class="wheel-sub">¡Gira la ruleta!</div>
+          <div class="wheel-wrap" id="wheel-wrap">
+            <svg id="wheel-disc" viewBox="0 0 320 320"></svg>
+            <svg id="wheel-frame" viewBox="0 0 320 320"></svg>
+          </div>
+          <button class="btn-submit spin-btn" id="spin-btn" onclick="spinWheel()">🎰 ¡GIRAR!</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. PESTAÑA STATS -->
+    <section id="tab-Stats" class="tab-section">
+      <div class="segmented">
+        <button class="seg-btn" id="stat-filter-Semana" onclick="setStatsFilter('Semana')">Semana</button>
+        <button class="seg-btn active" id="stat-filter-Mes" onclick="setStatsFilter('Mes')">Mes</button>
+        <button class="seg-btn" id="stat-filter-Histórico" onclick="setStatsFilter('Histórico')">Histórico</button>
+      </div>
+
+      <div class="card">
+        <div class="style-title">Consumo</div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-label">Tazas Totales</div>
+            <div class="stat-val" id="stat-total-cups">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Cafeína Total</div>
+            <div class="stat-val" id="stat-total-caffeine">0 mg</div>
+          </div>
+        </div>
+        <div class="stat-box" style="margin-top:10px;">
+          <div class="stat-label">Bebida Más Tomada</div>
+          <div class="stat-val" id="stat-top-style" style="color:var(--amber);">-</div>
+        </div>
+        <div id="stat-breakdown" style="margin-top:14px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="style-title">Gastos</div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-label">Gasto en Granos</div>
+            <div class="stat-val" id="stat-spent-beans">$0.00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">En Cafeterías</div>
+            <div class="stat-val" id="stat-spent-cafes">$0.00</div>
+          </div>
+        </div>
+        <div class="result-box" style="margin-top:10px;">
+          <div class="result-label" id="stat-total-label">GASTO TOTAL ACUMULADO (MES)</div>
+          <div class="result-value" id="stat-spent-total">$0.00 USD</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTÓN FLOTANTE (FAB) EN LAS 4 CATEGORÍAS -->
+  <button class="fab" onclick="tap();openEntryModal()" aria-label="Nueva entrada"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14"/></svg></button>
+
+  <!-- BARRA INFERIOR -->
+  <nav class="tab-bar">
+    <button class="tab-item active" id="nav-Diario" onclick="switchTab('Diario')">
+      <svg class="ti" viewBox="0 0 24 24"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M8.5 16.5H19"/></svg>
+      <span>Diario</span>
+    </button>
+    <button class="tab-item" id="nav-Inventario" onclick="switchTab('Inventario')">
+      <svg class="ti" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="5.6" ry="8.6" transform="rotate(35 12 12)"/><path d="M8.2 16c3.6-.8 4-5.2 7.6-8"/></svg>
+      <span>Inventario</span>
+    </button>
+    <button class="tab-item" id="nav-Herramientas" onclick="switchTab('Herramientas')">
+      <svg class="ti" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+      <span>Herramientas</span>
+    </button>
+    <button class="tab-item" id="nav-Stats" onclick="switchTab('Stats')">
+      <svg class="ti" viewBox="0 0 24 24"><path d="M5 20v-8M12 20V5M19 20v-5"/></svg>
+      <span>Stats</span>
+    </button>
+  </nav>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="ic-cup" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 17h22v7a11 8 0 0 1-22 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M31 19h2.5a3.2 3.2 0 0 1 0 6.4H30" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="17" rx="11" ry="2.6" fill="#6F4A2F" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="16.7" rx="7" ry="1.2" fill="#D4A373"/></symbol>
+<symbol id="ic-shot" viewBox="0 0 40 40"><path d="M11 11h18l-2.4 21a3 2.4 0 0 1-3 2.6H16.4a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".45" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.4 16h15.2l-1 16a2 1.6 0 0 1-2 1.8H15.4a2 1.6 0 0 1-2-1.8z" fill="#6F4A2F"/><path d="M11.8 11.6h16.4l-.3 4.4H12.1z" fill="#D4A373"/></symbol>
+<symbol id="ic-double" viewBox="0 0 40 40"><use href="#ic-shot" x="-4" y="6" width="28" height="28"/><use href="#ic-shot" x="16" y="6" width="28" height="28"/></symbol>
+<symbol id="ic-filter" viewBox="0 0 40 40"><path d="M7 5h26l-7.5 13h-11z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 8h20" stroke="#D4A373" stroke-width="1.6"/><circle cx="20" cy="22.5" r="1.4" fill="#6F4A2F"/><path d="M10 26h20v4a10 6.5 0 0 1-20 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 27.5h2a3 3 0 0 1 0 6h-2.4" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="26" rx="10" ry="2" fill="#6F4A2F" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+<symbol id="ic-cap" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 19h26l-2.6 11a8.4 5 0 0 1-20.8 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M33 21h1.5a3.2 3.2 0 0 1 0 6.4H31" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 19a12 9 0 0 1 24 0z" fill="#F5EBE6" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><circle cx="15" cy="16" r="1.1" fill="#6F4A2F"/><circle cx="20" cy="13.5" r="1.1" fill="#6F4A2F"/><circle cx="25" cy="16" r="1.1" fill="#6F4A2F"/></symbol>
+<symbol id="ic-cort" viewBox="0 0 40 40"><path d="M11 11h18l-2.4 21a3 2.4 0 0 1-3 2.6H16.4a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".45" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.6 21h14.8l-1 11a2 1.6 0 0 1-2 1.8H15.6a2 1.6 0 0 1-2-1.8z" fill="#6F4A2F"/><path d="M12 14h16l-.5 7h-15z" fill="#F5EBE6"/></symbol>
+<symbol id="ic-latte" viewBox="0 0 40 40"><path d="M10 4h20l-2.6 29a3 2.4 0 0 1-3 2.6H15.6a3 2.4 0 0 1-3-2.6z" fill="#fff" fill-opacity=".4" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12.4 23h15.2l-1 10.4a2 1.6 0 0 1-2 1.6H15.4a2 1.6 0 0 1-2-1.6z" fill="#6F4A2F"/><path d="M11.9 14h16.2l-.5 9H12.4z" fill="#D4A373"/><path d="M11.1 6h17.8l-.8 8H11.9z" fill="#F5EBE6"/></symbol>
+<symbol id="ic-fw" viewBox="0 0 40 40"><ellipse cx="20" cy="33" rx="15" ry="3" fill="#e8dccf" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 15h28l-3 14a9 6 0 0 1-22 0z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M34 18h1.5a3.2 3.2 0 0 1 0 6.4H32" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="15" rx="14" ry="5" fill="#C28A55" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="17.2" rx="6.2" ry="1.7" fill="#fff"/><ellipse cx="20" cy="14.9" rx="4.8" ry="1.5" fill="#fff"/><ellipse cx="20" cy="12.7" rx="3.3" ry="1.2" fill="#fff"/><path d="M20 18.6V11" stroke="#C28A55" stroke-width=".9" stroke-linecap="round"/></symbol>
+<symbol id="ic-amer" viewBox="0 0 40 40"><path d="M7 13h23v14a8 8 0 0 1-8 8h-7a8 8 0 0 1-8-8z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 16h2.5a4.2 4.2 0 0 1 0 8.4H29.5" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="13" rx="11.5" ry="2.8" fill="#4a2f1c" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="12.7" rx="8.5" ry="1.3" fill="#C28A55"/><path d="M13 8c-2-2 2-3 0-6M22 8c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="ic-press" viewBox="0 0 40 40"><rect x="11" y="12" width="18" height="22" rx="2" fill="#fff" fill-opacity=".45" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><rect x="12.2" y="21" width="15.6" height="12.8" fill="#6F4A2F"/><path d="M29 16h3.5a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H29" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><rect x="10" y="10" width="20" height="3" rx="1.5" fill="#d9d9d9" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 10V5" stroke="#3b2a20" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="4" r="2.6" fill="#3b2a20"/><rect x="10" y="34" width="20" height="3" rx="1.5" fill="#3b2a20"/></symbol>
+<symbol id="ic-moka" viewBox="0 0 40 40"><path d="M30 14h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4" fill="none" stroke="#3b2a20" stroke-width="2.4" stroke-linecap="round"/><path d="M10 36l2-10h16l2 10z" fill="#B8B8B8" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><rect x="12" y="24" width="16" height="3" fill="#8a8a8a" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 24l-2-12h20l-2 12z" fill="#D0D0D0" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 12l2-4h16l2 4z" fill="#9a9a9a" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><circle cx="20" cy="6" r="2" fill="#3b2a20"/><path d="M10 12l-3-1.5 3 3.5z" fill="#D0D0D0" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+<symbol id="ic-milk" viewBox="0 0 40 40"><path d="M7 13h23v14a8 8 0 0 1-8 8h-7a8 8 0 0 1-8-8z" fill="#fff" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 16h2.5a4.2 4.2 0 0 1 0 8.4H29.5" fill="none" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="18.5" cy="13" rx="11.5" ry="2.8" fill="#C9A27A" stroke="#3b2a20" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 13c3-1.4 5 1.2 8-.2s3-.6 5.5 0" fill="none" stroke="#F5EBE6" stroke-width="1.4" stroke-linecap="round"/><path d="M13 8c-2-2 2-3 0-6M22 8c-2-2 2-3 0-6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+</defs></svg>
+<div id="jackpot" onclick="if(event.target===this)closeJackpot()">
+  <button class="jp-x" onclick="closeJackpot()" aria-label="Cerrar">✕</button>
+  <div class="jp-flash"></div><div class="jp-beams"></div><canvas id="jp-canvas"></canvas>
+  <div class="jp-card">
+    <div class="jp-title">¡JACKPOT!</div>
+    <svg class="jp-ic" viewBox="0 0 40 40"><use id="jp-use" href="#ic-shot"/></svg>
+    <div class="jp-name" id="jp-name"></div>
+    <div class="jp-sub">¡Hoy toca esto! ☕</div>
+    <button class="btn-submit" onclick="useJackpot()">Preparar este café</button>
+    <button class="btn-outline" style="margin-top:10px;width:100%;color:#fff;border-color:#fff;" onclick="closeJackpot();setTimeout(spinWheel,350)">Girar de nuevo</button>
+  </div>
+</div>
+<div id="toast"></div>
+  <div id="undo-bar" role="status"><span id="undo-msg"></span><button onclick="runUndo()">DESHACER</button></div><div id="asb"></div>
+  <label style="position:fixed;left:-99px;opacity:0;pointer-events:none"><input type="checkbox" switch id="hp"></label>
+
+  <!-- ==================== MODAL: NUEVA ENTRADA ==================== -->
+  <div id="entry-modal" class="modal-overlay">
+    <div class="modal-header">
+      <div class="style-title" id="entry-title">Nueva Entrada de Café</div>
+      <button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeEntryModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="src-tabs">
+        <button class="src-btn s-casa active" id="src-Casa" onclick="setEntrySource('Casa')"><span class="si">🏠</span>Casa</button>
+        <button class="src-btn s-cafe" id="src-Cafetería" onclick="setEntrySource('Cafetería')"><span class="si">☕</span>Cafetería</button>
+        <button class="src-btn s-soc" id="src-Social" onclick="setEntrySource('Social')"><span class="si">👥</span>Social</button>
+      </div>
+
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="entry-date" />
+      </div>
+
+      <!-- SECCIÓN CASA -->
+      <div id="fields-Casa">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <label style="margin:0;">Granos del Inventario</label>
+          <button class="icon-btn" style="color:var(--amber); font-size:13px; font-weight:700;" onclick="openBeanModal()">+ Agregar otro</button>
+        </div>
+        <div id="entry-beans-chips" class="chips-scroll"></div>
+
+        <label>Método</label>
+        <div id="entry-method-chips" class="chips-scroll"></div>
+
+        <div class="form-group">
+          <label>Ajuste de Molino</label>
+          <input type="text" id="entry-grind" placeholder="Ej: 0.8.0 / 40" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dosis (g)</label>
+            <input min="0" data-max="5000" type="number" step="0.1" id="entry-dose" placeholder="Ej: 18" oninput="updateLiveEntryPreview()" />
+          </div>
+          <div class="form-group">
+            <label id="yield-label">Rendimiento (g)</label>
+            <input min="0" data-max="5000" type="number" step="0.5" id="entry-yield" placeholder="Ej: 36" oninput="updateLiveEntryPreview()" />
+          </div>
+          <div class="form-group" id="grp-time">
+            <label>Tiempo (s)</label>
+            <input type="number" id="entry-time" placeholder="Opc." />
+          </div>
+          <div class="form-group" id="grp-ratio" style="display:none;">
+            <label>Ratio (1 : X)</label>
+            <input min="0" data-max="100" type="number" step="0.1" inputmode="decimal" id="entry-ratio" placeholder="Ej: 15" />
+          </div>
+        </div>
+        <div id="live-entry-preview" style="color:var(--amber); font-size:12px; font-weight:600; margin-bottom:10px;">
+          Ratio: 1:2.5 • Cafeína: 173 mg
+        </div>
+      </div>
+
+      <!-- SECCIÓN CAFETERÍA -->
+      <div id="fields-Cafetería" style="display:none;">
+        <div class="form-group">
+          <label>Nombre de la Cafetería</label>
+          <input type="text" id="entry-shop-name" placeholder="Ej: Edison Café" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lugar / Ciudad</label>
+            <input type="text" id="entry-shop-loc" placeholder="Ej: Santa Fe" />
+          </div>
+          <div class="form-group">
+            <label>Costo (USD)</label>
+            <input min="0" data-max="500" type="number" step="0.1" id="entry-shop-cost" placeholder="Ej: 3.50" />
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN SOCIAL -->
+      <div id="fields-Social" style="display:none;">
+        <div class="form-group">
+          <label>Anfitrión / Casa de quién</label>
+          <input type="text" id="entry-host" placeholder="Nombre del amigo o familiar" />
+        </div>
+        <div class="form-group">
+          <label>Método que usaron</label>
+          <div id="entry-social-chips" class="chips-scroll"></div>
+        </div>
+      </div>
+
+      <!-- CAMPOS COMUNES -->
+      <label id="style-label" style="margin-top:6px;">Estilo de Bebida</label>
+      <div id="entry-style-chips" class="chips-scroll"></div>
+
+      <div class="rating-box"><div class="rv">Calificación <b id="entry-rating-val">—</b></div><div class="stars" id="stars"><i id="starfill">★★★★★</i>★★★★★</div></div>
+
+      <label>Perfil y Etiquetas</label>
+      <div id="entry-tags-chips" class="tags-wrap" style="margin-bottom:10px;"></div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input type="text" id="new-tag-input" placeholder="Nuevo tag (ej: Avellana)" style="padding:7px 10px; font-size:14px;" />
+        <button class="btn-outline" onclick="addCustomTag()">+ Tag</button>
+      </div>
+
+      <div class="form-group">
+        <label>Notas</label>
+        <input type="text" id="entry-notes" placeholder="Observaciones de extracción o sabor..." />
+      </div>
+
+      <label class="photo-label-btn">
+        <span id="cup-photo-status">📷 Adjuntar foto de la taza (Opcional)</span>
+        <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event, 'cup')" />
+      </label>
+
+      <button class="btn-submit" id="entry-save" onclick="saveEntry()">Guardar en el Diario</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: NUEVO GRANO ==================== -->
+  <div id="bean-modal" class="modal-overlay">
+    <div class="modal-header">
+      <div class="style-title" id="bean-title">Registrar Paquete de Café</div>
+      <button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeBeanModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="photo-label-btn" style="padding:22px;">
+        <span id="bean-photo-status">📸 Fotografiar Etiqueta / Paquete</span>
+        <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event, 'bean')" />
+      </label>
+
+      <div class="form-group">
+        <label>Nombre del Café / Varietal</label>
+        <input type="text" id="bean-name" placeholder="Ej: Bourbon Rosado" />
+      </div>
+      <div class="form-group">
+        <label>Tostador</label>
+        <input type="text" id="bean-roaster" placeholder="Ej: Iris / Puerto Blest" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Origen</label>
+          <input type="text" id="bean-origin" placeholder="Ej: Colombia" />
+        </div>
+        
+      </div>
+      <div class="form-group">
+        <label>Tueste: <b id="roast-name" style="color:var(--amber)">Medio</b></label>
+        <input type="range" id="bean-roast" class="roast" min="0" max="3" step="1" value="1" oninput="roastUI()" />
+        <div class="roast-labels"><span>Ligero</span><span class="on">Medio</span><span>Medio-oscuro</span><span>Oscuro</span></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Peso Paquete (g)</label>
+          <input min="0" data-max="5000" type="number" id="bean-weight" value="250" />
+        </div>
+        <div class="form-group">
+          <label>Precio Total (USD)</label>
+          <input min="0" data-max="500" type="number" step="0.5" id="bean-price" placeholder="Ej: 14.00" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha de compra</label>
+          <input type="date" id="bean-date" />
+        </div>
+        <div class="form-group" id="bean-rem-group" style="display:none;">
+          <label>Restante (g)</label>
+          <input min="0" data-max="5000" type="number" step="any" inputmode="decimal" id="bean-remaining" />
+        </div>
+      </div>
+      <div class="rating-box"><div class="rv">Calificación del café <b id="bean-rating-val">—</b></div><div class="stars" id="bean-stars"><i id="bean-starfill">★★★★★</i>★★★★★</div></div>
+
+      <button class="btn-submit" id="bean-save" onclick="saveBean()">Guardar en Inventario</button>
+    </div>
+  </div>
+
+  <div id="rp" class="dlg" onclick="if(event.target===this)closeRepurchase()">
+    <div class="dlg-card">
+      <div class="style-title" id="rp-title">Recomprar</div>
+      <p class="dlg-sub" id="rp-sub"></p>
+      <div class="form-group"><label>Fecha de compra</label><input type="date" id="rp-date" /></div>
+      <div class="form-group"><label>Precio (USD)</label><input min="0" data-max="500" type="number" step="any" inputmode="decimal" id="rp-price" /></div>
+      <div class="dlg-note" id="rp-note"></div>
+      <div class="dlg-btns"><button class="btn-outline" onclick="closeRepurchase()">Cancelar</button><button class="btn-submit" style="background:#30A46C; color:#fff;" onclick="confirmRepurchase()">Recomprar</button></div>
+    </div>
+  </div>
+  <div id="bean-detail-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title" id="bd-title">Paquete</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeBeanDetail()">✕</button></div>
+    <div class="modal-body" id="bd-body"></div>
+  </div>
+  <div id="tier-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title">Cafeína semanal</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="$('tier-modal').classList.remove('open')">✕</button></div>
+    <div class="modal-body anim-in" id="tier-body"></div>
+  </div>
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-header"><div class="style-title">Ajustes</div><button class="icon-btn" style="font-size:22px; color:var(--crema);" onclick="closeSettings()">✕</button></div>
+    <div class="modal-body">
+      <label>Mis métodos de preparación</label>
+      <p class="set-help">Marcá los que usás. Solo esos aparecen al crear una entrada.</p>
+      <div id="methods-list" class="check-list"></div>
+      <div style="display:flex; gap:8px; margin-bottom:22px;"><input type="text" id="new-method-input" placeholder="Otro método (ej: Sifón)" /><button class="btn-outline" onclick="addCustomMethod()">+ Agregar</button></div>
+      <label>Datos</label>
+      <div class="check-list">
+        <button class="set-row" onclick="exportCSV()"><span>Exportar diario (CSV)</span><span>›</span></button>
+        <button class="set-row" onclick="exportBackupJSON()"><span>Guardar backup (JSON)</span><span>›</span></button>
+        <label class="set-row"><span>Restaurar backup (.json)</span><span>›</span><input type="file" accept=".json" hidden onchange="importBackupJSON(event)" /></label>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- CONSTANTES Y ESTADO ---
+    const DRINK_STYLES = ['Flat White', 'Doble Shot', 'Shot', 'Cortado', 'Americano', 'Latte', 'Cappuccino', 'Filtrado'];
+    const STANDARD_CAFFEINE = {
+      'Shot': 80, 'Doble Shot': 160, 'Flat White': 150, 'Cortado': 140,
+      'Latte': 150, 'Cappuccino': 150, 'Americano': 150, 'Filtrado': 120
+    };
+
+    let beans = [];
+    let logs = [];
+    let tags = ['Brillante', 'Frutal', 'Chocolatoso', 'Balanceado', 'Dulce', 'Cuerpo sedoso', 'Ácido', 'Amargo'];
+
+    let entrySource = 'Casa';
+    let selectedBeanId = '';
+    let selectedMethod = '';
+    let selectedStyle = '';
+    let currentRating = 0;
+    let beanRating = 0;
+    let selectedTags = [];
+    let tempCupPhoto = null;
+    let tempBeanPhoto = null;
+
+    let showArchivedBeans = false;
+    let statsFilter = 'Mes';
+
+    // --- INICIALIZACIÓN ---
+    function initApp() {
+      const savedBeans = localStorage.getItem('skibidi_beans');
+      const savedLogs = localStorage.getItem('skibidi_logs');
+      const savedTags = localStorage.getItem('skibidi_tags');
+
+      if (savedBeans) {
+        beans = JSON.parse(savedBeans);
+        beans.forEach(b => { if (b.remaining === undefined) b.remaining = b.weight; });
+      } else {
+        beans = [];
+      }
+
+      if (savedLogs) {
+        logs = JSON.parse(savedLogs);
+        let logsChanged = false;
+        logs = logs.map(l => {
+          if (l.method !== 'Picopresso') return l;
+          logsChanged = true;
+          return { ...l, method: 'Espresso' };
+        });
+        if (logsChanged) localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      } else {
+        logs = [];
+      }
+
+      if (savedTags) tags = JSON.parse(savedTags);
+
+      
+
+      renderAll();
+    }
+
+    function renderAll() {
+      renderLogs();
+      renderBeans();
+      renderStats();
+      updateToolsCalc();
+    }
+
+    // --- NAVEGACIÓN ---
+    function switchTab(tabName) {
+      const wasStats = $('tier').style.display === 'flex';
+      ['Diario', 'Inventario', 'Herramientas', 'Stats'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('active', t === tabName);
+        document.getElementById('nav-' + t).classList.toggle('active', t === tabName);
+      });
+      if (tabName === 'Stats') renderStats();
+      $('lt').textContent = tabName;
+      if (tabName === 'Stats' && !wasStats) playTier();
+      $('tier').style.display = tabName === 'Stats' ? 'flex' : 'none';
+      scrollTo(0, 0); tap();
+    }
+
+    // --- RENDER DIARIO ---
+    function renderLogs() {
+      const container = document.getElementById('logs-container');
+      if (logs.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--muted); margin-top:40px;">No hay cafés registrados. Tocá el botón "+" para anotar el primero.</p>`;
+        return;
+      }
+
+      container.innerHTML = logs.map(log => {
+        const badgeClass = log.source === 'Cafetería' ? 'cafeteria' : (log.source === 'Social' ? 'social' : '');
+        const subText = log.source === 'Casa'
+          ? `${log.beanName} • ${log.method}`
+          : log.source === 'Cafetería'
+            ? `📍 ${log.shopName} ${log.shopLocation ? '(' + log.shopLocation + ')' : ''}`
+            : `🏠 En lo de ${log.hostName} • ${log.method}`;
+
+        const unit = isWater(log.method) ? 'ml' : 'g';
+        const ratio = log.dose > 0 ? ratioFmt(log.method, log.dose, log.yieldAmount) : '0';
+
+        const metricsHtml = log.source === 'Casa' ? `
+          <div class="metrics-strip">
+            <span class="metric-pill">⚙️ ${log.grind}</span>
+            <span class="metric-pill">⚖️ ${log.dose}g ➔ ${log.yieldAmount}${unit}</span>
+            ${log.brewTime ? `<span class="metric-pill">⏱️ ${log.brewTime}s</span>` : ''}
+            <span class="metric-pill">1:${ratio}</span>
+          </div>
+        ` : '';
+
+        const photoHtml = log.photo ? `<img src="${log.photo}" class="cup-img" />` : drinkTile(log.drinkStyle, log.method);
+        const tagsHtml = (log.tags && log.tags.length)
+          ? `<div class="tags-wrap">${log.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}</div>`
+          : '';
+        const notesHtml = log.notes ? `<div class="notes-text">"${log.notes}"</div>` : '';
+
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="badge-row">
+                <span class="badge ${badgeClass}">${log.source}</span>
+                <span class="style-title">${logTitle(log)}</span>
+              </div>
+              <button class="icon-btn" onclick="deleteLog('${log.id}')">🗑️</button>
+            </div>
+            <div class="card-sub">${subText}</div>
+            ${metricsHtml}
+            ${photoHtml}
+            ${tagsHtml}
+            ${notesHtml}
+            <div class="card-footer">
+              <span class="stars-display">${log.rating ? '⭐ ' + Number(log.rating).toFixed(1) : ''}</span>
+              <div style="display:flex; gap:10px;">
+                <span>⚡ ${log.caffeineMg} mg</span>
+                ${log.costUSD > 0 ? `<span>💵 $${Number(log.costUSD).toFixed(2)}</span>` : ''}
+                <span>${new Date(log.date).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      decorate();
+    }
+
+    function deleteLog(id) {
+      const idx = logs.findIndex(l => l.id === id); if (idx < 0) return;
+      const gone = logs[idx], afterId = idx > 0 ? logs[idx - 1].id : null;
+      let returned = 0;
+      if (gone.stockG && gone.beanId) { returned = adjustStock(gone.beanId, gone.stockG); localStorage.setItem('skibidi_beans', JSON.stringify(beans)); }
+      logs = logs.filter(l => l.id !== id);
+      localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      renderAll();
+      showUndo('Entrada eliminada', () => {
+        logs.splice(afterId ? logs.findIndex(l => l.id === afterId) + 1 : 0, 0, gone);
+        if (returned) adjustStock(gone.beanId, -returned);
+        localStorage.setItem('skibidi_logs', JSON.stringify(logs)); localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+        renderAll(); renderEntryChips();
+      });
+    }
+
+    // --- RENDER INVENTARIO ---
+    function renderBeans() {
+      const container = document.getElementById('beans-container');
+      renderSort();
+      const visibleBeans = beans.filter(b => showArchivedBeans ? true : !b.archived).sort(sortBeans);
+
+      if (visibleBeans.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--muted); margin-top:30px;">No hay paquetes en esta vista.</p>`;
+        return;
+      }
+
+      container.innerHTML = visibleBeans.map(b => {
+        const costPerGram = b.weight > 0 ? (b.priceUSD / b.weight).toFixed(3) : 0;
+        const rem = b.remaining ?? b.weight;
+        const pct = b.weight > 0 ? Math.max(0, Math.min(100, rem / b.weight * 100)) : 0;
+        const pd = b.purchaseDate ? new Date(b.purchaseDate + 'T12:00:00') : (b.dateAdded ? new Date(b.dateAdded) : null);
+        const dateTxt = pd ? '🗓 ' + pd.toLocaleDateString() : '';
+        const coverHtml = b.photo
+          ? `<img src="${b.photo}" class="bean-cover" />`
+          : `<div class="bean-cover">☕</div>`;
+
+        return `
+          <div class="card" style="${b.archived ? 'opacity:0.55;' : ''} cursor:pointer;" onclick="if(!event.target.closest('button'))openBeanDetail('${b.id}')">
+            <div class="bean-row">
+              ${coverHtml}
+              <div style="flex:1;">
+                <div style="display:flex; justify-content:space-between;">
+                  <div class="style-title" style="font-size:16px;">${b.name}</div>
+                  ${b.archived ? `<span style="color:var(--danger); font-size:10px; font-weight:800;">AGOTADO</span>` : ''}
+                </div>
+                <div class="card-sub" style="margin-bottom:4px;">${b.roaster} • ${b.origin}</div>
+                <div style="color:var(--muted); font-size:12px;">${b.roast !== undefined ? `Tueste: <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${ROAST_C[b.roast]};margin:0 3px 0 2px"></span>${ROAST[b.roast]}` : (b.process ? 'Proceso: ' + b.process : '')}</div>
+                <div style="color:var(--muted); font-size:12px; margin-top:2px;">
+                  📦 <span style="${pct < 20 ? 'color:var(--danger); font-weight:700;' : ''}">${+rem.toFixed(1)}g</span> / ${b.weight}g | 💵 $${b.priceUSD} USD ($${costPerGram}/g)
+                </div>
+                <div class="stock ${pct < 20 ? 'low' : ''}"><i style="width:${pct}%"></i></div>
+                <div style="color:var(--muted); font-size:12px; display:flex; align-items:center; gap:10px;">${dateTxt}${b.rating ? `<span class="stars sm"><i style="width:${b.rating / 5 * 100}%">★★★★★</i>★★★★★</span>` : ''}</div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="editBean('${b.id}')">Editar</button>
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px;" onclick="toggleArchiveBean('${b.id}')">${b.archived ? 'Reactivar' : 'Agotado'}</button>
+                  ${b.archived ? `<button class="btn-outline" style="padding:4px 10px; font-size:11px; background:#30A46C; border-color:#30A46C; color:#fff; font-weight:700;" onclick="openRepurchase('${b.id}')">Recomprar</button>` : ''}
+                  <button class="btn-outline" style="padding:4px 10px; font-size:11px; color:var(--danger); border-color:var(--danger);" onclick="delBean('${b.id}')">Borrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleShowArchived() {
+      showArchivedBeans = !showArchivedBeans;
+      document.getElementById('toggle-archived-btn').innerText = showArchivedBeans ? 'Ocultar Agotados' : 'Ver Agotados';
+      renderBeans();
+    }
+
+    function toggleArchiveBean(id) {
+      beans = beans.map(b => {
+        if (b.id !== id) return b;
+        const arch = !b.archived;
+        return { ...b, archived: arch, autoArchived: false, remaining: arch ? 0 : b.weight };
+      });
+      localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+      renderBeans(); renderEntryChips();
+    }
+
+    // --- COMPRESIÓN DE FOTOS EN CANVAS (PARA NO SATURAR MEMORIA EN iOS) ---
+    function handlePhotoUpload(event, targetType) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 550;
+          let w = img.width;
+          let h = img.height;
+          if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; }
+          else if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+
+          if (targetType === 'cup') {
+            tempCupPhoto = dataUrl;
+            document.getElementById('cup-photo-status').innerText = '✅ Foto de la taza lista';
+          } else {
+            tempBeanPhoto = dataUrl;
+            document.getElementById('bean-photo-status').innerText = '✅ Foto de etiqueta lista';
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- MODAL NUEVA ENTRADA ---
+    function showEntryModal() {
+      tempCupPhoto = null;
+      document.getElementById('cup-photo-status').innerText = '📷 Adjuntar foto de la taza (Opcional)';
+      renderEntryChips();
+      updateLiveEntryPreview();
+      document.getElementById('entry-modal').classList.add('open');
+    }
+
+    function closeEntryModal() {
+      document.getElementById('entry-modal').classList.remove('open');
+    }
+
+    function setEntrySource(src) {
+      entrySource = src;
+      ['Casa', 'Cafetería', 'Social'].forEach(s => {
+        document.getElementById('src-' + s).classList.toggle('active', s === src);
+        document.getElementById('fields-' + s).style.display = (s === src) ? 'block' : 'none';
+      });
+      renderEntryChips();
+    }
+
+    function renderEntryChips() {
+      if (selectedBeanId && !beans.find(b => b.id === selectedBeanId)) selectedBeanId = '';
+      const activeBeans = beans.filter(b => !b.archived || b.id === selectedBeanId);
+
+      document.getElementById('entry-beans-chips').innerHTML = activeBeans.map(b => `
+        <button class="choice-chip ${b.id === selectedBeanId ? 'active' : ''}" onclick="selectEntryBean('${b.id}')">
+          ${b.roaster} - ${b.name} · ${+((b.remaining ?? b.weight)).toFixed(0)}g
+        </button>
+      `).join('');
+
+      document.getElementById('entry-method-chips').innerHTML = entryMethods().map(m => `
+        <button class="choice-chip ${m === selectedMethod ? 'active' : ''}" onclick="selectEntryMethod('${m}')">
+          ${m}
+        </button>
+      `).join('');
+
+      if (selectedStyle && !styleOptions().includes(selectedStyle)) selectedStyle = '';
+      $('style-label').textContent = styleOptional() ? 'Estilo de Bebida (opcional)' : 'Estilo de Bebida';
+      document.getElementById('entry-style-chips').innerHTML = styleOptions().map(st => `
+        <button class="choice-chip ${st === selectedStyle ? 'active' : ''}" onclick="selectEntryStyle('${st}')">
+          ${st}
+        </button>
+      `).join('');
+
+      document.getElementById('entry-tags-chips').innerHTML = tags.map(t => {
+        const active = selectedTags.includes(t);
+        return `<button class="choice-chip ${active ? 'active' : ''}" onclick="toggleEntryTag('${t}')">${t}</button>`;
+      }).join('');
+      syncYield();
+      $('entry-social-chips').innerHTML = allMethods.map(m => `<button class="choice-chip ${m === socialMethod ? 'active' : ''}" onclick="setSocialMethod('${m}')">${m}</button>`).join('');
+    }
+
+    function selectEntryBean(id) { selectedBeanId = (selectedBeanId === id ? '' : id); renderEntryChips(); updateLiveEntryPreview(); }
+    function selectEntryMethod(m) {
+      selectedMethod = m;
+      syncYield();
+      renderEntryChips();
+    }
+    function selectEntryStyle(st) { selectedStyle = (selectedStyle === st && styleOptional()) ? '' : st; renderEntryChips(); }
+    function toggleEntryTag(t) {
+      if (selectedTags.includes(t)) selectedTags = selectedTags.filter(x => x !== t);
+      else selectedTags.push(t);
+      renderEntryChips();
+    }
+
+    function addCustomTag() {
+      const val = document.getElementById('new-tag-input').value.trim();
+      if (val && !tags.includes(val)) {
+        tags.push(val);
+        selectedTags.push(val);
+        localStorage.setItem('skibidi_tags', JSON.stringify(tags));
+        document.getElementById('new-tag-input').value = '';
+        renderEntryChips();
+      }
+    }
+
+    function updateLiveEntryPreview() {
+      const d = parseFloat(document.getElementById('entry-dose').value) || 0;
+      const y = parseFloat(document.getElementById('entry-yield').value) || 0;
+      const ratio = d > 0 ? ratioFmt(effMethod(), d, y) : '0';
+      const caff = Math.round(d * 10);
+      const sb = beans.find(x => x.id === selectedBeanId);
+      document.getElementById('live-entry-preview').innerText = `Ratio automático: 1:${ratio} • Cafeína: ${caff} mg` + (sb ? ` • Quedan ${+((sb.remaining ?? sb.weight)).toFixed(1)} g` : '');
+      const over = !!selectedBeanId && d > availStock(selectedBeanId) + 1e-6;
+      document.getElementById('entry-dose').classList.toggle('err', over);
+      document.getElementById('live-entry-preview').classList.toggle('over', over);
+      if (over) document.getElementById('live-entry-preview').innerText += ' ⚠ La dosis supera el stock';
+    }
+
+    function saveEntry() {
+      let caffeineMg = 150;
+      let costUSD = 0;
+      let beanLabel = '';
+      if (!selectedStyle && !styleOptional()) { toast('Elegí un estilo de bebida.'); return; }
+
+      if (entrySource === 'Casa') {
+        const d = num('entry-dose', 5000);
+        if (!(d > 0)) { toast('Ingresá la dosis de café.'); return; }
+        if (selectedBeanId && d > availStock(selectedBeanId) + 1e-6) {
+          $('entry-dose').classList.add('err');
+          toast(`La dosis (${d} g) supera lo que queda en el paquete (${+availStock(selectedBeanId).toFixed(1)} g).`); return;
+        }
+        caffeineMg = Math.round(d * 10);
+        const b = beans.find(x => x.id === selectedBeanId);
+        if (b) {
+          beanLabel = `${b.roaster} - ${b.name}`;
+          if (b.weight > 0 && b.priceUSD > 0) {
+            costUSD = Number(((b.priceUSD / b.weight) * d).toFixed(2));
+          }
+        } else {
+          beanLabel = 'Grano sin especificar';
+        }
+      } else if (entrySource === 'Cafetería') {
+        const sName = document.getElementById('entry-shop-name').value.trim();
+        if (!sName) { toast('Indicá el nombre de la cafetería.'); return; }
+        caffeineMg = STANDARD_CAFFEINE[selectedStyle] || 150;
+        costUSD = num('entry-shop-cost', 500);
+      } else {
+        caffeineMg = STANDARD_CAFFEINE[selectedStyle] || 140;
+      }
+
+      const newLog = {
+        id: uid('log'),
+        date: dateFromInput(),
+        source: entrySource,
+        beanId: entrySource === 'Casa' ? selectedBeanId : null,
+        beanName: entrySource === 'Casa' ? beanLabel : null,
+        method: entrySource === 'Casa' ? (selectedMethod || 'Sin especificar') : (entrySource === 'Social' ? (socialMethod || 'Sin especificar') : 'Máquina Comercial'),
+        grind: entrySource === 'Casa' ? document.getElementById('entry-grind').value.trim() : null,
+        dose: entrySource === 'Casa' ? num('entry-dose', 5000) : null,
+        yieldAmount: entrySource === 'Casa' ? num('entry-yield', 5000) : null,
+        brewTime: (entrySource === 'Casa' && !useRatio()) ? (parseFloat(document.getElementById('entry-time').value) || null) : null,
+        shopName: entrySource === 'Cafetería' ? document.getElementById('entry-shop-name').value.trim() : null,
+        shopLocation: entrySource === 'Cafetería' ? document.getElementById('entry-shop-loc').value.trim() : null,
+        hostName: entrySource === 'Social' ? (document.getElementById('entry-host').value.trim() || 'Amigo') : null,
+        drinkStyle: selectedStyle,
+        caffeineMg,
+        costUSD,
+        rating: currentRating,
+        tags: [...selectedTags],
+        notes: document.getElementById('entry-notes').value.trim(),
+        photo: tempCupPhoto
+      };
+
+      const oldLog = editingLogId ? logs.find(l => l.id === editingLogId) : null;
+      if (oldLog && oldLog.stockG && oldLog.beanId) adjustStock(oldLog.beanId, oldLog.stockG);
+      if (entrySource === 'Casa' && selectedBeanId && newLog.dose > 0) newLog.stockG = -adjustStock(selectedBeanId, -newLog.dose);
+      localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+      if (oldLog) logs = logs.map(l => l.id === editingLogId ? { ...newLog, id: oldLog.id } : l); else logs.unshift(newLog);
+      localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      document.getElementById('entry-notes').value = '';
+      document.getElementById('entry-shop-cost').value = '';
+      closeEntryModal();
+      editingLogId = null;
+      renderAll();
+    }
+
+    // --- MODAL NUEVO GRANO ---
+    function showBeanModal() {
+      tempBeanPhoto = null;
+      document.getElementById('bean-photo-status').innerText = '📸 Fotografiar Etiqueta / Paquete';
+      document.getElementById('bean-modal').classList.add('open');
+    }
+
+    function closeBeanModal() {
+      document.getElementById('bean-modal').classList.remove('open');
+    }
+
+    function saveBean() {
+      const name = $('bean-name').value.trim(), roaster = $('bean-roaster').value.trim();
+      if (!name || !roaster) { toast('Ingresá nombre y tostador.'); return; }
+      const weight = num('bean-weight', 5000);
+      if (!(weight > 0)) { toast('Ingresá el peso del paquete.'); return; }
+      const d = { name, roaster, origin: $('bean-origin').value.trim() || 'Varios', roast: +$('bean-roast').value,
+        weight, priceUSD: num('bean-price', 500), photo: tempBeanPhoto, purchaseDate: $('bean-date').value || todayStr(), rating: beanRating };
+      if (editingBeanId) {
+        const rv = $('bean-remaining').value;
+        beans = beans.map(b => {
+          if (b.id !== editingBeanId) return b;
+          const rem = rv === '' ? (b.remaining ?? weight) : num('bean-remaining', 5000);
+          return { ...b, ...d, remaining: Math.min(weight, rem) };
+        });
+        logs = logs.map(l => l.beanId === editingBeanId ? { ...l, beanName: `${roaster} - ${name}` } : l);
+        localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      } else {
+        const nb = { id: uid('bean'), ...d, remaining: weight, archived: false, dateAdded: new Date().toISOString() };
+        beans.unshift(nb); selectedBeanId = nb.id;
+      }
+      localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+      editingBeanId = null;
+      closeBeanModal(); renderAll(); renderEntryChips();
+    }
+
+    // --- CALCULADORAS ---
+    function updateToolsCalc() { calcRender(); }
+
+    // --- STATS ---
+    function setStatsFilter(period) {
+      statsFilter = period;
+      ['Semana', 'Mes', 'Histórico'].forEach(p => {
+        document.getElementById('stat-filter-' + p).classList.toggle('active', p === period);
+      });
+      renderStats();
+    }
+
+    function renderStats() {
+      renderTier();
+      const now = new Date();
+      const passFilter = (iso) => {
+        if (statsFilter === 'Histórico') return true;
+        const diffDays = (now - new Date(iso)) / (1000 * 60 * 60 * 24);
+        return statsFilter === 'Semana' ? diffDays <= 7 : diffDays <= 30;
+      };
+
+      const fLogs = logs.filter(l => passFilter(l.date));
+      const fBeans = beans.filter(b => passFilter(b.purchaseDate ? b.purchaseDate + 'T12:00:00' : b.dateAdded));
+
+      const spentBeans = fBeans.reduce((acc, b) => acc + (parseFloat(b.priceUSD) || 0), 0);
+      const spentCafes = fLogs.filter(l => l.source === 'Cafetería').reduce((acc, l) => acc + (parseFloat(l.costUSD) || 0), 0);
+      const totalSpent = spentBeans + spentCafes;
+
+      document.getElementById('stat-spent-beans').innerText = `$${spentBeans.toFixed(2)}`;
+      document.getElementById('stat-spent-cafes').innerText = `$${spentCafes.toFixed(2)}`;
+      document.getElementById('stat-total-label').innerText = `GASTO TOTAL ACUMULADO (${statsFilter.toUpperCase()})`;
+      document.getElementById('stat-spent-total').innerText = `$${totalSpent.toFixed(2)} USD`;
+
+      const totalCups = fLogs.length;
+      const totalCaff = fLogs.reduce((acc, l) => acc + (l.caffeineMg || 0), 0);
+      document.getElementById('stat-total-cups').innerText = totalCups;
+      document.getElementById('stat-total-caffeine').innerText = `${totalCaff} mg`;
+
+      const counts = {};
+      fLogs.forEach(l => { counts[statLabel(l)] = (counts[statLabel(l)] || 0) + 1; });
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+      document.getElementById('stat-top-style').innerText = sorted.length ? `${sorted[0][0]} (${sorted[0][1]})` : 'Sin datos';
+      document.getElementById('stat-breakdown').innerHTML = sorted.map(([st, cnt]) => `
+        <div class="breakdown-row">
+          <span>${st}</span>
+          <span style="color:var(--caramel); font-weight:700;">${cnt} tazas</span>
+        </div>
+      `).join('');
+    }
+
+    // --- EXPORTAR CSV Y BACKUP JSON (PARA MIGRAR A MAC) ---
+    function exportCSV() {
+      const headers = 'Fecha,Modo,Estilo,Detalle,Metodo,Molienda,Dosis(g),Rendimiento,Tiempo(s),Temp(C),Cafeina(mg),Costo(USD),Rating,Tags,Notas\n';
+      const rows = logs.map(l => {
+        const d = new Date(l.date).toLocaleDateString();
+        const det = l.source === 'Casa' ? l.beanName : (l.source === 'Cafetería' ? l.shopName : `Casa de ${l.hostName}`);
+        return `${d},${l.source},${l.drinkStyle},"${det || ''}",${l.method || ''},"${l.grind || ''}",${l.dose || ''},${l.yieldAmount || ''},${l.brewTime || ''},92,${l.caffeineMg},${l.costUSD || 0},${l.rating},"${(l.tags || []).join('|')}","${(l.notes || '').replace(/"/g, "'")}"`;
+      }).join('\n');
+
+      downloadFile(headers + rows, 'SkibidiCoffee_Diario.csv', 'text/csv;charset=utf-8;');
+    }
+
+    function exportBackupJSON() {
+      const payload = JSON.stringify({ beans, logs, tags, methods: { all: allMethods, mine: myMethods }, exportedAt: new Date().toISOString() }, null, 2);
+      downloadFile(payload, 'SkibidiCoffee_Backup.json', 'application/json');
+    }
+
+    function importBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.beans) { beans = data.beans; localStorage.setItem('skibidi_beans', JSON.stringify(beans)); }
+          if (data.logs) { logs = data.logs; localStorage.setItem('skibidi_logs', JSON.stringify(logs)); }
+          if (data.tags) { tags = data.tags; localStorage.setItem('skibidi_tags', JSON.stringify(tags)); }
+          if (data.methods && data.methods.all) { allMethods = data.methods.all; myMethods = data.methods.mine || []; saveMethods(); }
+          renderAll();
+          toast('¡Backup restaurado con éxito!');
+        } catch (err) {
+          toast('Archivo JSON inválido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+      const f = new File([content], fileName, { type: mimeType });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f] }).catch(() => {}); return; }
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    
+    // ===== ACABADO NATIVO =====
+    const $ = id => document.getElementById(id);
+    const tap = () => { try { navigator.vibrate && navigator.vibrate(8); $('hp').parentElement.click(); } catch (e) {} };
+    function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2300); }
+    function actionSheet(t, acts) {
+      const b = $('asb');
+      b.innerHTML = `<div class="asg">${t ? `<div class="ast">${t}</div>` : ''}${acts.map((a, i) => `<button class="${a.d ? 'd' : ''}" data-i="${i}">${a.l}</button>`).join('')}</div><div class="asg c"><button>Cancelar</button></div>`;
+      b.querySelectorAll('.asg:not(.c) button').forEach(x => x.onclick = () => { b.classList.remove('open'); acts[x.dataset.i].fn(); });
+      b.querySelector('.c button').onclick = () => b.classList.remove('open');
+      b.onclick = e => { if (e.target === b) b.classList.remove('open'); };
+      requestAnimationFrame(() => b.classList.add('open'));
+    }
+
+    // Deslizar para borrar
+    let _lastScroll = 0;
+    document.addEventListener('scroll', () => { _lastScroll = Date.now(); }, true);
+    function decorate() {
+      [...$('logs-container').querySelectorAll(':scope > .card')].forEach((card, i) => {
+        const id = logs[i].id, w = document.createElement('div');
+        w.className = 'swipe';
+        w.innerHTML = '<div class="swipe-act"><button class="swipe-ed">Editar</button><button class="swipe-del">Borrar</button></div>';
+        card.replaceWith(w); w.append(card);
+        w.querySelector('.swipe-del').onclick = () => actionSheet('¿Eliminar esta entrada del diario?', [{ l: 'Eliminar', d: 1, fn: () => deleteLog(id) }]);
+        w.querySelector('.swipe-ed').onclick = () => { card._o = false; card.style.transform = ''; editLog(id); };
+        // Editar/Borrar solo se abren con un deslizamiento horizontal claro y deliberado:
+        // zona muerta de 24 px, dirección casi horizontal (al menos 2.5 : 1) y recorrido largo (o un gesto rápido).
+        // Si el dedo va más hacia arriba/abajo es scroll y la tarjeta no se mueve.
+        let x0 = 0, y0 = 0, mx = 0, t0 = 0, mode = '', moved = false;
+        const DEAD = 24, OPEN_AT = -90;
+        const base = () => card._o ? -160 : 0;
+        const settle = () => { card.style.transition = ''; card.style.transform = card._o ? 'translateX(-160px)' : ''; };
+        card.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; mx = 0; t0 = Date.now(); mode = ''; moved = false; }, { passive: true });
+        card.addEventListener('touchmove', e => {
+          const dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+          if (Math.abs(dx) > 8 || Math.abs(dy) > 8) moved = true;
+          if (mode === 'scroll') return;
+          if (mode === '') {
+            if (Math.abs(dy) > 10 && Math.abs(dy) * 1.5 >= Math.abs(dx)) { mode = 'scroll'; return; }
+            if (Math.abs(dx) < DEAD || Math.abs(dx) < Math.abs(dy) * 2.5) return;
+            mode = 'swipe'; card.style.transition = 'none';
+          }
+          mx = dx - Math.sign(dx) * DEAD;
+          card.style.transform = `translateX(${Math.min(0, Math.max(-180, base() + mx))}px)`;
+        }, { passive: true });
+        card.addEventListener('touchend', () => {
+          if (mode !== 'swipe') return;
+          const fast = (Date.now() - t0) < 300 && Math.abs(mx) > 50;
+          card._o = card._o ? !(mx > 40 || (fast && mx > 0)) : (base() + mx < OPEN_AT || (fast && mx < 0));
+          settle();
+        });
+        card.addEventListener('touchcancel', () => { if (mode === 'swipe') settle(); mode = ''; });
+        card.addEventListener('click', () => {
+          if (moved || Date.now() - _lastScroll < 250) return;
+          if (card._o) { card._o = false; card.style.transform = ''; } else editLog(id);
+        });
+      });
+    }
+
+    (function () {
+      // Hojas inferiores: arrastrar el encabezado hacia abajo para cerrar
+      document.querySelectorAll('.modal-overlay').forEach(o => {
+        const s = document.createElement('div'); s.className = 'sheet';
+        while (o.firstChild) s.appendChild(o.firstChild);
+        o.appendChild(s);
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+        const h = s.querySelector('.modal-header'); let y0 = 0, dy = 0;
+        h.addEventListener('touchstart', e => { y0 = e.touches[0].clientY; dy = 0; s.style.transition = 'none'; }, { passive: true });
+        h.addEventListener('touchmove', e => { dy = Math.max(0, e.touches[0].clientY - y0); s.style.transform = `translateY(${dy}px)`; }, { passive: true });
+        h.addEventListener('touchend', () => { s.style.transition = ''; s.style.transform = ''; if (dy > 110) o.classList.remove('open'); });
+      });
+      // Estrellas táctiles (pasos de 0.5; tocar la misma nota la borra)
+      let lastScroll = 0;
+      document.addEventListener('scroll', () => { lastScroll = Date.now(); }, true);
+      const mkStars = (id, fillId, valId, get, set) => {
+        const st = $(id), paint = v => { $(fillId).style.width = (v / 5 * 100) + '%'; $(valId).textContent = v ? v.toFixed(1) : '—'; };
+        const at = e => { const r = st.getBoundingClientRect(); return Math.min(5, Math.max(0.5, Math.round((e.clientX - r.left) / r.width * 10) / 2)); };
+        let sx = 0, sy = 0, t0 = 0, active = false, drag = false;
+        // Tocar y soltar en el lugar (toque corto, sin movimiento) pone la nota; arrastrar en horizontal la ajusta.
+        // Un gesto vertical (scroll) o un toque justo después de scrollear no cambian nada.
+        st.onpointerdown = e => { active = true; drag = false; sx = e.clientX; sy = e.clientY; t0 = Date.now(); };
+        st.onpointermove = e => {
+          if (!active) return;
+          const dx = e.clientX - sx, dy = e.clientY - sy;
+          if (!drag) {
+            if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) { active = false; return; }
+            if (Math.abs(dx) < 12) return;
+            drag = true; try { st.setPointerCapture(e.pointerId); } catch (x) {}
+          }
+          const v = at(e); if (v !== get()) { set(v); paint(v); tap(); }
+        };
+        st.onpointerup = e => {
+          if (active && !drag && Date.now() - t0 < 400 && Math.abs(e.clientX - sx) < 8 && Math.abs(e.clientY - sy) < 8 && Date.now() - lastScroll > 250) {
+            const v = at(e), nv = v === get() ? 0 : v; set(nv); paint(nv); tap();
+          }
+          active = false; drag = false;
+        };
+        st.onpointercancel = () => { active = false; drag = false; };
+        return paint;
+      };
+      window.setRatingUI = mkStars('stars', 'starfill', 'entry-rating-val', () => currentRating, v => currentRating = v);
+      window.setBeanRatingUI = mkStars('bean-stars', 'bean-starfill', 'bean-rating-val', () => beanRating, v => beanRating = v);
+      setRatingUI(currentRating); setBeanRatingUI(beanRating);
+      // Título que se achica al hacer scroll
+      addEventListener('scroll', () => { $('hmini').style.opacity = Math.min(1, Math.max(0, (scrollY - 34) / 24)); document.querySelector('.header').classList.toggle('sc', scrollY > 40); }, { passive: true });
+      // Instalación y modo sin conexión
+      if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+    })();
+
+    
+    // ===== MÉTODOS, EDICIÓN, TUESTE Y CALCULADORA =====
+    const CATALOG = ['Espresso', 'Prensa Francesa', 'Filtro', 'Moka', 'Aeropress', 'Cold Brew', 'Café turco'];
+    const dedupeRename = (list, from, to) => [...new Set((list || []).map(m => m === from ? to : m))];
+    let allMethods = [...CATALOG], myMethods = ['Espresso', 'Moka', 'Prensa Francesa'];
+    try { const m = JSON.parse(localStorage.getItem('skibidi_methods')); if (m && m.all) { allMethods = m.all; myMethods = m.mine || []; } } catch (e) {}
+    allMethods = dedupeRename(allMethods, 'Picopresso', 'Espresso');
+    myMethods = dedupeRename(myMethods, 'Picopresso', 'Espresso');
+    if (!allMethods.includes('Espresso')) allMethods.unshift('Espresso');
+    const saveMethods = () => localStorage.setItem('skibidi_methods', JSON.stringify({ all: allMethods, mine: myMethods }));
+    saveMethods();
+    let editingLogId = null, editingBeanId = null, socialMethod = 'Prensa Francesa';
+    const ROAST = ['Ligero', 'Medio', 'Medio-oscuro', 'Oscuro'], ROAST_C = ['#C9A47A', '#9B6B43', '#5E3C24', '#2A1B12'];
+    const isWater = m => ['Prensa Francesa', 'Filtro', 'Cold Brew', 'Aeropress'].includes(m);
+    const RATIO_METHODS = ['Prensa Francesa'];
+    const useRatio = () => entrySource === 'Casa' && RATIO_METHODS.includes(selectedMethod);
+    let entTouch = [];
+    const syncYield = () => {
+      $('yield-label').innerText = isWater(selectedMethod) ? 'Agua (ml)' : 'Rendimiento (g)';
+      const r = useRatio();
+      $('grp-time').style.display = r ? 'none' : ''; $('grp-ratio').style.display = r ? '' : 'none';
+      if (r && entTouch.length < 2 && $('entry-dose').value && $('entry-yield').value) { entTouch = ['dose', 'yield']; entryRatioCalc(); }
+      if (!r) { entTouch = []; ['dose', 'yield', 'ratio'].forEach(k => $('entry-' + k).classList.remove('auto')); }
+    };
+    function entryRatioInput(f) {
+      if (!useRatio()) return;
+      entTouch = entTouch.filter(x => x !== f); entTouch.push(f); if (entTouch.length > 2) entTouch.shift();
+      entryRatioCalc();
+    }
+    function entryRatioCalc() {
+      const K = ['dose', 'yield', 'ratio'], el = k => $('entry-' + k), g = k => parseFloat(el(k).value);
+      const miss = entTouch.length === 2 ? K.find(k => !entTouch.includes(k)) : null;
+      K.forEach(k => el(k).classList.toggle('auto', k === miss));
+      if (!miss) return;
+      const d = g('dose'), y = g('yield'), r = g('ratio');
+      const v = miss === 'ratio' ? y / d : miss === 'yield' ? d * r : y / r, lim = miss === 'ratio' ? 100 : 5000;
+      el(miss).value = (v > 0 && v <= lim) ? (miss === 'ratio' ? Math.max(1, Math.round(v)) : +v.toFixed(miss === 'yield' ? 0 : 1)) : '';
+      updateLiveEntryPreview();
+    }
+    function entryMethods() {
+      const base = allMethods.filter(m => myMethods.includes(m)), list = base.length ? base : allMethods;
+      if (editingLogId && selectedMethod && !list.includes(selectedMethod)) return [...list, selectedMethod];
+      if (selectedMethod && !list.includes(selectedMethod)) selectedMethod = '';
+      return list;
+    }
+    function setSocialMethod(m) { socialMethod = m; renderEntryChips(); }
+
+    // Ajustes
+    function renderMethods() {
+      $('methods-list').innerHTML = allMethods.map(m => `<button class="chk ${myMethods.includes(m) ? 'on' : ''}" onclick="toggleMethod('${m}')"><span>${m}</span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>`).join('');
+    }
+    function toggleMethod(m) { myMethods = myMethods.includes(m) ? myMethods.filter(x => x !== m) : [...myMethods, m]; saveMethods(); renderMethods(); tap(); }
+    function addCustomMethod() {
+      const v = $('new-method-input').value.replace(/["'<>]/g, '').trim(); if (!v) return;
+      if (!allMethods.includes(v)) allMethods.push(v);
+      if (!myMethods.includes(v)) myMethods.push(v);
+      $('new-method-input').value = ''; saveMethods(); renderMethods();
+    }
+    const openSettings = () => { renderMethods(); $('settings-modal').classList.add('open'); };
+    const closeSettings = () => $('settings-modal').classList.remove('open');
+
+    // Entradas: nueva / editar
+    function resetEntryForm() {
+      setEntrySource('Casa'); selectedMethod = ''; socialMethod = ''; selectedStyle = ''; selectedTags = []; selectedBeanId = '';
+      ['entry-grind', 'entry-dose', 'entry-yield', 'entry-time', 'entry-ratio', 'entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => $(i).value = '');
+      entTouch = []; $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
+    }
+    function openEntryModal() {
+      editingLogId = null;
+      resetEntryForm();
+      $('entry-title').textContent = 'Nueva Entrada de Café'; $('entry-save').textContent = 'Guardar en el Diario';
+      showEntryModal();
+    }
+    function editLog(id) {
+      const l = logs.find(x => x.id === id); if (!l) return;
+      editingLogId = id;
+      setEntrySource(l.source);
+      if (l.beanId) selectedBeanId = l.beanId;
+      if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
+      selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])];
+      editOrig = { method: l.source === 'Cafetería' ? '' : l.method, style: l.drinkStyle };
+      const v = (i, x) => $(i).value = x ?? '';
+      entTouch = []; v('entry-ratio', ''); v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
+      v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName); v('entry-notes', l.notes); v('entry-date', ymd(new Date(l.date)));
+      showEntryModal();
+      tempCupPhoto = l.photo || null;
+      $('cup-photo-status').innerText = l.photo ? '✅ Foto de la taza lista' : '📷 Adjuntar foto de la taza (Opcional)';
+      currentRating = l.rating || 0; window.setRatingUI(currentRating);
+      $('entry-title').textContent = 'Editar entrada'; $('entry-save').textContent = 'Guardar cambios';
+    }
+
+    // Granos: nuevo / editar / borrar / tueste
+    function roastUI() {
+      const i = $('bean-roast'), v = +i.value;
+      $('roast-name').textContent = ROAST[v]; i.style.setProperty('--rc', ROAST_C[v]);
+      document.querySelectorAll('.roast-labels span').forEach((s, k) => s.classList.toggle('on', k === v));
+    }
+    function openBeanModal() {
+      editingBeanId = null;
+      ['bean-name', 'bean-roaster', 'bean-origin', 'bean-price'].forEach(i => $(i).value = '');
+      $('bean-weight').value = 250; $('bean-roast').value = 1; roastUI();
+      $('bean-date').value = todayStr(); $('bean-rem-group').style.display = 'none'; beanRating = 0; window.setBeanRatingUI(0);
+      $('bean-title').textContent = 'Registrar Paquete de Café'; $('bean-save').textContent = 'Guardar en Inventario';
+      showBeanModal();
+    }
+    function editBean(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      showBeanModal(); editingBeanId = id;
+      const v = (i, x) => $(i).value = x ?? '';
+      v('bean-name', b.name); v('bean-roaster', b.roaster); v('bean-origin', b.origin); v('bean-weight', b.weight); v('bean-price', b.priceUSD || '');
+      $('bean-roast').value = b.roast ?? 1; roastUI();
+      $('bean-date').value = b.purchaseDate || (b.dateAdded ? ymd(new Date(b.dateAdded)) : todayStr());
+      $('bean-rem-group').style.display = 'block'; $('bean-remaining').value = +((b.remaining ?? b.weight)).toFixed(1);
+      beanRating = b.rating || 0; window.setBeanRatingUI(beanRating);
+      tempBeanPhoto = b.photo || null;
+      $('bean-photo-status').innerText = b.photo ? '✅ Foto de etiqueta lista (tocá para cambiar)' : '📸 Fotografiar Etiqueta / Paquete';
+      $('bean-title').textContent = 'Editar paquete'; $('bean-save').textContent = 'Guardar cambios';
+    }
+    function delBean(id) {
+      actionSheet('¿Eliminar este paquete? Las entradas del diario que lo usaron se conservan.', [{ l: 'Eliminar paquete', d: 1, fn: () => {
+        const idx = beans.findIndex(b => b.id === id); if (idx < 0) return;
+        const gone = beans[idx], afterId = idx > 0 ? beans[idx - 1].id : null;
+        beans = beans.filter(b => b.id !== id);
+        localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+        renderAll(); renderEntryChips();
+        showUndo('Paquete eliminado', () => {
+          beans.splice(afterId ? beans.findIndex(b => b.id === afterId) + 1 : 0, 0, gone);
+          localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+          renderAll(); renderEntryChips();
+        });
+      } }]);
+    }
+
+    // Calculadora: ingresás 2 y calcula el 3ro
+    let calcTouched = [];
+    function calcInput(f) { calcTouched = calcTouched.filter(x => x !== f); calcTouched.push(f); if (calcTouched.length > 2) calcTouched.shift(); calcRender(); }
+    function calcReset() { calcTouched = []; ['coffee', 'water', 'ratio'].forEach(k => $('calc-' + k).value = ''); calcRender(); }
+    function calcRender() {
+      const K = ['coffee', 'water', 'ratio'], g = k => parseFloat($('calc-' + k).value), miss = calcTouched.length === 2 ? K.find(k => !calcTouched.includes(k)) : null;
+      K.forEach(k => $('calc-' + k).classList.toggle('auto', k === miss));
+      const out = $('calc-result-text'); $('calc-prep').style.display = 'none';
+      if (!miss) { out.innerText = 'Ingresá 2 valores'; return; }
+      const c = g('coffee'), w = g('water'), r = g('ratio');
+      const v = miss === 'ratio' ? w / c : miss === 'water' ? c * r : w / r;
+      const lim = miss === 'ratio' ? 100 : 5000;
+      if (!(v > 0) || v > lim) { $('calc-' + miss).value = ''; out.innerText = v > lim ? `Fuera de rango (máx. ${lim})` : 'Ingresá 2 valores'; return; }
+      $('calc-' + miss).value = +v.toFixed(miss === 'water' ? 0 : 1);
+      const C = g('coffee'), W = g('water'), Rt = g('ratio');
+      const okc = C > 0 && W > 0;
+      out.innerText = okc ? `${+C.toFixed(1)} g + ${+W.toFixed(0)} ml  →  1 : ${(+Rt.toFixed(1))}` : 'Ingresá 2 valores';
+      $('calc-prep').style.display = okc ? 'block' : 'none';
+    }
+    
+    // ===== FECHAS, LÍMITES, STOCK, RULETA =====
+    const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const todayStr = () => ymd(new Date());
+    const num = (id, max) => Math.min(max, Math.max(0, parseFloat($(id).value) || 0));
+    function dateFromInput() {
+      const v = $('entry-date').value;
+      if (editingLogId) { const o = logs.find(l => l.id === editingLogId); if (o && (!v || ymd(new Date(o.date)) === v)) return o.date; }
+      if (!v || v === todayStr()) return new Date().toISOString();
+      return new Date(v + 'T12:00:00').toISOString();
+    }
+    // Descuenta (delta < 0) o devuelve (delta > 0) gramos del paquete. Devuelve el cambio real aplicado.
+    function adjustStock(beanId, delta) {
+      const b = beans.find(x => x.id === beanId); if (!b) return 0;
+      const cur = b.remaining ?? b.weight;
+      if (delta > 0 && b.archived && !b.autoArchived) return 0;
+      b.remaining = Math.min(b.weight, Math.max(0, +(cur + delta).toFixed(1)));
+      if (b.remaining <= 0 && !b.archived) { b.archived = true; b.autoArchived = true; toast('Paquete agotado: ' + b.name); }
+      else if (delta > 0 && b.autoArchived && b.remaining > 0) { b.archived = false; b.autoArchived = false; }
+      return +(b.remaining - cur).toFixed(1);
+    }
+    document.addEventListener('input', e => {
+      const i = e.target; if (!i.dataset || !i.dataset.max) return;
+      const m = +i.dataset.max;
+      if (i.value !== '' && +i.value > m) { i.value = m; toast('Máximo permitido: ' + m + (m === 500 ? ' USD' : m === 5000 ? ' g' : '')); }
+      else if (+i.value < 0) i.value = 0;
+    }, true);
+
+    // Herramientas: una a la vez
+    function setTool(t) { ['ratio', 'wheel', 'guide'].forEach(k => { $('tool-' + k).style.display = k === t ? 'block' : 'none'; $('tool-btn-' + k).classList.toggle('active', k === t); }); }
+
+    // Ruleta
+    const DRINKS = [
+      { n: 'Shot', i: 'shot', c: '#E5484D' }, { n: 'Doble Shot', i: 'double', c: '#F76B15' }, { n: 'Filtrado', i: 'filter', c: '#E5A800' },
+      { n: 'Cappuccino', i: 'cap', c: '#30A46C' }, { n: 'Cortado', i: 'cort', c: '#12A594' }, { n: 'Latte', i: 'latte', c: '#3E63DD' }, { n: 'Flat White', i: 'fw', c: '#8E4EC6' }, { n: 'Americano', i: 'amer', c: '#7FBF27' }
+    ];
+    function buildWheel() {
+      const N = DRINKS.length, S = 360 / N, C = 160, R = 140, pt = (a, r) => [C + r * Math.cos(a * Math.PI / 180), C + r * Math.sin(a * Math.PI / 180)];
+      let d = '';
+      DRINKS.forEach((k, j) => {
+        const [x0, y0] = pt(j * S - 90, R), [x1, y1] = pt((j + 1) * S - 90, R);
+        d += `<path d="M${C} ${C}L${x0} ${y0}A${R} ${R} 0 0 1 ${x1} ${y1}Z" fill="${k.c}" stroke="#fff" stroke-width="2"/>`;
+        d += `<g transform="rotate(${(j + .5) * S} ${C} ${C})"><use href="#ic-${k.i}" x="${C - 17}" y="30" width="34" height="34"/><text x="${C}" y="86" text-anchor="middle" class="wl">${k.n}</text></g>`;
+      });
+      $('wheel-disc').innerHTML = d;
+      let b = '';
+      for (let j = 0; j < 32; j++) { const [x, y] = pt(j * 360 / 32, 150); b += `<circle cx="${x}" cy="${y}" r="4.6" class="bulb b${j % 2}"/>`; }
+      $('wheel-frame').innerHTML = `<circle cx="160" cy="160" r="150" fill="none" stroke="#C98A12" stroke-width="16"/><circle cx="160" cy="160" r="141" fill="none" stroke="#FFE08A" stroke-width="2"/>` + b +
+        `<circle cx="160" cy="160" r="27" fill="#FFD43B" stroke="#7a4b00" stroke-width="3"/><text x="160" y="169" text-anchor="middle" font-size="26" fill="#7a4b00">★</text><path d="M147 0h26l-13 32z" fill="#FF3B3B" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`;
+    }
+    let wheelRot = 0, spinning = false, _win = null, _cf = 0;
+    function spinWheel() {
+      if (spinning) return; spinning = true;
+      const N = DRINKS.length, S = 360 / N, idx = Math.floor(Math.random() * N), jitter = (Math.random() - .5) * S * .7;
+      const R0 = wheelRot;
+      wheelRot = Math.ceil((wheelRot + 360 * 6) / 360) * 360 - (idx + .5) * S + jitter;
+      const disc = $('wheel-disc'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      disc.style.transition = still ? 'none' : 'transform 5s cubic-bezier(.12,.62,.12,1)';
+      disc.style.transform = `rotate(${wheelRot}deg)`;
+      if (!still) wheelSound(R0, wheelRot, S, 5);
+      $('wheel-wrap').classList.remove('win'); $('wheel-wrap').classList.add('spinning'); $('spin-btn').disabled = true; tap();
+      setTimeout(() => {
+        $('wheel-wrap').classList.remove('spinning'); $('wheel-wrap').classList.add('win');
+        setTimeout(() => $('wheel-wrap').classList.remove('win'), 4000);
+        jackpot(DRINKS[idx]); spinning = false; $('spin-btn').disabled = false;
+      }, still ? 200 : 5150);
+    }
+    function jackpot(k) {
+      _win = k; $('jp-use').setAttribute('href', '#ic-' + k.i); $('jp-name').textContent = k.n;
+      $('jackpot').classList.add('on'); [0, 120, 240, 420].forEach(t => setTimeout(tap, t)); winSound();
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) confetti();
+    }
+    const closeJackpot = () => { $('jackpot').classList.remove('on'); cancelAnimationFrame(_cf); };
+    function useJackpot() { const k = _win; closeJackpot(); openEntryModal(); selectedStyle = k.n; renderEntryChips(); }
+    function confetti() {
+      const c = $('jp-canvas'), x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+      const cols = ['#ff3b3b', '#ffd43b', '#3bff6b', '#3bd0ff', '#b13bff', '#ff8a00', '#ffffff'];
+      const mk = (px, py, vx0) => ({ x: px, y: py, vx: vx0 + (Math.random() - .5) * 14, vy: -Math.random() * 16 - 4, r: Math.random() * 5 + 3, c: cols[Math.floor(Math.random() * cols.length)], coin: Math.random() < .17, rot: Math.random() * 6, vr: (Math.random() - .5) * .4 });
+      const P = Array.from({ length: 170 }, () => mk(innerWidth / 2, innerHeight * .45, 0));
+      let f = 0;
+      (function loop() {
+        x.clearRect(0, 0, c.width, c.height);
+        if (f === 40) for (let i = 0; i < 60; i++) { P.push(mk(0, innerHeight * .7, 9)); P.push(mk(innerWidth, innerHeight * .7, -9)); }
+        P.forEach(p => {
+          p.vy += .35; p.x += p.vx; p.y += p.vy; p.vx *= .995; p.rot += p.vr;
+          x.save(); x.translate(p.x, p.y); x.rotate(p.rot);
+          if (p.coin) { x.fillStyle = '#FFD43B'; x.beginPath(); x.arc(0, 0, p.r + 3, 0, 6.3); x.fill(); x.strokeStyle = '#b8860b'; x.lineWidth = 2; x.stroke(); }
+          else { x.fillStyle = p.c; x.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); }
+          x.restore();
+        });
+        if (++f < 280 && $('jackpot').classList.contains('on')) _cf = requestAnimationFrame(loop); else x.clearRect(0, 0, c.width, c.height);
+      })();
+    }
+    buildWheel();
+    
+    // ===== ORDEN DE INVENTARIO, STOCK, GUÍA Y NIVELES =====
+    const fmtN = n => Math.round(n).toLocaleString('es-AR');
+    const SORTS = { date: { l: 'Fecha', d: -1 }, rating: { l: 'Calificación', d: -1 }, price: { l: 'Precio', d: 1 }, stock: { l: 'Stock', d: 1 } };
+    let invSort = 'date', invDir = -1;
+    function setSort(k) { if (invSort === k) invDir = -invDir; else { invSort = k; invDir = SORTS[k].d; } renderBeans(); }
+    function renderSort() {
+      $('sort-row').innerHTML = Object.entries(SORTS).map(([k, v]) =>
+        `<button class="choice-chip ${k === invSort ? 'active' : ''}" onclick="setSort('${k}')">${v.l}${k === invSort ? (invDir < 0 ? ' ↓' : ' ↑') : ''}</button>`).join('');
+    }
+    function sortBeans(a, b) {
+      const t = x => new Date(x.purchaseDate ? x.purchaseDate + 'T12:00:00' : x.dateAdded).getTime() || 0;
+      const key = x => invSort === 'date' ? t(x) : invSort === 'rating' ? (x.rating || 0) : invSort === 'price' ? (x.priceUSD || 0) : (x.remaining ?? x.weight);
+      return (key(a) - key(b)) * invDir || (new Date(b.dateAdded) - new Date(a.dateAdded));
+    }
+    function availStock(id) {
+      const b = beans.find(x => x.id === id); if (!b) return Infinity;
+      let a = b.remaining ?? b.weight;
+      const o = editingLogId && logs.find(l => l.id === editingLogId);
+      if (o && o.beanId === id && o.stockG) a += o.stockG;
+      return a;
+    }
+
+    // Guía de ratios por bebida
+    const GUIDE = [
+      { n: 'Espresso / Moka Puro', i: 'shot', r: [1, 0, 0], cup: '60 – 80 ml', t: 'Café solo.' },
+      { n: 'Cortado', i: 'cort', r: [1, 1, 0], cup: '100 – 120 ml', t: 'Misma cantidad de café y leche caliente.' },
+      { n: 'Flat White', i: 'fw', r: [1, 2, 0.5], cup: '150 – 160 ml', t: 'Doble shot con leche texturizada y capa muy fina de microespuma.' },
+      { n: 'Cappuccino', i: 'cap', r: [1, 1.5, 1], cup: '160 – 180 ml', t: 'Partes casi iguales de café, leche texturizada y espuma.' },
+      { n: 'Latte', i: 'latte', r: [1, 3, 0.5], cup: '240 – 300 ml', t: 'Más leche que café. Bebida larga. ' },
+      { n: 'Americano', i: 'amer', r: [1, 2, 0], water: true, cup: '180 – 200 ml', t: 'Agua a 90–92°C en la taza y el café vertido encima.' }
+    ];
+    function buildGuide() {
+      const COL = ['#6F4A2F', '#EAD9BF', '#FFFFFF'], WCOL = '#7FB6D9';
+      $('tool-guide').innerHTML = `<p style="color:var(--muted); font-size:12px; margin:0 4px 12px;">Proporción en partes: <b style="color:var(--crema)">Café : Leche líquida : Microespuma</b></p>` +
+        GUIDE.map(g => {
+          const names = ['Café', g.water ? 'Agua' : 'Leche líquida', 'Microespuma'], cols = [COL[0], g.water ? WCOL : COL[1], COL[2]];
+          const bar = g.r.map((v, k) => v ? `<i style="flex:${v};background:${cols[k]}"></i>` : '').join('');
+          const legend = g.r.map((v, k) => v ? `<span><b style="background:${cols[k]}"></b>${names[k]} ${v}</span>` : '').join('');
+          return `<div class="card gcard">
+            <div class="grow"><svg class="gic" viewBox="0 0 40 40"><use href="#ic-${g.i}"/></svg>
+              <div><div class="style-title" style="font-size:16px;">${g.n}</div><div class="gratio">${g.r[0]} : ${g.r[1]}${g.water ? ' (Agua)' : ''} : ${g.r[2]}</div></div></div>
+            <div class="gbar">${bar}</div><div class="glegend">${legend}</div>
+            <div class="gmeta">🥛 Taza sugerida: ${g.cup}</div><div class="gtext">${g.t}</div></div>`;
+        }).join('');
+    }
+
+    // Niveles de cafeína (últimos 7 días)
+    const TIERS = [
+      { max: 350, n: 'Nivel 0', r: '0 – 350 mg', tag: '', c: '#30A46C', fg: '#ffffff' },
+      { max: 850, n: 'Nivel 1', r: '351 – 850 mg', tag: '', c: '#9BC53D', fg: '#14210a' },
+      { max: 1400, n: 'Nivel 2', r: '851 – 1.400 mg', tag: '', c: '#F2B705', fg: '#2a1e00' },
+      { max: 2100, n: 'Nivel 3', r: '1.401 – 2.100 mg', tag: '', c: '#F76B15', fg: '#ffffff' },
+      { max: 2399, n: 'Nivel 4', r: '2.101 – 2.399 mg', tag: '', c: '#E5484D', fg: '#ffffff' },
+      { max: Infinity, n: 'Nivel Taquicardia', r: '2.400+ mg', tag: 'Taquicardia', c: '#9E0F3A', fg: '#ffffff' }
+    ];
+                buildGuide();
+    
+    // ===== SONIDO Y FOTO POR DEFECTO =====
+    const METHOD_ICON = { 'Prensa Francesa': ['press', '#8C6A4F'], 'Moka': ['moka', '#C9742B'] };
+    function drinkTile(name, method) {
+      const d = DRINKS.find(x => x.n === name) || (name === 'Con leche' ? { i: 'milk', c: '#B07D54' } : (METHOD_ICON[method] ? { i: METHOD_ICON[method][0], c: METHOD_ICON[method][1] } : { i: 'cup', c: '#9B6B43' }));
+      return `<div class="cup-ph" style="background:linear-gradient(135deg,${d.c}55,#1b1815 85%)"><svg viewBox="0 0 40 40"><use href="#ic-${d.i}"/></svg></div>`;
+    }
+    let _ac = null, soundOn = localStorage.getItem('skibidi_sound') !== '0';
+    function ac() {
+      if (!_ac) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; _ac = new C(); }
+      if (_ac.state === 'suspended') _ac.resume();
+      return _ac;
+    }
+    function beep(t, f, d, type, v, f2) {
+      const a = _ac, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+    }
+    // curva cubic-bezier igual a la del giro, para que cada "clic" caiga cuando pasa un gajo
+    function bez(x1, y1, x2, y2) {
+      const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+      const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
+      return x => { let lo = 0, hi = 1; for (let i = 0; i < 28; i++) { const m = (lo + hi) / 2; X(m) < x ? lo = m : hi = m; } return Y((lo + hi) / 2); };
+    }
+    function wheelSound(R0, R1, step, dur) {
+      if (!soundOn || !ac()) return;
+      const P = bez(.12, .62, .12, 1), t0 = _ac.currentTime + 0.05;
+      for (let m = Math.floor(R0 / step) + 1; m <= Math.floor(R1 / step); m++) {
+        const f = (m * step - R0) / (R1 - R0);
+        let lo = 0, hi = 1; for (let i = 0; i < 24; i++) { const x = (lo + hi) / 2; P(x) < f ? lo = x : hi = x; }
+        beep(t0 + lo * dur, 950 + (m % 2) * 230, 0.045, 'triangle', 0.16);
+      }
+    }
+    function winSound() {
+      if (!soundOn || !ac()) return;
+      const t = _ac.currentTime + 0.02;
+      [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568, 2093].forEach((f, i) => beep(t + i * 0.09, f, 0.22, 'square', 0.07));
+      for (let i = 0; i < 16; i++) { const tt = t + 0.75 + i * 0.1 + Math.random() * 0.03; beep(tt, 1568, 0.12, 'sine', 0.12); beep(tt + 0.04, 2093, 0.18, 'sine', 0.1); }
+      [523.25, 659.25, 783.99, 1046.5].forEach(f => beep(t + 2.5, f, 0.9, 'triangle', 0.09));
+    }
+    function syncSnd() { $('snd-btn').textContent = soundOn ? '🔊' : '🔇'; }
+    function toggleSound() {
+      soundOn = !soundOn; localStorage.setItem('skibidi_sound', soundOn ? '1' : '0'); syncSnd();
+      if (soundOn && ac()) beep(_ac.currentTime + 0.01, 880, 0.14, 'triangle', 0.15, 1320);
+    }
+    syncSnd();
+    
+    // ===== RATIO EN ENTRADA, POPUP DE BOLSA, WIDGET DE CAFEÍNA =====
+    ['entry-dose', 'entry-yield', 'entry-ratio'].forEach(id => $(id).addEventListener('input', () => entryRatioInput(id.slice(6))));
+
+    function prepFromCalc() {
+      const c = num('calc-coffee', 5000), w = num('calc-water', 5000);
+      const pick = ['Prensa Francesa', 'Filtro'].find(m => myMethods.includes(m)) || '';
+      openEntryModal();
+      selectedMethod = pick; $('entry-dose').value = c; $('entry-yield').value = w;
+      entTouch = []; renderEntryChips(); updateLiveEntryPreview();
+    }
+
+    // Popup de la bolsa
+    const E = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const roStars = r => `<span class="stars sm"><i style="width:${r / 5 * 100}%">★★★★★</i>★★★★★</span>`;
+    const closeBeanDetail = () => $('bean-detail-modal').classList.remove('open');
+    function openBeanDetail(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      const rem = b.remaining ?? b.weight, pct = b.weight > 0 ? Math.max(0, Math.min(100, rem / b.weight * 100)) : 0, perG = b.weight > 0 ? b.priceUSD / b.weight : 0;
+      const used = logs.filter(l => l.beanId === id && l.source === 'Casa');
+      const grams = used.reduce((a, l) => a + (l.dose || 0), 0), avgDose = used.length ? grams / used.length : 0;
+      const rated = used.filter(l => l.rating > 0), avgR = rated.length ? rated.reduce((a, l) => a + l.rating, 0) / rated.length : 0;
+      const best = bestShotOf(b);
+      const pd = b.purchaseDate ? new Date(b.purchaseDate + 'T12:00:00') : (b.dateAdded ? new Date(b.dateAdded) : null);
+      const row = (l, v) => `<div class="bd-row"><span>${l}</span><b>${v}</b></div>`;
+      let bestHtml;
+      if (best) {
+        const unit = isWater(best.method) ? 'ml' : 'g', ratio = best.dose > 0 ? ratioFmt(best.method, best.dose, best.yieldAmount) : '—';
+        bestHtml = `<div class="bd-best"><div class="bd-bhead">${roStars(best.rating)}<b style="color:var(--amber)">${best.rating.toFixed(1)}</b> · ${best.drinkStyle ? E(logTitle(best)) + ' · ' : ''}${new Date(best.date).toLocaleDateString()}</div>
+          <div class="bd-list" style="background:transparent; margin-bottom:10px;">${row('Método', E(best.method))}${row('Molienda', E(best.grind || '—'))}${row('Dosis', best.dose + ' g')}${row('Rendimiento', best.yieldAmount + ' ' + unit)}${row('Ratio', '1 : ' + ratio)}${best.brewTime ? row('Tiempo', best.brewTime + ' s') : ''}</div>
+          <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}','${best.id}')">☕ Preparar con esta configuración</button></div>`;
+      } else {
+        bestHtml = `<p style="color:var(--muted); font-size:13px; margin-bottom:10px;">Todavía no hay tiros calificados con este grano. Cuando califiques una preparación, la mejor aparece acá.</p>
+          <button class="btn-submit" style="margin-top:0" onclick="prepFromBean('${id}')">☕ Preparar con este grano</button>`;
+      }
+      $('bd-title').textContent = b.name;
+      $('bd-body').innerHTML = `
+        ${b.photo ? `<img class="bd-photo" src="${b.photo}" alt="Etiqueta">` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+          <div class="card-sub" style="margin:0;">${E(b.roaster)} • ${E(b.origin)}${b.roast !== undefined ? ' • ' + ROAST[b.roast] : ''}</div>
+          ${b.rating ? roStars(b.rating) : ''}
+        </div>
+        <div class="bd-list">
+          ${row('Restante', `${+rem.toFixed(1)} g (${Math.round(pct)}%)${avgDose ? ' · ≈ ' + Math.floor(rem / avgDose) + ' tazas' : ''}`)}
+          ${row('Precio', `$${b.priceUSD} · $${perG.toFixed(3)}/g`)}
+          ${row('Preparaciones', `${used.length}${used.length ? ' · ' + +grams.toFixed(1) + ' g usados' : ''}`)}
+          ${row('Costo por taza', used.length && perG ? '$' + (avgDose * perG).toFixed(2) : '—')}
+          ${row('Rating de tiros', avgR ? '⭐ ' + avgR.toFixed(1) : '—')}
+          ${row('Comprado', pd ? pd.toLocaleDateString() : '—')}
+        </div>
+        <div class="bd-sec">🏆 Mejor tiro</div>
+        ${bestHtml}
+        ${b.archived ? `<button class="btn-submit" style="margin-top:12px; background:#30A46C; color:#fff;" onclick="closeBeanDetail(); openRepurchase('${id}')">Recomprar este grano</button>` : ''}
+        <button class="btn-outline" style="width:100%; margin-top:12px; padding:12px;" onclick="closeBeanDetail(); editBean('${id}')">Editar paquete</button>`;
+      $('bean-detail-modal').classList.add('open');
+    }
+    function prepFromBean(id, logId) {
+      const l = logId === '__inherited' ? (beans.find(x => x.id === id) || {}).bestShot : (logId && logs.find(x => x.id === logId));
+      closeBeanDetail(); openEntryModal();
+      selectedBeanId = id;
+      if (l) {
+        selectedMethod = l.method; selectedStyle = l.drinkStyle;
+        $('entry-grind').value = l.grind ?? ''; $('entry-dose').value = l.dose ?? ''; $('entry-yield').value = l.yieldAmount ?? ''; $('entry-time').value = l.brewTime ?? '';
+      }
+      entTouch = []; renderEntryChips(); updateLiveEntryPreview();
+    }
+
+    // Widget de cafeína semanal
+    const EMO = ['😴', '☕', '⚡', '🔥', '🤪', '💓'];
+    function weekDays() {
+      const out = [], t = new Date(); t.setHours(12, 0, 0, 0);
+      for (let i = 6; i >= 0; i--) { const d = new Date(t); d.setDate(t.getDate() - i); out.push({ key: ymd(d), d, mg: 0 }); }
+      logs.forEach(l => { const o = out.find(x => x.key === ymd(new Date(l.date))); if (o) o.mg += l.caffeineMg || 0; });
+      return out;
+    }
+    const weekCaffeine = () => weekDays().reduce((a, x) => a + x.mg, 0);
+    function meterHtml(mg) {
+      const pct = Math.min(100, mg / 2400 * 100);
+      const seg = TIERS.slice(0, 5).map((x, i) => `<i style="flex:${x.max - (i ? TIERS[i - 1].max : 0)};background:${x.c}"></i>`).join('');
+      return `<div class="tmeter"><div class="tm-bg">${seg}</div><div class="tm-fill" style="clip-path:inset(0 ${100 - pct}% 0 0)">${seg}</div><span class="tm-pin" style="left:${pct}%"></span></div>`;
+    }
+    function playTier() {
+      const el = $('tier'); el.classList.add('anim'); renderTier();
+      clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('anim'), 1100);
+    }
+    function renderTier() {
+      const mg = weekCaffeine(), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k];
+      $('tier').innerHTML = `<div class="tr1"><span class="tbadge${k === 5 ? ' pulse' : ''}" style="background:${t.c};color:${t.fg}">${EMO[k]} ${t.n.toUpperCase()}</span><span class="tmg">${fmtN(mg)} mg</span></div>
+        ${meterHtml(mg)}
+        <div class="tnext">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : 'Adicto!'}</div>`;
+    }
+    function showTiers() {
+      const days = weekDays(), mg = days.reduce((a, x) => a + x.mg, 0), k = TIERS.findIndex(t => mg <= t.max), t = TIERS[k], mx = Math.max(1, ...days.map(x => x.mg));
+      const wd = d => d.toLocaleDateString('es-AR', { weekday: 'short' }).replace('.', '');
+      $('tier-body').innerHTML = `
+        <div style="text-align:center; margin-bottom:8px;">
+          <span class="tbadge${k === 5 ? ' pulse' : ''}" style="background:${t.c};color:${t.fg};font-size:14px;padding:6px 14px">${EMO[k]} ${t.n.toUpperCase()}${t.tag && k < 5 ? ' · ' + t.tag : ''}</span>
+          <div style="font-size:34px; font-weight:900; margin-top:8px;">${fmtN(mg)} <span style="font-size:15px; color:var(--muted); font-weight:600;">mg · últimos 7 días</span></div>
+        </div>
+        ${meterHtml(mg)}
+        <div class="tnext" style="text-align:center;">${k < 5 ? `${fmtN(TIERS[k].max + 1 - mg)} mg para ${TIERS[k + 1].n}` : 'Adicto!'}</div>
+        <div class="dchart">${days.map((x, i) => `<div class="dbar ${i === 6 ? 'today' : ''}"><em>${x.mg || ''}</em><i style="height:${Math.max(3, x.mg / mx * 88)}px"></i><span>${wd(x.d)}</span></div>`).join('')}</div>
+        <div class="bd-sec">Niveles</div>
+        ${TIERS.map((x, i) => `<div class="trow ${i === k ? 'on' : ''}"><b style="background:${x.c}"></b><span>${x.n}</span><small>${x.r}${x.tag && i < 5 ? ' · ' + x.tag : ''}</small>${i === k ? '<em>ESTÁS ACÁ</em>' : ''}</div>`).join('')}
+        <p style="color:var(--muted); font-size:12px; margin-top:10px;">Se cuentan hoy y los 6 días anteriores, sin importar el filtro de Stats.</p>`;
+      $('tier-modal').classList.add('open');
+    }
+    
+    // ===== ESTILOS DE BEBIDA SEGÚN EL MÉTODO =====
+    const ESPRESSO_STYLES = DRINK_STYLES.filter(x => x !== 'Filtrado');
+    const STYLE_RULES = {
+      'Prensa Francesa': { opts: ['Con leche'], optional: true },
+      'Moka': { opts: ['Flat White', 'Cortado', 'Cappuccino', 'Latte', 'Americano'], optional: true },
+      'Espresso': { opts: ESPRESSO_STYLES },
+      'Picopresso': { opts: ESPRESSO_STYLES }
+    };
+    const effMethod = () => entrySource === 'Casa' ? selectedMethod : (entrySource === 'Social' ? socialMethod : '');
+    const styleRule = () => STYLE_RULES[effMethod()] || { opts: DRINK_STYLES };
+    const styleOptional = () => !!styleRule().optional;
+    let editOrig = null;
+    const logTitle = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || l.method || 'Sin estilo');
+    const statLabel = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || ((l.method && l.method !== 'Sin especificar') ? l.method : 'Sin estilo'));
+    function styleOptions() {
+      const list = styleRule().opts;
+      const keep = editingLogId && editOrig && selectedStyle && selectedStyle === editOrig.style && effMethod() === editOrig.method && !list.includes(selectedStyle);
+      return keep ? [...list, selectedStyle] : list;
+    }
+    
+    // ===== RECOMPRAR, RATIOS ENTEROS =====
+    const RATIO_INT = ['Prensa Francesa', 'Moka'];
+    const ratioFmt = (m, d, y) => RATIO_INT.includes(m) ? String(Math.round(y / d)) : (y / d).toFixed(1);
+
+    // Mejor tiro de un paquete: sus propias entradas calificadas + el tiro heredado de la compra anterior
+    function bestShotOf(b) {
+      const c = logs.filter(l => l.beanId === b.id && l.source === 'Casa' && l.rating > 0)
+        .map(l => ({ id: l.id, rating: l.rating, drinkStyle: l.drinkStyle, method: l.method, grind: l.grind, dose: l.dose, yieldAmount: l.yieldAmount, brewTime: l.brewTime, date: l.date }));
+      if (b.bestShot) c.push({ ...b.bestShot, id: '__inherited' });
+      return c.sort((a, d) => (d.rating - a.rating) || (new Date(d.date) - new Date(a.date)))[0] || null;
+    }
+    let rpId = null;
+    function openRepurchase(id) {
+      const b = beans.find(x => x.id === id); if (!b) return;
+      rpId = id;
+      $('rp-title').textContent = 'Recomprar ' + b.name;
+      $('rp-sub').textContent = `Se crea un paquete nuevo de ${b.weight} g. El actual queda intacto en el historial de agotados.`;
+      $('rp-date').value = todayStr(); $('rp-price').value = b.priceUSD || '';
+      $('rp-note').textContent = bestShotOf(b) ? '✓ Hereda la configuración de su mejor tiro.' : '';
+      $('rp').classList.add('on');
+    }
+    const closeRepurchase = () => $('rp').classList.remove('on');
+    function confirmRepurchase() {
+      const old = beans.find(x => x.id === rpId); if (!old) { closeRepurchase(); return; }
+      const best = bestShotOf(old); let snap;
+      if (best) { const { id, ...rest } = best; snap = rest; }
+      const nb = { ...old, id: uid('bean'), purchaseDate: $('rp-date').value || todayStr(), dateAdded: new Date().toISOString(),
+        priceUSD: num('rp-price', 500), remaining: old.weight, archived: false, autoArchived: false, bestShot: snap };
+      beans.unshift(nb);
+      localStorage.setItem('skibidi_beans', JSON.stringify(beans));
+      closeRepurchase(); renderAll(); renderEntryChips();
+      toast('Nuevo paquete agregado: ' + nb.name);
+    }
+    
+    // ===== DESHACER =====
+    let _undoFn = null, _undoT = 0;
+    function showUndo(msg, fn) {
+      const b = $('undo-bar'); _undoFn = fn; $('undo-msg').textContent = msg;
+      b.classList.remove('on'); void b.offsetWidth; b.classList.add('on');
+      clearTimeout(_undoT); _undoT = setTimeout(hideUndo, 6000);
+    }
+    function hideUndo() { $('undo-bar').classList.remove('on'); _undoFn = null; }
+    function runUndo() { const f = _undoFn; clearTimeout(_undoT); hideUndo(); if (f) { f(); toast('Restaurado'); } }
+    const uid = p => p + '-' + Date.now() + Math.random().toString(36).slice(2, 6);
+    initApp();
+
+    (function splash() {
+      const el = document.getElementById('splash');
+      if (!el) return;
+      const hide = () => {
+        if (el.classList.contains('out')) return;
+        el.classList.add('out');
+        el.addEventListener('animationend', e => { if (e.animationName === 'splashOut') el.remove(); });
+      };
+      const img = el.querySelector('img');
+      const ready = img && img.complete ? Promise.resolve() : new Promise(r => {
+        if (!img) return r();
+        img.addEventListener('load', r, { once: true });
+        img.addEventListener('error', r, { once: true });
+      });
+      Promise.all([ready, new Promise(r => setTimeout(r, 1600))]).then(hide);
+    })();
+  </script>
+</body>
+</html>
