@@ -514,8 +514,9 @@ input:focus{border-color:var(--caramel)}
 .stars{position:relative;display:inline-block;font-size:32px;letter-spacing:4px;line-height:1;color:#4a423b;touch-action:pan-y;cursor:pointer}
 .stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--amber);font-style:normal;pointer-events:none}
 /* deslizar para borrar */
-.dup-btn{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted)}
-.dup-btn:active{color:var(--caramel);border-color:var(--caramel)}
+.card-actions{display:flex;gap:6px;flex:none}
+.mini-btn{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted)}
+.mini-btn:active{color:var(--caramel);border-color:var(--caramel)}
 .swipe{position:relative;margin-bottom:14px;border-radius:14px;overflow:hidden;background:var(--danger)}
 .swipe .card{margin:0;position:relative;transition:transform .22s;touch-action:pan-y}
 .swipe-act{position:absolute;right:0;top:0;bottom:0;width:160px;display:flex}.swipe-act button{flex:1;border:0;color:#fff;font-weight:700;font-size:14px;border-radius:0}.swipe-ed{background:#6B7F94}.swipe-del{background:var(--danger)}
@@ -1176,7 +1177,10 @@ body{min-height:calc(100vh + 2px)}
                 <span class="badge ${badgeClass}">${log.source}</span>
                 <span class="style-title">${logTitle(log)}</span>
               </div>
-              <button class="dup-btn" onclick="event.stopPropagation(); dupLog('${log.id}')" aria-label="Duplicar entrada" title="Duplicar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.4"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9"/></svg></button>
+              <div class="card-actions">
+                <button class="mini-btn" onclick="event.stopPropagation(); dupLog('${log.id}')" aria-label="Duplicar entrada" title="Duplicar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.4"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9"/></svg></button>
+                <button class="mini-btn" onclick="event.stopPropagation(); entryMenu('${log.id}')" aria-label="Más opciones" title="Más opciones"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="18.5" cy="12" r="1.3" fill="currentColor"/></svg></button>
+              </div>
             </div>
             <div class="card-sub">${subText}</div>
             ${metricsHtml}
@@ -2255,6 +2259,16 @@ async function exportBackupJSON() {
     function hideUndo() { $('undo-bar').classList.remove('on'); _undoFn = null; }
     function runUndo() { const f = _undoFn; clearTimeout(_undoT); hideUndo(); if (f) { f(); toast('Restaurado'); } }
     const uid = p => p + '-' + Date.now() + Math.random().toString(36).slice(2, 6);
+
+    // Menú de la entrada (botón "⋯"): editar, duplicar o eliminar (con "Deshacer")
+    function entryMenu(id) {
+      const l = logs.find(x => x.id === id); if (!l) return;
+      actionSheet(`${logTitle(l)} · ${new Date(l.date).toLocaleDateString()}`, [
+        { l: 'Editar', fn: () => editLog(id) },
+        { l: 'Duplicar', fn: () => dupLog(id) },
+        { l: 'Eliminar', d: 1, fn: () => deleteLog(id) }
+      ]);
+    }
 
     // Duplicar: abre una entrada nueva con la misma preparación (fecha de hoy; sin nota, foto, calificación ni tags)
     function dupLog(id) {
