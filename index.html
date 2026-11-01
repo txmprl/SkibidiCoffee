@@ -1364,7 +1364,7 @@ body{min-height:calc(100vh + 2px)}
         <button class="choice-chip ${st === selectedStyle ? 'active' : ''}" onclick="selectEntryStyle('${st}')">
           ${st}
         </button>
-      `).join('');
+      `).join('') + coldChipHtml();
 
       document.getElementById('entry-tags-chips').innerHTML = tags.map(t => {
         const active = selectedTags.includes(t);
@@ -1462,6 +1462,7 @@ body{min-height:calc(100vh + 2px)}
         costUSD,
         rating: currentRating,
         tags: [...selectedTags],
+        ...(selectedCold ? { cold: true } : {}),
         notes: document.getElementById('entry-notes').value.trim(),
         photo: tempCupPhoto
       };
@@ -1568,11 +1569,11 @@ body{min-height:calc(100vh + 2px)}
 
     // --- EXPORTAR CSV Y BACKUP JSON (PARA MIGRAR A MAC) ---
     function exportCSV() {
-      const headers = 'Fecha,Modo,Estilo,Detalle,Metodo,Molienda,Dosis(g),Rendimiento,Tiempo(s),Temp(C),Cafeina(mg),Costo(USD),Rating,Tags,Notas\n';
+      const headers = 'Fecha,Modo,Estilo,Detalle,Metodo,Molienda,Dosis(g),Rendimiento,Tiempo(s),Temp(C),Cafeina(mg),Costo(USD),Rating,Frio,Tags,Notas\n';
       const rows = logs.map(l => {
         const d = new Date(l.date).toLocaleDateString();
         const det = l.source === 'Casa' ? l.beanName : (l.source === 'Cafetería' ? l.shopName : `Casa de ${l.hostName}`);
-        return `${d},${l.source},${l.drinkStyle},"${det || ''}",${l.method || ''},"${l.grind || ''}",${l.dose || ''},${l.yieldAmount || ''},${l.brewTime || ''},92,${l.caffeineMg},${l.costUSD || 0},${l.rating},"${(l.tags || []).join('|')}","${(l.notes || '').replace(/"/g, "'")}"`;
+        return `${d},${l.source},${l.drinkStyle},"${det || ''}",${l.method || ''},"${l.grind || ''}",${l.dose || ''},${l.yieldAmount || ''},${l.brewTime || ''},92,${l.caffeineMg},${l.costUSD || 0},${l.rating},${isCold(l) ? 'Si' : ''},"${(l.tags || []).join('|')}","${(l.notes || '').replace(/"/g, "'")}"`;
       }).join('\n');
 
       downloadFile(headers + rows, 'SkibidiCoffee_Diario.csv', 'text/csv;charset=utf-8;');
@@ -1599,6 +1600,7 @@ async function exportBackupJSON() {
           if (data.logs) localStorage.setItem('skibidi_logs', JSON.stringify(logs));
           if (data.tags) { tags = data.tags; localStorage.setItem('skibidi_tags', JSON.stringify(tags)); }
           if (data.methods && data.methods.all) { allMethods = data.methods.all; myMethods = data.methods.mine || []; saveMethods(); }
+          migrateCold();
           renderAll();
           gcPhotos().catch(() => {});
           toast('¡Backup restaurado con éxito!');
@@ -1801,7 +1803,7 @@ async function exportBackupJSON() {
     function resetEntryForm() {
       setEntrySource('Casa'); selectedMethod = ''; socialMethod = ''; selectedStyle = ''; selectedTags = []; selectedBeanId = '';
       ['entry-grind', 'entry-dose', 'entry-yield', 'entry-time', 'entry-ratio', 'entry-shop-name', 'entry-shop-loc', 'entry-shop-cost', 'entry-host', 'entry-notes'].forEach(i => $(i).value = '');
-      entTouch = []; $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
+      entTouch = []; selectedCold = false; $('entry-date').value = todayStr(); currentRating = 0; window.setRatingUI(0);
     }
     function openEntryModal() {
       editingLogId = null;
@@ -1815,7 +1817,7 @@ async function exportBackupJSON() {
       setEntrySource(l.source);
       if (l.beanId) selectedBeanId = l.beanId;
       if (l.source === 'Casa') selectedMethod = l.method; else if (l.source === 'Social') socialMethod = l.method;
-      selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])];
+      selectedStyle = l.drinkStyle; selectedTags = [...(l.tags || [])]; selectedCold = !!l.cold;
       editOrig = { method: l.source === 'Cafetería' ? '' : l.method, style: l.drinkStyle };
       const v = (i, x) => $(i).value = x ?? '';
       entTouch = []; v('entry-ratio', ''); v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
@@ -2148,7 +2150,7 @@ async function exportBackupJSON() {
       closeBeanDetail(); openEntryModal();
       selectedBeanId = id;
       if (l) {
-        selectedMethod = l.method; selectedStyle = l.drinkStyle;
+        selectedMethod = l.method; selectedStyle = l.drinkStyle; selectedCold = !!l.cold;
         $('entry-grind').value = l.grind ?? ''; $('entry-dose').value = l.dose ?? ''; $('entry-yield').value = l.yieldAmount ?? ''; $('entry-time').value = l.brewTime ?? '';
       }
       entTouch = []; renderEntryChips(); updateLiveEntryPreview();
@@ -2207,8 +2209,10 @@ async function exportBackupJSON() {
     const styleRule = () => STYLE_RULES[effMethod()] || { opts: DRINK_STYLES };
     const styleOptional = () => !!styleRule().optional;
     let editOrig = null;
-    const logTitle = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || l.method || 'Sin estilo');
-    const statLabel = l => l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || ((l.method && l.method !== 'Sin especificar') ? l.method : 'Sin estilo'));
+    // Una entrada es fría si se marcó "❄ Frío" o si el método es Cold Brew (que es frío por definición)
+    const isCold = l => !!l.cold || l.method === 'Cold Brew';
+    const logTitle = l => (isCold(l) ? '❄ ' : '') + (l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || l.method || 'Sin estilo'));
+    const statLabel = l => (isCold(l) ? '❄ ' : '') + (l.drinkStyle === 'Con leche' ? 'Café con leche' : (l.drinkStyle || ((l.method && l.method !== 'Sin especificar') ? l.method : 'Sin estilo')));
     function styleOptions() {
       const list = styleRule().opts;
       const keep = editingLogId && editOrig && selectedStyle && selectedStyle === editOrig.style && effMethod() === editOrig.method && !list.includes(selectedStyle);
@@ -2222,7 +2226,7 @@ async function exportBackupJSON() {
     // Mejor tiro de un paquete: sus propias entradas calificadas + el tiro heredado de la compra anterior
     function bestShotOf(b) {
       const c = logs.filter(l => l.beanId === b.id && l.source === 'Casa' && l.rating > 0)
-        .map(l => ({ id: l.id, rating: l.rating, drinkStyle: l.drinkStyle, method: l.method, grind: l.grind, dose: l.dose, yieldAmount: l.yieldAmount, brewTime: l.brewTime, date: l.date }));
+        .map(l => ({ id: l.id, rating: l.rating, drinkStyle: l.drinkStyle, method: l.method, cold: l.cold, grind: l.grind, dose: l.dose, yieldAmount: l.yieldAmount, brewTime: l.brewTime, date: l.date }));
       if (b.bestShot) c.push({ ...b.bestShot, id: '__inherited' });
       return c.sort((a, d) => (d.rating - a.rating) || (new Date(d.date) - new Date(a.date)))[0] || null;
     }
@@ -2260,6 +2264,25 @@ async function exportBackupJSON() {
     function runUndo() { const f = _undoFn; clearTimeout(_undoT); hideUndo(); if (f) { f(); toast('Restaurado'); } }
     const uid = p => p + '-' + Date.now() + Math.random().toString(36).slice(2, 6);
 
+    // ===== FRÍO =====
+    let selectedCold = false;
+    const isColdMethod = () => effMethod() === 'Cold Brew';
+    function coldChipHtml() {
+      const forced = isColdMethod();
+      return `<button class="choice-chip ${(selectedCold || forced) ? 'active' : ''}" ${forced ? 'disabled' : ''} onclick="toggleCold()">❄ Frío</button>`;
+    }
+    function toggleCold() { if (isColdMethod()) return; selectedCold = !selectedCold; renderEntryChips(); }
+    // Convierte la etiqueta "Frío" (que se usaba antes) en la marca de frío; es seguro repetirla
+    function migrateCold() {
+      const isTag = t => /^fr[ií]o$/i.test(String(t).trim());
+      let changed = false;
+      logs.forEach(l => { if ((l.tags || []).some(isTag)) { l.tags = l.tags.filter(t => !isTag(t)); l.cold = true; changed = true; } });
+      const keep = tags.filter(t => !isTag(t));
+      if (keep.length !== tags.length) { tags = keep; localStorage.setItem('skibidi_tags', JSON.stringify(tags)); changed = true; }
+      if (changed) localStorage.setItem('skibidi_logs', JSON.stringify(logs));
+      return changed;
+    }
+
     // Menú de la entrada (botón "⋯"): editar, duplicar o eliminar (con "Deshacer")
     function entryMenu(id) {
       const l = logs.find(x => x.id === id); if (!l) return;
@@ -2278,7 +2301,7 @@ async function exportBackupJSON() {
       if (l.beanId && beans.some(b => b.id === l.beanId)) selectedBeanId = l.beanId;
       const m = l.method === 'Sin especificar' ? '' : l.method;
       if (l.source === 'Casa') selectedMethod = m; else if (l.source === 'Social') socialMethod = m;
-      selectedStyle = l.drinkStyle || '';
+      selectedStyle = l.drinkStyle || ''; selectedCold = !!l.cold;
       const v = (i, x) => $(i).value = x ?? '';
       v('entry-grind', l.grind); v('entry-dose', l.dose); v('entry-yield', l.yieldAmount); v('entry-time', l.brewTime);
       v('entry-shop-name', l.shopName); v('entry-shop-loc', l.shopLocation); v('entry-shop-cost', l.source === 'Cafetería' ? l.costUSD : ''); v('entry-host', l.hostName);
@@ -2345,7 +2368,7 @@ async function exportBackupJSON() {
       await idb('readwrite', st => { dead.forEach(k => st.delete(k)); });
       dead.forEach(k => { try { URL.revokeObjectURL(PHOTO_URLS[k]); } catch (e) {} delete PHOTO_URLS[k]; });
     }
-    async function afterInit() { try { if (await migratePhotos()) renderAll(); await gcPhotos(); } catch (e) {} }
+    async function afterInit() { try { if (migrateCold()) renderAll(); if (await migratePhotos()) renderAll(); await gcPhotos(); } catch (e) {} }
         initPhotos().then(() => { initApp(); return afterInit(); });
 
     (function splash() {
